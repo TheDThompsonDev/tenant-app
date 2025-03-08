@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Page from "./db/index";
+import Page from "./prisma/index";
 
 export default function Home() {
   return (
