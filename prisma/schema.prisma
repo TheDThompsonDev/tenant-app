@@ -7,58 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// --- Enums (adjust enum values as needed) ---
+
+enum Role {
+  ADMIN
+  APPLICANT
+  TENANT
+  PROPERTY_MANAGER
+  LEASING_AGENT
+}
+
 enum LeaseStatus {
-  Active
-  Expired
-  Terminated
+  ACTIVE
+  EXPIRED
+  TERMINATED
 }
 
 enum RentalApplicationStatus {
-  Pending
-  Approved
-  Denied
+  PENDING
+  APPROVED
+  DENIED
 }
 
 enum NotificationType {
-  Email
+  EMAIL
   SMS
-  Push
+  PUSH
 }
 
 enum NotificationStatus {
-  Sent
-  Pending
-  Failed
+  SENT
+  PENDING
+  FAILED
 }
 
 enum NotificationPriority {
-  Low
-  Medium
-  High
+  LOW
+  MEDIUM
+  HIGH
 }
 
 enum AmenityAvailabilityStatus {
-  Available
-  Unavailable
+  AVAILABLE
+  UNAVAILABLE
 }
 
 /// 1. User 
 model User {
-  id        String   @id @default(uuid())
-  firstName String
-  lastName  String
-  dob       DateTime
-  email     String   @unique
-  password  String
-
-  // Relations to role-specific records
-  propertyManager PropertyManager?
-  applicant       Applicant?
-  admin           Admin?
-  leasingAgent    LeasingAgent?
-  tenant          Tenant?
+  id          Int      @id @default(autoincrement())
+  firstName   String   @db.VarChar(40)
+  lastName    String   @db.VarChar(40)
+  email       String   @unique
+  password    String
+  dateOfBirth DateTime
+  phoneNumber String   @db.VarChar(40)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
 
 /// 2. Property Manager 
 model PropertyManager {
@@ -161,15 +166,23 @@ model ManagementCompany {
 }
 
 /// 10. Address
+
 model Address {
-  id       String  @id @default(uuid())
-  number   String
-  street   String
-  aptSuite String?
-  city     String
-  state    String
-  zipcode  String
-  country  String
+  id                Int                @id @default(uuid())
+  number            Int
+  street            String
+  suiteNumber       Int
+  city              String
+  state             String
+  zipCode           String
+  country           String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  ManagementCompany ManagementCompany?
+  Property          Property?
+}
+
+
 
   // An address can be associated with one management company and many properties/applicants.
   managementCompany ManagementCompany?
@@ -330,4 +343,89 @@ model PackageLockerLog {
   action          String
   timestamp       DateTime
   performedBy     String
+
+
+model Address {
+  id                Int                @id @default(autoincrement())
+  number            Int
+  street            String
+  suiteNumber       Int
+  city              String
+  state             String
+  zipCode           String
+  country           String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  ManagementCompany ManagementCompany?
+  Property          Property?
+}
+
+model ContactInfo {
+  id          Int      @id @default(autoincrement())
+  contactName String
+  email       String
+  phoneNumber String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
+model ManagementCompany {
+  id         Int       @id @default(autoincrement())
+  name       String
+  address    Address   @relation(fields: [addressId], references: [id])
+  addressId  Int       @unique
+  websiteURL String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Property   Property?
+}
+
+model Property {
+  id                  Int                @id @default(autoincrement())
+  managementCompany   ManagementCompany  @relation(fields: [managementCompanyId], references: [id])
+  managementCompanyId Int                @unique
+  address             Address            @relation(fields: [addressId], references: [id])
+  addressId           Int                @unique
+  propertyName        String
+  websiteURL          String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  PropertyToAmenity   PropertyToAmenity?
+  Apartment           Apartment?
+}
+
+model Amenity {
+  id                 Int                @id @default(autoincrement())
+  amenityName        String
+  description        String
+  location           String
+  availabilityStatus DateTime
+  requiresAccessCode Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  PropertyToAmenity  PropertyToAmenity?
+}
+
+model PropertyToAmenity {
+  id         Int      @id @default(autoincrement())
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId Int      @unique
+  amenity    Amenity  @relation(fields: [amenityId], references: [id])
+  amenityId  Int      @unique
+}
+
+model Apartment {
+  id          Int      @id @default(autoincrement())
+  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId  Int      @unique
+  unitNumber  Int
+  maxCapacity Int
+  squareFeet  Int
+  image       String
+  beddrooms   Int
+  bathrooms   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
