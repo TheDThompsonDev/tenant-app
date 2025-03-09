@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 
@@ -434,7 +435,7 @@ model Apartment {
   maxCapacity Int
   squareFeet  Int
   image       String
-  beddrooms   Int
+  bedrooms   Int
   bathrooms   Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
