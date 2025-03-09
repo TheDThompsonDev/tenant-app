@@ -719,10 +719,10 @@ async function main() {
       requiresAccessCode: false,
       createdAt: new Date(),
   const user = await prisma.user.create({ 
-   data: {
-      firstName: 'Tatiana',
-      lastName: 'Bertazoli',
-      email: 'tatianabertazoli@gmail.com',
+    data: {
+      firstName: 'Test',
+      lastName: 'Test',
+      email: 'test@gmail.com',
       password: 'password',
       dateOfBirth: new Date('2002-02-02'),
       phoneNumber: '123-456-7890',
@@ -730,6 +730,7 @@ async function main() {
       updatedAt: new Date(),      
     },
   });
+<<<<<<< HEAD
   await prisma.propertyToAmenity.createMany({
     data: [
       { propertyId: property.id, amenityId: amenityPool.id },
@@ -767,6 +768,8 @@ async function main() {
 }
 
 })
+=======
+>>>>>>> ba5ae48 (fix: correct unique constraints and update seed data for testing)
 
   // Create addresses
   const address1 = await prisma.address.create({
@@ -833,7 +836,6 @@ async function main() {
     },
   });
 
-
   // Create apartments
   const apartment = await prisma.apartment.create({
     data: {
@@ -842,7 +844,7 @@ async function main() {
       maxCapacity: 4,
       squareFeet: 1200,
       image: 'https://example.com/apartment.jpg',
-      beddrooms: 2,
+      bedrooms: 2,
       bathrooms: 2,
       createdAt: new Date(),
       updatedAt: new Date(),

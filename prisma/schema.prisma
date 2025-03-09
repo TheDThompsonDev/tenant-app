@@ -382,54 +382,54 @@ model User {
 }
 
 model ManagementCompany {
-  id         String    @id @default(uuid())
+  id         String     @id @default(uuid())
   name       String
-  address    Address   @relation(fields: [addressId], references: [id])
-  addressId  String     
+  address    Address    @relation(fields: [addressId], references: [id])
+  addressId  String     @unique
   websiteURL String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  Property   Property?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  property   Property[]
 }
 
 model Property {
-  id                  String             @id @default(uuid())
-  managementCompany   ManagementCompany  @relation(fields: [managementCompanyId], references: [id])
-  managementCompanyId String             
-  address             Address            @relation(fields: [addressId], references: [id])
-  addressId           String               
+  id                  String              @id @default(uuid())
+  managementCompany   ManagementCompany   @relation(fields: [managementCompanyId], references: [id])
+  managementCompanyId String              @unique
+  address             Address             @relation(fields: [addressId], references: [id])
+  addressId           String              @unique
   propertyName        String
   websiteURL          String
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  PropertyToAmenity   PropertyToAmenity?
-  Apartment           Apartment?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  amenities           PropertyToAmenity[]
+  apartments          Apartment[]
 }
 
 model Amenity {
-  id                 String             @id @default(uuid())
+  id                 String              @id @default(uuid())
   amenityName        String
   description        String
   location           String
   availabilityStatus DateTime
-  requiresAccessCode Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  PropertyToAmenity  PropertyToAmenity?
+  requiresAccessCode Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  PropertyToAmenity  PropertyToAmenity[]
 }
 
 model PropertyToAmenity {
   id         String   @id @default(uuid())
   property   Property @relation(fields: [propertyId], references: [id])
-  propertyId String    
+  propertyId String
   amenity    Amenity  @relation(fields: [amenityId], references: [id])
-  amenityId  String     
+  amenityId  String
 }
 
 model Apartment {
   id          String   @id @default(uuid())
   property    Property @relation(fields: [propertyId], references: [id])
-  propertyId  String    
+  propertyId  String
   unitNumber  Int
   maxCapacity Int
   squareFeet  Int
@@ -439,4 +439,3 @@ model Apartment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
-
