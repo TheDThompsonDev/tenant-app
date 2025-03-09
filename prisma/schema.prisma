@@ -346,7 +346,7 @@ model PackageLockerLog {
 
 
 model Address {
-  id                Int                @id @default(autoincrement())
+  id                String             @id @default(uuid())
   number            Int
   street            String
   suiteNumber       Int
@@ -361,7 +361,7 @@ model Address {
 }
 
 model ContactInfo {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   contactName String
   email       String
   phoneNumber String
@@ -369,13 +369,23 @@ model ContactInfo {
   updatedAt   DateTime @updatedAt
 }
 
-
+model User {
+  id          String   @id @default(uuid())
+  firstName   String   @db.VarChar(40)
+  lastName    String   @db.VarChar(40)
+  email       String   @unique
+  password    String
+  dateOfBirth DateTime
+  phoneNumber String   @db.VarChar(40)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
 model ManagementCompany {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   name       String
   address    Address   @relation(fields: [addressId], references: [id])
-  addressId  Int       @unique
+  addressId  String     
   websiteURL String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -383,11 +393,11 @@ model ManagementCompany {
 }
 
 model Property {
-  id                  Int                @id @default(autoincrement())
+  id                  String             @id @default(uuid())
   managementCompany   ManagementCompany  @relation(fields: [managementCompanyId], references: [id])
-  managementCompanyId Int                @unique
+  managementCompanyId String             
   address             Address            @relation(fields: [addressId], references: [id])
-  addressId           Int                @unique
+  addressId           String               
   propertyName        String
   websiteURL          String
   createdAt           DateTime           @default(now())
@@ -397,7 +407,7 @@ model Property {
 }
 
 model Amenity {
-  id                 Int                @id @default(autoincrement())
+  id                 String             @id @default(uuid())
   amenityName        String
   description        String
   location           String
@@ -409,17 +419,17 @@ model Amenity {
 }
 
 model PropertyToAmenity {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   property   Property @relation(fields: [propertyId], references: [id])
-  propertyId Int      @unique
+  propertyId String    
   amenity    Amenity  @relation(fields: [amenityId], references: [id])
-  amenityId  Int      @unique
+  amenityId  String     
 }
 
 model Apartment {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   property    Property @relation(fields: [propertyId], references: [id])
-  propertyId  Int      @unique
+  propertyId  String    
   unitNumber  Int
   maxCapacity Int
   squareFeet  Int
@@ -429,3 +439,4 @@ model Apartment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
