@@ -4,17 +4,17 @@ const prisma = new PrismaClient()
 
 async function main() {
   const user = await prisma.user.create({ 
-   data: {
-      firstName: 'Tatiana',
-      lastName: 'Bertazoli',
-      email: 'tatianabertazoli@gmail.com',
+    data: {
+      firstName: 'Test',
+      lastName: 'Test',
+      email: 'test@gmail.com',
       password: 'password',
       dateOfBirth: new Date('2002-02-02'),
       phoneNumber: '123-456-7890',
       createdAt: new Date(),
       updatedAt: new Date(),      
     },
-})
+  });
 
   // Create addresses
   const address1 = await prisma.address.create({
@@ -81,7 +81,6 @@ async function main() {
     },
   });
 
-
   // Create apartments
   const apartment = await prisma.apartment.create({
     data: {
@@ -90,7 +89,7 @@ async function main() {
       maxCapacity: 4,
       squareFeet: 1200,
       image: 'https://example.com/apartment.jpg',
-      beddrooms: 2,
+      bedrooms: 2,
       bathrooms: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
