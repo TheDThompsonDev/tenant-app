@@ -7,13 +7,327 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// --- Enums (adjust enum values as needed) ---
+enum LeaseStatus {
+  Active
+  Expired
+  Terminated
+}
+
+enum RentalApplicationStatus {
+  Pending
+  Approved
+  Denied
+}
+
+enum NotificationType {
+  Email
+  SMS
+  Push
+}
+
+enum NotificationStatus {
+  Sent
+  Pending
+  Failed
+}
+
+enum NotificationPriority {
+  Low
+  Medium
+  High
+}
+
+enum AmenityAvailabilityStatus {
+  Available
+  Unavailable
+}
+
+/// 1. User 
 model User {
-  id    Int    @id @default(autoincrement())
-  firstName  String
-  lastName   String
-  email      String  @unique
-  password   String
-  dateOfBirth  DateTime
-  phoneNumber String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  dob       DateTime
+  email     String   @unique
+  password  String
+
+  // Relations to role-specific records
+  propertyManager PropertyManager?
+  applicant       Applicant?
+  admin           Admin?
+  leasingAgent    LeasingAgent?
+  tenant          Tenant?
+}
+
+/// 2. Property Manager 
+model PropertyManager {
+  id       String @id @default(uuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade) // FK to User
+  userRole String
+}
+
+/// 3. Rental Application 
+model RentalApplication {
+  id          String                  @id @default(uuid())
+  // ERROR FIX: Changed type from String? to match Apartment.id (String) and kept @unique to enforce one-to-one.
+  apartmentId String?                 @unique
+  status      RentalApplicationStatus
+  startDate   DateTime
+  length      Int
+
+  // Relation to Apartment (one-to-one)
+  apartment Apartment? @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  applicant Applicant?
+}
+
+/// 4. Applicant 
+model Applicant {
+  id                  String             @id @default(uuid())
+  userId              String             @unique
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole            String
+  rentalApplicationId String?            @unique
+  rentalApplication   RentalApplication? @relation(fields: [rentalApplicationId], references: [id], onDelete: Cascade)
+  addressId           String?
+  address             Address?           @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  governmentId        String // government_id column from SQL
+  socialSecurity      String // social_security column
+  vehicles            Int? // vehicles (optional)
+  smoker              String
+  annualIncome        Float? // annual_income
+  pet                 String
+  signatureStatus     String // signature_status
+}
+
+/// 5. Admin
+model Admin {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// 6. Leasing Agent (SQL: Leasing Agent)
+model LeasingAgent {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole   String
+  // FK to Property – adjust as needed; this relation is optional.
+  propertyId String?
+  createdAt  DateTime  @default(now())
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+/// 7. Lease
+model Lease {
+  id              String      @id @default(uuid())
+  // ERROR FIX: Changed type to String to match Apartment.id and kept @unique for one-to-one.
+  apartmentId     String      @unique
+  apartment       Apartment   @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  leaseStart      DateTime
+  leaseEnd        DateTime
+  monthlyRent     Decimal
+  securityDeposit Decimal
+  leaseStatus     LeaseStatus
+
+  tenant Tenant?
+}
+
+/// 8. Tenant 
+model Tenant {
+  id      String @id @default(uuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaseId String @unique
+  lease   Lease  @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+
+  // One-to-many: A tenant can have many notifications.
+  notifications Notification[]
+}
+
+/// 9. Management Company
+model ManagementCompany {
+  id         String  @id @default(uuid())
+  name       String
+  addressId  String  @unique
+  address    Address @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  websiteUrl String?
+  email      String?
+
+  // One-to-many: A management company can have multiple properties.
+  properties Property[]
+}
+
+/// 10. Address
+model Address {
+  id       String  @id @default(uuid())
+  number   String
+  street   String
+  aptSuite String?
+  city     String
+  state    String
+  zipcode  String
+  country  String
+
+  // An address can be associated with one management company and many properties/applicants.
+  managementCompany ManagementCompany?
+  properties        Property[]
+  applicants        Applicant[]
+}
+
+/// 11. Property 
+model Property {
+  id                  String            @id @default(uuid())
+  managementCompanyId String
+  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id], onDelete: Cascade)
+  addressId           String
+  address             Address           @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  propertyName        String
+  websiteUrl          String?
+
+  // Relations:
+  apartments          Apartment[]
+  listings            Listing[]
+  leasingAgents       LeasingAgent[]
+  propertyToAmenities PropertyToAmenity[]
+  packageLockers      PackageLocker[]
+}
+
+/// 12. Apartment 
+model Apartment {
+  id          String   @id @default(uuid())
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitNumber  String
+  maxCapacity Int
+  squareFeet  Int
+  image       String?
+  bedrooms    Int
+  baths       Int
+
+  // Relations:
+  // One-to-one with RentalApplication and Lease.
+  rentalApplication RentalApplication?
+  lease             Lease?
+  // One-to-one with SmartLock.
+  smartLock         SmartLock?
+  // One-to-many: An apartment can have multiple parking passes...
+  parkingPasses     ParkingPass[]
+  // and multiple listings 
+  listings          Listing[]
+}
+
+/// 13. Listing 
+model Listing {
+  id          String    @id @default(uuid())
+  // ERROR FIX: Changed type to String to match Apartment.id.
+  apartmentId String
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  listingDate DateTime
+  moveInDate  DateTime
+  leaseLength Int
+  petFriendly Boolean
+  furnished   Boolean
+  // one-to-many (an apartment can have many listings)
+  Property    Property? @relation(fields: [propertyId], references: [id])
+  propertyId  String?
+}
+
+/// 14. Notification 
+model Notification {
+  id               String               @id @default(uuid()) @map("notification_id")
+  tenantId         String
+  tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  propertyId       String?
+  notificationType NotificationType
+  title            String
+  sentAt           DateTime
+  message          String
+  status           NotificationStatus
+  priority         NotificationPriority
+}
+
+/// 15. Parking Pass (SQL: Parking Pass)
+model ParkingPass {
+  id             String    @id @default(uuid())
+  // ERROR FIX: Changed type to String to match Apartment.id.
+  apartmentId    String
+  apartment      Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  licensePlate   String
+  make           String
+  model          String
+  color          String
+  createdAt      DateTime  @default(now())
+  expirationDate DateTime
+}
+
+/// 16. Smart Lock
+model SmartLock {
+  id          String    @id @default(uuid())
+  apartmentId String    @unique
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+
+  // One-to-one with DigitalAccessKey.
+  digitalAccessKey DigitalAccessKey?
+}
+
+/// 17. Digital Access Key
+model DigitalAccessKey {
+  id             String    @id @default(uuid())
+  smartLockId    String    @unique
+  smartLock      SmartLock @relation(fields: [smartLockId], references: [id], onDelete: Cascade)
+  code           String
+  expirationDate DateTime
+}
+
+/// 18. Amenity
+model Amenity {
+  id                 String                    @id @default(uuid())
+  amenityName        String
+  description        String
+  location           String
+  availabilityStatus AmenityAvailabilityStatus
+  requiresAccessCode Boolean
+  createdAt          DateTime
+
+  propertyToAmenities PropertyToAmenity[]
+}
+
+/// 19. PropertyToAmenity (SQL: PropertyToAmenity)
+model PropertyToAmenity {
+  id         String   @id @default(uuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenityId  String
+  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+}
+
+/// 20. Package Locker (SQL: Package Locker)
+model PackageLocker {
+  id                String             @id @default(uuid())
+  propertyId        String
+  property          Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  lockerNumber      String
+  location          String
+  lockerStatus      String
+  lastAccessedAt    DateTime?
+  accessCode        String
+  assignedUserId    String?
+  packageId         String?
+  // One-to-many: A package locker can have multiple logs.
+  packageLockerLogs PackageLockerLog[]
+}
+
+/// 21. Package Locker Log (
+model PackageLockerLog {
+  id              String        @id @default(uuid())
+  packageLockerId String
+  packageLocker   PackageLocker @relation(fields: [packageLockerId], references: [id], onDelete: Cascade)
+  packageId       String?
+  assignedUserId  String?
+  action          String
+  timestamp       DateTime
+  performedBy     String
 }
