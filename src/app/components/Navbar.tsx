@@ -8,13 +8,16 @@ export default function Navbar() {
     <nav>
       <ul className='flex space-x-4'>
         <Link href='/' className={linkClasses}>
-          <p className='hidden md:block'>Home</p>
+          <p className='hidden md:block text-lg'>Messages</p>
         </Link>
-        <Link href='/about' className={linkClasses}>
-          <p className='hidden md:block'>About</p>
+        <Link href='/' className={linkClasses}>
+          <p className='hidden md:block text-lg'>Unlock Door</p>
         </Link>
-        <Link href='/contact' className={linkClasses}>
-          <p className='hidden md:block'>Contact</p>
+        <Link href='/' className={linkClasses}>
+          <p className='hidden md:block text-lg'>Packages</p>
+        </Link>
+        <Link href='/' className={linkClasses}>
+          <p className='hidden md:block text-lg'>Parking</p>
         </Link>
       </ul>
     </nav>
