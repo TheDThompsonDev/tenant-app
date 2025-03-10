@@ -3,11 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-
 
 enum Role {
   ADMIN
@@ -30,15 +29,14 @@ enum RentalApplicationStatus {
 }
 
 enum NotificationType {
-  EMAIL
-  SMS
-  PUSH
+  COMPLAINT
+  REPAIR
+  NOISE_COMPLAINT
 }
 
 enum NotificationStatus {
-  SENT
-  PENDING
-  FAILED
+  READ
+  UNREAD
 }
 
 enum NotificationPriority {
@@ -57,6 +55,16 @@ enum ApartmentAvailabilityStatus {
   UNAVAILABLE
 }
 
+enum PackageLockerStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum Action {
+  READY_FOR_PICKUP
+  PICKED_UP
+}
+
 model Address {
   id                String             @id @default(uuid())
   number            Int
@@ -70,287 +78,290 @@ model Address {
   updatedAt         DateTime           @updatedAt
   ManagementCompany ManagementCompany?
   Property          Property?
+  Applicant         Applicant[]
 }
-
-
-model ContactInfo {
-  id          String   @id @default(uuid())
-  contactName String
-  email       String
-  phoneNumber String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
 
 model User {
-  id          String   @id @default(uuid())
-  firstName   String   @db.VarChar(40)
-  lastName    String   @db.VarChar(40)
-  email       String   @unique
-  password    String
-  dateOfBirth DateTime
-  phoneNumber String   @db.VarChar(40)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String           @id @default(uuid())
+  firstName       String           @db.VarChar(40)
+  lastName        String           @db.VarChar(40)
+  email           String           @unique
+  password        String
+  dateOfBirth     DateTime
+  phoneNumber     String           @db.VarChar(40)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  Admin           Admin?
+  PropertyManager PropertyManager?
+  Tenant          Tenant?
+  LeasingAgent    LeasingAgent?
+  Applicant       Applicant?
 }
-
 
 model Admin {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole  String   @default(ADMIN)
+  id       String @id @default(uuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole Role   @default(ADMIN)
 }
 
-
 model PropertyManager {
-  id         String   @id @default(uuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade) // FK to User
-  userRole   String   @default(PROPERTY_MANAGER)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade) // FK to User
+  userRole   Role      @default(PROPERTY_MANAGER)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
 }
 
 model Tenant {
-  id      String @id @default(uuid())
-  userId  String @unique
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leaseId String @unique
-  lease   Lease  @relation(fields: [leaseId], references: [id], onDelete: Cascade)  
-  userRole String @default(TENANT)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  notifications Notification[]
-  guest      Guest[]
+  id                  String                @id @default(uuid())
+  userId              String                @unique
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaseId             String                @unique
+  lease               Lease                 @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  userRole            Role                  @default(TENANT)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  notifications       Notification[]
+  guest               Guest[]
+  PackageLockerAccess PackageLockerAccess[]
+  Property            Property?             @relation(fields: [propertyId], references: [id])
+  propertyId          String?
+  DigitalAccessKey    DigitalAccessKey?
 }
 
-
 model LeasingAgent {
-  id         String    @id @default(uuid())
-  userId     String    @unique
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole   String    @default(LEASING_AGENT)
-  propertyId String    @unique
-  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole   Role     @default(LEASING_AGENT)
+  propertyId String   @unique
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Guest {
-  id         String    @id @default(uuid())
-  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  tenantId   String    @unique    
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id          String        @id @default(uuid())
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    String        @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  parkingPass ParkingPass[]
 }
 
-
 model ManagementCompany {
-  id         String     @id @default(uuid())
-  name       String
-  address    Address    @relation(fields: [addressId], references: [id])
-  addressId  String     @unique
-  websiteURL String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  property   Property[]
+  id          String     @id @default(uuid())
+  companyName String
+  address     Address    @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId   String     @unique
+  websiteURL  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  property    Property[]
 }
 
 model Property {
-  id                  String              @id @default(uuid())
-  managementCompany   ManagementCompany   @relation(fields: [managementCompanyId], references: [id])
-  managementCompanyId String              @unique
-  address             Address             @relation(fields: [addressId], references: [id])
-  addressId           String              @unique
+  id                  String            @id @default(uuid())
+  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id], onDelete: Cascade)
+  managementCompanyId String            @unique
+  address             Address           @relation(fields: [addressId], references: [id])
+  addressId           String            @unique
   propertyName        String
   websiteURL          String
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  amenities           PropertyToAmenity[]
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  amenities           Amenity[]
   apartments          Apartment[]
-  leasingAgent        LeasingAgent[]?
-  tenant              Tenant[]
+  leasingAgent        LeasingAgent[]
+  tenants             Tenant[]
+  packageLocker       PackageLocker[]
+  propertyManager     PropertyManager[]
 }
 
-
 model Amenity {
-  id                 String              @id @default(uuid())
+  id                 String    @id @default(uuid())
   amenityName        String
   description        String?
   location           String?
   availabilityStatus DateTime
-  requiresAccessCode Boolean             @default(false)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  PropertyToAmenity  PropertyToAmenity[]
+  requiresAccessCode Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  Property           Property? @relation(fields: [propertyId], references: [id])
+  propertyId         String?
 }
-
-model PropertyToAmenity {
-  id         String   @id @default(uuid())
-  property   Property @relation(fields: [propertyId], references: [id])
-  propertyId String
-  amenity    Amenity  @relation(fields: [amenityId], references: [id])
-  amenityId  String
-}
-
 
 model Apartment {
-  id          String   @id @default(uuid())
-  property    Property @relation(fields: [propertyId], references: [id])
-  propertyId  String
-  unitNumber  Int
-  maxCapacity Int
-  squareFeet  Int
-  image       String
-  bedrooms    Int
-  bathrooms   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                          String                      @id @default(uuid())
+  property                    Property                    @relation(fields: [propertyId], references: [id])
+  propertyId                  String
+  unitNumber                  Int
+  maxCapacity                 Int
+  squareFeet                  Int
+  image                       String
+  bedrooms                    Int
+  bathrooms                   Int
+  apartmentAvailabilityStatus ApartmentAvailabilityStatus @default(AVAILABLE)
+  createdAt                   DateTime                    @default(now())
+  updatedAt                   DateTime                    @updatedAt
+  listings                    Listing[]
+  smartLock                   SmartLock[]
 }
 
-
-
+model Listing {
+  id                String             @id @default(uuid())
+  apartmentId       String
+  apartment         Apartment          @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  petFriendly       Boolean
+  furnished         Boolean
+  leaseLength       Int
+  monthlyRent       Float
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  RentalApplication RentalApplication?
+  ContactUs         ContactUs?
+}
 
 model RentalApplication {
   id          String                  @id @default(uuid())
-  // ERROR FIX: Changed type from String? to match Apartment.id (String) and kept @unique to enforce one-to-one.
-  apartmentId String?                 @unique
-  status      RentalApplicationStatus
+  listing     Listing                 @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId   String                  @unique
+  status      RentalApplicationStatus @default(PENDING)
   startDate   DateTime
-  length      Int
-
-  // Relation to Apartment (one-to-one)
-  apartment Apartment? @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
-  applicant Applicant?
+  leaseLength Int
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+  applicants  Applicant[]
+  Lease       Lease?
 }
-
-
 
 model Applicant {
   id                  String             @id @default(uuid())
   userId              String             @unique
   user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole            String
-  rentalApplicationId String?            @unique
+  userRole            Role               @default(APPLICANT)
+  rentalApplicationId String             @unique
   rentalApplication   RentalApplication? @relation(fields: [rentalApplicationId], references: [id], onDelete: Cascade)
-  addressId           String?
-  address             Address?           @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId           String
+  address             Address            @relation(fields: [addressId], references: [id], onDelete: Cascade)
   governmentId        String // government_id column from SQL
   socialSecurity      String // social_security column
-  vehicles            Int? // vehicles (optional)
-  smoker              String
-  annualIncome        Float? // annual_income
-  pet                 String
+  vehicle             Vehicle?           @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId           String?
+  smoker              Boolean
+  annualIncome        Float // annual_income
+  pet                 Boolean
   signatureStatus     String // signature_status
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 }
 
-
+model Vehicle {
+  id           String        @id @default(uuid())
+  model        String
+  maker        String
+  color        String
+  licensePlate String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  Applicant    Applicant[]
+  ParkingPass  ParkingPass[]
+}
 
 model Lease {
-  id              String      @id @default(uuid())
-  // ERROR FIX: Changed type to String to match Apartment.id and kept @unique for one-to-one.
-  apartmentId     String      @unique
-  apartment       Apartment   @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
-  leaseStart      DateTime
-  leaseEnd        DateTime
-  monthlyRent     Decimal
-  securityDeposit Decimal
-  leaseStatus     LeaseStatus
-
-  tenant Tenant?
+  id                  String            @id @default(uuid())
+  rentalApplication   RentalApplication @relation(fields: [rentalApplicationId], references: [id], onDelete: Cascade)
+  rentalApplicationId String            @unique
+  leaseStart          DateTime
+  leaseEnd            DateTime
+  monthlyRent         Decimal
+  securityDeposit     Decimal
+  leaseStatus         LeaseStatus
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  tenants             Tenant[]
 }
-
-model Listing {
-  id          String    @id @default(uuid())
-  // ERROR FIX: Changed type to String to match Apartment.id.
-  apartmentId String
-  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
-  listingDate DateTime
-  moveInDate  DateTime
-  leaseLength Int
-  petFriendly Boolean
-  furnished   Boolean
-  // one-to-many (an apartment can have many listings)
-  Property    Property? @relation(fields: [propertyId], references: [id])
-  propertyId  String?
-}
-
 
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
   tenantId         String
   tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  propertyId       String?
-  notificationType NotificationType
+  notificationType NotificationType     @default(NOISE_COMPLAINT)
   title            String
-  sentAt           DateTime
-  message          String
-  status           NotificationStatus
-  priority         NotificationPriority
+  message          String?
+  status           NotificationStatus   @default(UNREAD)
+  priority         NotificationPriority @default(LOW)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
 }
-
 
 model ParkingPass {
-  id             String    @id @default(uuid())
-  // ERROR FIX: Changed type to String to match Apartment.id.
-  apartmentId    String
-  apartment      Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
-  licensePlate   String
-  make           String
-  model          String
-  color          String
-  createdAt      DateTime  @default(now())
-  expirationDate DateTime
+  id                String   @id @default(uuid())
+  guestId           String   @unique
+  guest             Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  vehicleId         String
+  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  parkingPassNumber String   @unique
+  dateIssued        DateTime @default(now())
+  expirationDate    DateTime
 }
-
 
 model SmartLock {
-  id          String    @id @default(uuid())
-  apartmentId String    @unique
-  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
-
-  // One-to-one with DigitalAccessKey.
-  digitalAccessKey DigitalAccessKey?
+  id               String             @id @default(uuid())
+  apartmentId      String             @unique
+  apartment        Apartment          @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  digitalAccessKey DigitalAccessKey[]
 }
-
 
 model DigitalAccessKey {
   id             String    @id @default(uuid())
   smartLockId    String    @unique
   smartLock      SmartLock @relation(fields: [smartLockId], references: [id], onDelete: Cascade)
+  tenantId       String    @unique
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   code           String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   expirationDate DateTime
 }
 
-
-
 model PackageLocker {
-  id                String             @id @default(uuid())
-  propertyId        String
-  property          Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  lockerNumber      String
-  location          String
-  lockerStatus      String
-  lastAccessedAt    DateTime?
-  accessCode        String
-  assignedUserId    String?
-  packageId         String?
-  // One-to-many: A package locker can have multiple logs.
-  packageLockerLogs PackageLockerLog[]
+  id                  String                @id @default(uuid())
+  propertyId          String
+  property            Property              @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  lockerNumber        String
+  location            String?
+  packageLockerStatus PackageLockerStatus
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  PackageLockerAccess PackageLockerAccess[]
 }
 
-model PackageLockerLog {
+model PackageLockerAccess {
   id              String        @id @default(uuid())
   packageLockerId String
   packageLocker   PackageLocker @relation(fields: [packageLockerId], references: [id], onDelete: Cascade)
-  packageId       String?
-  assignedUserId  String?
-  action          String
-  timestamp       DateTime
-  performedBy     String
+  tenantId        String        @unique
+  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  action          Action        @default(READY_FOR_PICKUP)
+  timestamp       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
-
-
+model ContactUs {
+  id          String  @id @default(uuid())
+  listingId   String  @unique
+  listing     Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  name        String
+  email       String?
+  phoneNumber String
+  title       String?
+  message     String?
+}
