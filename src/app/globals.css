@@ -11,6 +11,17 @@
   /* --secondary-button-blue: theme(colors.secondaryButtonBlue); */
 }
 
+@theme {
+  --color-primary-green:#10B981;
+  --color-secondary-blue: #164e63;
+  --color-alternate-green: #d1fae5;
+  --color-primary-black: #171717;
+  --color-secondary-dark-gray: #44403C;
+  --color-alternate-gray: #a8a29e;
+  --color-alternate-light-gray: #e7e5e4;
+
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
