@@ -85,3 +85,56 @@ model Address {
 
   applicant Applicant? // One-to-One relationship with Applicant
 }
+
+
+
+
+
+
+
+/// 12. Apartment 
+model Apartment {
+  id          String   @id @default(uuid())
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitNumber  String
+  maxCapacity Int
+  squareFeet  Int
+  image       String?
+  bedrooms    Int
+  baths       Int
+
+  // Relations:
+  // One-to-one with RentalApplication and Lease.
+  rentalApplication RentalApplication?
+  lease             Lease?
+  // One-to-one with SmartLock.
+  smartLock         SmartLock?
+  // One-to-many: An apartment can have multiple parking passes...
+  parkingPasses     ParkingPass[]
+  // and multiple listings 
+  listings          Listing[]
+}
+
+
+//add vehicle entity
+
+
+
+/// 11. Property 
+model Property {
+  id                  String            @id @default(uuid())
+  managementCompanyId String
+  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id], onDelete: Cascade)
+  addressId           String
+  address             Address           @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  propertyName        String
+  websiteUrl          String?
+
+  // Relations:
+  apartments          Apartment[]
+  listings            Listing[]
+  leasingAgents       LeasingAgent[]
+  propertyToAmenities PropertyToAmenity[]
+  packageLockers      PackageLocker[]
+}

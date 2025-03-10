@@ -50,31 +50,28 @@ enum NotificationPriority {
 enum AmenityAvailabilityStatus {
   AVAILABLE
   UNAVAILABLE
-  directUrl = env("DIRECT_URL")
 }
 
-enum Role {
-  ADMIN
-  APPLICANT
-  TENANT
-  PROPERTY_MANAGER
-  LEASING_AGENT
+enum ApartmentAvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
 }
 
 model Address {
   id                String             @id @default(uuid())
   number            Int
   street            String
-  suiteNumber       Int
+  suiteNumber       Int?
   city              String
   state             String
   zipCode           String
   country           String
   createdAt         DateTime           @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime           @updatedAt
   ManagementCompany ManagementCompany?
   Property          Property?
 }
+
 
 model ContactInfo {
   id          String   @id @default(uuid())
@@ -85,7 +82,7 @@ model ContactInfo {
   updatedAt   DateTime @updatedAt
 }
 
-/// 1. User 
+
 model User {
   id          String   @id @default(uuid())
   firstName   String   @db.VarChar(40)
@@ -98,12 +95,64 @@ model User {
   updatedAt   DateTime @updatedAt
 }
 
+
+model Admin {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole  String   @default(ADMIN)
+}
+
+
+model PropertyManager {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade) // FK to User
+  userRole   String   @default(PROPERTY_MANAGER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Tenant {
+  id      String @id @default(uuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaseId String @unique
+  lease   Lease  @relation(fields: [leaseId], references: [id], onDelete: Cascade)  
+  userRole String @default(TENANT)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  notifications Notification[]
+  guest      Guest[]
+}
+
+
+model LeasingAgent {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole   String    @default(LEASING_AGENT)
+  propertyId String    @unique
+  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Guest {
+  id         String    @id @default(uuid())
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId   String    @unique    
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+
 model ManagementCompany {
   id         String     @id @default(uuid())
   name       String
   address    Address    @relation(fields: [addressId], references: [id])
   addressId  String     @unique
-  websiteURL String
+  websiteURL String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   property   Property[]
@@ -121,13 +170,16 @@ model Property {
   updatedAt           DateTime            @updatedAt
   amenities           PropertyToAmenity[]
   apartments          Apartment[]
+  leasingAgent        LeasingAgent[]?
+  tenant              Tenant[]
 }
+
 
 model Amenity {
   id                 String              @id @default(uuid())
   amenityName        String
-  description        String
-  location           String
+  description        String?
+  location           String?
   availabilityStatus DateTime
   requiresAccessCode Boolean             @default(false)
   createdAt          DateTime            @default(now())
@@ -143,6 +195,7 @@ model PropertyToAmenity {
   amenityId  String
 }
 
+
 model Apartment {
   id          String   @id @default(uuid())
   property    Property @relation(fields: [propertyId], references: [id])
@@ -151,31 +204,15 @@ model Apartment {
   maxCapacity Int
   squareFeet  Int
   image       String
-  bedrooms   Int
+  bedrooms    Int
   bathrooms   Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  id          Int      @id @default(autoincrement())
-  firstName   String   @db.VarChar(40)
-  lastName    String   @db.VarChar(40)
-  email       String   @unique
-  password    String
-  dateOfBirth DateTime
-  phoneNumber String   @db.VarChar(40)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 
-/// 2. Property Manager 
-model PropertyManager {
-  id       String @id @default(uuid())
-  userId   String @unique
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade) // FK to User
-  userRole String
-}
 
-/// 3. Rental Application 
+
 model RentalApplication {
   id          String                  @id @default(uuid())
   // ERROR FIX: Changed type from String? to match Apartment.id (String) and kept @unique to enforce one-to-one.
@@ -189,7 +226,8 @@ model RentalApplication {
   applicant Applicant?
 }
 
-/// 4. Applicant 
+
+
 model Applicant {
   id                  String             @id @default(uuid())
   userId              String             @unique
@@ -208,26 +246,8 @@ model Applicant {
   signatureStatus     String // signature_status
 }
 
-/// 5. Admin
-model Admin {
-  id     String @id @default(uuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
-/// 6. Leasing Agent (SQL: Leasing Agent)
-model LeasingAgent {
-  id         String    @id @default(uuid())
-  userId     String    @unique
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole   String
-  // FK to Property – adjust as needed; this relation is optional.
-  propertyId String?
-  createdAt  DateTime  @default(now())
-  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-}
 
-/// 7. Lease
 model Lease {
   id              String      @id @default(uuid())
   // ERROR FIX: Changed type to String to match Apartment.id and kept @unique for one-to-one.
@@ -242,99 +262,6 @@ model Lease {
   tenant Tenant?
 }
 
-/// 8. Tenant 
-model Tenant {
-  id      String @id @default(uuid())
-  userId  String @unique
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leaseId String @unique
-  lease   Lease  @relation(fields: [leaseId], references: [id], onDelete: Cascade)
-
-  // One-to-many: A tenant can have many notifications.
-  notifications Notification[]
-}
-
-/// 9. Management Company
-model ManagementCompany {
-  id         String  @id @default(uuid())
-  name       String
-  addressId  String  @unique
-  address    Address @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  websiteUrl String?
-  email      String?
-
-  // One-to-many: A management company can have multiple properties.
-  properties Property[]
-}
-
-/// 10. Address
-
-model Address {
-  id                Int                @id @default(uuid())
-  number            Int
-  street            String
-  suiteNumber       Int
-  city              String
-  state             String
-  zipCode           String
-  country           String
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime
-  ManagementCompany ManagementCompany?
-  Property          Property?
-}
-
-
-
-  // An address can be associated with one management company and many properties/applicants.
-  managementCompany ManagementCompany?
-  properties        Property[]
-  applicants        Applicant[]
-}
-
-/// 11. Property 
-model Property {
-  id                  String            @id @default(uuid())
-  managementCompanyId String
-  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id], onDelete: Cascade)
-  addressId           String
-  address             Address           @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  propertyName        String
-  websiteUrl          String?
-
-  // Relations:
-  apartments          Apartment[]
-  listings            Listing[]
-  leasingAgents       LeasingAgent[]
-  propertyToAmenities PropertyToAmenity[]
-  packageLockers      PackageLocker[]
-}
-
-/// 12. Apartment 
-model Apartment {
-  id          String   @id @default(uuid())
-  propertyId  String
-  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  unitNumber  String
-  maxCapacity Int
-  squareFeet  Int
-  image       String?
-  bedrooms    Int
-  baths       Int
-
-  // Relations:
-  // One-to-one with RentalApplication and Lease.
-  rentalApplication RentalApplication?
-  lease             Lease?
-  // One-to-one with SmartLock.
-  smartLock         SmartLock?
-  // One-to-many: An apartment can have multiple parking passes...
-  parkingPasses     ParkingPass[]
-  // and multiple listings 
-  listings          Listing[]
-}
-
-/// 13. Listing 
 model Listing {
   id          String    @id @default(uuid())
   // ERROR FIX: Changed type to String to match Apartment.id.
@@ -350,7 +277,7 @@ model Listing {
   propertyId  String?
 }
 
-/// 14. Notification 
+
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
   tenantId         String
@@ -364,7 +291,7 @@ model Notification {
   priority         NotificationPriority
 }
 
-/// 15. Parking Pass (SQL: Parking Pass)
+
 model ParkingPass {
   id             String    @id @default(uuid())
   // ERROR FIX: Changed type to String to match Apartment.id.
@@ -378,7 +305,7 @@ model ParkingPass {
   expirationDate DateTime
 }
 
-/// 16. Smart Lock
+
 model SmartLock {
   id          String    @id @default(uuid())
   apartmentId String    @unique
@@ -388,7 +315,7 @@ model SmartLock {
   digitalAccessKey DigitalAccessKey?
 }
 
-/// 17. Digital Access Key
+
 model DigitalAccessKey {
   id             String    @id @default(uuid())
   smartLockId    String    @unique
@@ -397,29 +324,8 @@ model DigitalAccessKey {
   expirationDate DateTime
 }
 
-/// 18. Amenity
-model Amenity {
-  id                 String                    @id @default(uuid())
-  amenityName        String
-  description        String
-  location           String
-  availabilityStatus AmenityAvailabilityStatus
-  requiresAccessCode Boolean
-  createdAt          DateTime
 
-  propertyToAmenities PropertyToAmenity[]
-}
 
-/// 19. PropertyToAmenity (SQL: PropertyToAmenity)
-model PropertyToAmenity {
-  id         String   @id @default(uuid())
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  amenityId  String
-  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
-}
-
-/// 20. Package Locker (SQL: Package Locker)
 model PackageLocker {
   id                String             @id @default(uuid())
   propertyId        String
@@ -435,7 +341,6 @@ model PackageLocker {
   packageLockerLogs PackageLockerLog[]
 }
 
-/// 21. Package Locker Log (
 model PackageLockerLog {
   id              String        @id @default(uuid())
   packageLockerId String
@@ -445,99 +350,7 @@ model PackageLockerLog {
   action          String
   timestamp       DateTime
   performedBy     String
-
-
-model Address {
-  id                String             @id @default(uuid())
-  number            Int
-  street            String
-  suiteNumber       Int
-  city              String
-  state             String
-  zipCode           String
-  country           String
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime
-  ManagementCompany ManagementCompany?
-  Property          Property?
 }
 
-model ContactInfo {
-  id          String   @id @default(uuid())
-  contactName String
-  email       String
-  phoneNumber String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
-model User {
-  id          String   @id @default(uuid())
-  firstName   String   @db.VarChar(40)
-  lastName    String   @db.VarChar(40)
-  email       String   @unique
-  password    String
-  dateOfBirth DateTime
-  phoneNumber String   @db.VarChar(40)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
-model ManagementCompany {
-  id         String     @id @default(uuid())
-  name       String
-  address    Address    @relation(fields: [addressId], references: [id])
-  addressId  String     @unique
-  websiteURL String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  property   Property[]
-}
-
-model Property {
-  id                  String              @id @default(uuid())
-  managementCompany   ManagementCompany   @relation(fields: [managementCompanyId], references: [id])
-  managementCompanyId String              @unique
-  address             Address             @relation(fields: [addressId], references: [id])
-  addressId           String              @unique
-  propertyName        String
-  websiteURL          String
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  amenities           PropertyToAmenity[]
-  apartments          Apartment[]
-}
-
-model Amenity {
-  id                 String              @id @default(uuid())
-  amenityName        String
-  description        String
-  location           String
-  availabilityStatus DateTime
-  requiresAccessCode Boolean             @default(false)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  PropertyToAmenity  PropertyToAmenity[]
-}
-
-model PropertyToAmenity {
-  id         String   @id @default(uuid())
-  property   Property @relation(fields: [propertyId], references: [id])
-  propertyId String
-  amenity    Amenity  @relation(fields: [amenityId], references: [id])
-  amenityId  String
-}
-
-model Apartment {
-  id          String   @id @default(uuid())
-  property    Property @relation(fields: [propertyId], references: [id])
-  propertyId  String
-  unitNumber  Int
-  maxCapacity Int
-  squareFeet  Int
-  image       String
-  bedrooms   Int
-  bathrooms   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
