@@ -1,11 +1,8 @@
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-<<<<<<< HEAD
 console.log("Prisma object: ", prisma);
 
-=======
->>>>>>> AP-171
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -33,8 +30,6 @@ export default async function handler(
           dateOfBirth,
           phoneNumber,
         } = req.body;
-<<<<<<< HEAD
-=======
 
         if (
           !firstName ||
@@ -47,7 +42,6 @@ export default async function handler(
           return res.status(400).json({ error: "All fields are required" });
         }
 
->>>>>>> AP-171
         const user = await prisma.user.create({
           data: {
             firstName,
