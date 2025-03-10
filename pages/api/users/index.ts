@@ -1,8 +1,6 @@
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-console.log("Prisma object: ", prisma);
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
