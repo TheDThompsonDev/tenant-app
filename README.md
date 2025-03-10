@@ -34,3 +34,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Color Branding  
+
+In order to use the in-line color schema within any front-end component, under `className`, use one of the following color configuration names:  
+
+- `primary-green`
+- `secondary-blue`
+- `alternate-green`
+- `primary-black`
+- `secondary-dark-gray`
+- `alternate-gray`
+- `alternate-light-gray`
+
+These can be applied to background colors, text colors, and border colors using Tailwind's utility classes.
+
+### Example Usage  
+
+#### Background Color  
+```jsx
+<div className="bg-primary-green p-4">
+  This div has a primary green background.
+</div>
