@@ -50,10 +50,111 @@ enum NotificationPriority {
 enum AmenityAvailabilityStatus {
   AVAILABLE
   UNAVAILABLE
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  APPLICANT
+  TENANT
+  PROPERTY_MANAGER
+  LEASING_AGENT
+}
+
+model Address {
+  id                String             @id @default(uuid())
+  number            Int
+  street            String
+  suiteNumber       Int
+  city              String
+  state             String
+  zipCode           String
+  country           String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  ManagementCompany ManagementCompany?
+  Property          Property?
+}
+
+model ContactInfo {
+  id          String   @id @default(uuid())
+  contactName String
+  email       String
+  phoneNumber String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 /// 1. User 
 model User {
+  id          String   @id @default(uuid())
+  firstName   String   @db.VarChar(40)
+  lastName    String   @db.VarChar(40)
+  email       String   @unique
+  password    String
+  dateOfBirth DateTime
+  phoneNumber String   @db.VarChar(40)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ManagementCompany {
+  id         String     @id @default(uuid())
+  name       String
+  address    Address    @relation(fields: [addressId], references: [id])
+  addressId  String     @unique
+  websiteURL String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  property   Property[]
+}
+
+model Property {
+  id                  String              @id @default(uuid())
+  managementCompany   ManagementCompany   @relation(fields: [managementCompanyId], references: [id])
+  managementCompanyId String              @unique
+  address             Address             @relation(fields: [addressId], references: [id])
+  addressId           String              @unique
+  propertyName        String
+  websiteURL          String
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  amenities           PropertyToAmenity[]
+  apartments          Apartment[]
+}
+
+model Amenity {
+  id                 String              @id @default(uuid())
+  amenityName        String
+  description        String
+  location           String
+  availabilityStatus DateTime
+  requiresAccessCode Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  PropertyToAmenity  PropertyToAmenity[]
+}
+
+model PropertyToAmenity {
+  id         String   @id @default(uuid())
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+  amenity    Amenity  @relation(fields: [amenityId], references: [id])
+  amenityId  String
+}
+
+model Apartment {
+  id          String   @id @default(uuid())
+  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId  String
+  unitNumber  Int
+  maxCapacity Int
+  squareFeet  Int
+  image       String
+  bedrooms   Int
+  bathrooms   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   id          Int      @id @default(autoincrement())
   firstName   String   @db.VarChar(40)
   lastName    String   @db.VarChar(40)
