@@ -99,6 +99,15 @@ async function main() {
     },
   });
 
+  // create admin
+  const admin1 = await prisma.admin.create({
+    data: {
+      userId: user1.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
   // Create addresses
   const address1 = await prisma.address.create({
     data: {
@@ -251,6 +260,16 @@ async function main() {
     },
   });
 
+  //leasing agent
+  const leasingAgent1 = await prisma.leasingAgent.create({
+    data: {
+      userId: user3.id,
+      addressId: address3.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
   // Create properties
   const property = await prisma.property.create({
     data: {
@@ -268,16 +287,9 @@ async function main() {
           { id: amenity3.id },
         ],
       },
-    },
-  });
-
-  //leasing agent
-  const leasingAgent1 = await prisma.leasingAgent.create({
-    data: {
-      userId: user3.id,
-      addressId: address3.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      leasingAgents: {
+        connect: [{ id: leasingAgent1.id }],
+      },
     },
   });
 
@@ -445,6 +457,7 @@ async function main() {
     data: {
       userId: user4.id,
       addressId: address4.id,
+      rentalApplicationId: rentalApplication1.id,
       governmentId: "GOV-001",
       socialSecurity: "111-11-1111",
       vehicleId: vehicle1.id,
@@ -461,6 +474,7 @@ async function main() {
     data: {
       userId: user5.id,
       addressId: address5.id,
+      rentalApplicationId: rentalApplication1.id,
       governmentId: "GOV-002",
       socialSecurity: "222-22-2222",
       vehicleId: vehicle2.id,
@@ -468,23 +482,6 @@ async function main() {
       annualIncome: 60000,
       pet: true,
       signatureStatus: "Signed",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
-
-  // Create tenant
-  const tenant1 = await prisma.tenant.create({
-    data: {
-      applicantId: applicant1.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
-
-  const tenant2 = await prisma.tenant.create({
-    data: {
-      applicantId: applicant2.id,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -499,9 +496,25 @@ async function main() {
       monthlyRent: 2594,
       securityDeposit: 2594,
       leaseStatus: "ACTIVE",
-      tenants: {
-        connect: [{ id: tenant1.id }, { id: tenant2.id }],
-      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  // Create tenant
+  const tenant1 = await prisma.tenant.create({
+    data: {
+      applicantId: applicant1.id,
+      leaseId: lease1.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  const tenant2 = await prisma.tenant.create({
+    data: {
+      applicantId: applicant2.id,
+      leaseId: lease1.id,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
