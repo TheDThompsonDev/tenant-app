@@ -7,19 +7,16 @@
 :root {
   --background: #ededed;
   --foreground: #0a0a0a;
-  /* --secondary-button-blue: #164e63; */
-  /* --secondary-button-blue: theme(colors.secondaryButtonBlue); */
 }
 
 @theme {
-  --color-primary-green:#10B981;
+  --color-primary-green: #10b981;
   --color-secondary-blue: #164e63;
   --color-alternate-green: #d1fae5;
   --color-primary-black: #171717;
-  --color-secondary-dark-gray: #44403C;
+  --color-secondary-dark-gray: #44403c;
   --color-alternate-gray: #a8a29e;
   --color-alternate-light-gray: #e7e5e4;
-
 }
 
 @theme inline {
