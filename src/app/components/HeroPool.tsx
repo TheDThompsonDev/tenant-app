@@ -18,7 +18,7 @@ export default function HeroPool () {
 
       <div className="HeroPool-container relative z-10 text-center px-6">
         <h2 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl max-w-2xl mx-auto drop-shadow-[2px_3px_3px_rgba(0,0,0,0.5)]">
-          Managing everyday apartment life just got easier.
+          Managing your apartment just got easier.
         </h2>
       </div>
     </section>
