@@ -8,7 +8,7 @@ export default function HeroPool () {
       <Image
         src="/pool.png"
         alt="apartment life"
-        layout="fill"
+        fill={true}
         objectFit="cover"
         className="absolute inset-0 w-full h-full"
       />
