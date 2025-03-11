@@ -35,10 +35,65 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Jira/Git Workflow
 
-## Color Branding  
+### Choose a Jira ticket
 
-In order to use the in-line color schema within any front-end component, under `className`, use one of the following color configuration names:  
+- In Jira, find a ticket to work on
+- Assign it to yourself and mark it as 'In Progress'
+
+### Local work
+
+- Make sure your local repo is up to date (make sure you have main checked out locally first):
+
+  ```bash
+  git pull origin main
+  ```
+
+- Create a new branch locally. Make sure to include the Jira ticket and a description:
+
+  ```bash
+  git checkout -b AP-12345-modal
+  ```
+
+- Make your changes and then stage them. Commits should be either feat, chore, or fix. Make sure the Jira ticket is at the end in parentheses:
+
+  ```bash
+  git commit -m 'feat: add super awesome modal (AP-12345)'
+  ```
+
+  or...
+
+  ```bash
+  git commit -m "chore: add bg color for super awesome modal (AP-12345)"
+  ```
+
+  or...
+
+  ```bash
+  git commit -m "fix: center modal (AP-12345)"
+  ```
+
+### Push to GitHub and make a pull request
+
+- Sync the remote repo with with your local repo and your new branch:
+
+  ```bash
+  git push origin AP-12345
+  ```
+
+- Under (https://github.com/TheDThompsonDev/tenant-app/branches) you should find the branch you just pushed. Click on it.
+- Click "Compare & pull request".
+- Make sure base is set to main at the top.
+- Adjust the title as needed and add a description.
+- Add reviewers (2) by clicking the gear.
+- Click "Create pull request".
+- Once the PR is approved, the assignee (you) should complete the pull request by merging to main and delete the branch.
+- Go back to Jira and change ticket status to done.
+
+## Color Branding
+
+In order to use the in-line color schema within any front-end component, under `className`, use one of the following color configuration names:
 
 - `primary-green`
 - `secondary-blue`
@@ -50,10 +105,12 @@ In order to use the in-line color schema within any front-end component, under `
 
 These can be applied to background colors, text colors, and border colors using Tailwind's utility classes.
 
-### Example Usage  
+### Example Usage
 
-#### Background Color  
+#### Background Color
+
 ```jsx
-<div className="bg-primary-green p-4">
+<div className='bg-primary-green p-4'>
   This div has a primary green background.
 </div>
+```
