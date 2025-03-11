@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import Image from "next/image"
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -20,11 +20,11 @@ export default function Hero() {
         <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-3xl">
           Smart Solutions for Modern Apartment Living
         </h1>
-      
+
         <button className="mt-6 px-6 py-3 bg-[#10B981] text-white text-lg font-semibold rounded-lg">
-          Get Started
+          <a href="#contact">Get Started</a>
         </button>
       </div>
     </section>
-  )
+  );
 }
