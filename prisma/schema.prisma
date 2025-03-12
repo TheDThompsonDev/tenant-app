@@ -157,7 +157,6 @@ model Property {
   amenities           Amenity[]
   apartments          Apartment[]
   leasingAgents       LeasingAgent[]
-  tenants             Tenant[]
   packageLockers      PackageLocker[]
 }
 
@@ -176,7 +175,7 @@ model Amenity {
 
 model Apartment {
   id                          String                      @id @default(uuid())
-  property                    Property                    @relation(fields: [propertyId], references: [id])
+  Property                    Property                    @relation(fields: [propertyId], references: [id])
   propertyId                  String
   unitNumber                  Int
   maxCapacity                 Int
@@ -187,23 +186,23 @@ model Apartment {
   apartmentAvailabilityStatus ApartmentAvailabilityStatus @default(AVAILABLE)
   createdAt                   DateTime                    @default(now())
   updatedAt                   DateTime                    @updatedAt
-  listings                    Listing[]
-  smartLock                   SmartLock[]
+  Listing                    Listing[]
+  SmartLock                  SmartLock[]
 }
 
 model Listing {
   id                String                      @id @default(uuid())
-  apartmentId       String
-  apartment         Apartment                   @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
   petFriendly       Boolean
   furnished         Boolean
   leaseLength       Int
   monthlyRent       Float
+  status            ApartmentAvailabilityStatus @default(AVAILABLE)
   createdAt         DateTime                    @default(now())
   updatedAt         DateTime                    @updatedAt
   RentalApplication RentalApplication?
-  ContactUs         ContactUs?
-  status            ApartmentAvailabilityStatus @default(AVAILABLE)
+  ContactUs         ContactUs?  
+  apartmentId       String
+  Apartment         Apartment                   @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
 }
 
 model RentalApplication {
@@ -220,32 +219,31 @@ model RentalApplication {
 }
 
 model Applicant {
-  id                  String            @id @default(uuid())
-  userId              String            @unique
-  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole            Role              @default(APPLICANT)
+  id                  String             @id @default(uuid())
+  userId              String             @unique
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userRole            Role               @default(APPLICANT)
   rentalApplication   RentalApplication @relation(fields: [rentalApplicationId], references: [id])
   rentalApplicationId String
   addressId           String
-  address             Address           @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  address             Address            @relation(fields: [addressId], references: [id], onDelete: Cascade)
   governmentId        String // government_id column from SQL
   socialSecurity      String // social_security column
-  vehicle             Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  Vehicle             Vehicle?           @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   vehicleId           String?
   smoker              Boolean
   annualIncome        Float // annual_income
   pet                 Boolean
   signatureStatus     String // signature_status
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-
-  Tenant Tenant?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  Tenant              Tenant?
 }
 
 model Tenant {
   id                  String                @id @default(uuid())
   applicantId         String                @unique
-  applicant           Applicant             @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  Applicant           Applicant             @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   userRole            Role                  @default(TENANT)
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -253,8 +251,6 @@ model Tenant {
   guests              Guest[]
   PackageLockerAccess PackageLockerAccess[]
   DigitalAccessKey    DigitalAccessKey?
-  Property            Property?             @relation(fields: [propertyId], references: [id])
-  propertyId          String?
   Lease               Lease?                @relation(fields: [leaseId], references: [id])
   leaseId             String?
 }
@@ -268,7 +264,7 @@ model Vehicle {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   Applicant    Applicant[]
-  ParkingPass  ParkingPass[]
+  ParkingPass  ParkingPass?
 }
 
 model Lease {
@@ -304,18 +300,18 @@ model Guest {
   tenantId    String        @unique
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  parkingPass ParkingPass[]
+  parkingPass ParkingPass[]       
 }
 
 model ParkingPass {
   id                String   @id @default(uuid())
-  guestId           String   @unique
-  guest             Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
-  vehicleId         String
-  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId         String   @unique
+  Vehicle           Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   parkingPassNumber String   @unique
   createdAt         DateTime @default(now())
   expirationDate    DateTime
+  guestId           String   @unique
+  Guest             Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
 }
 
 model SmartLock {
