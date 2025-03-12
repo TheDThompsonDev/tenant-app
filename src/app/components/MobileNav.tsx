@@ -19,15 +19,17 @@ interface DropdownLinkProps {
 
 export function DropdownLink({ icon, label, href }: DropdownLinkProps) {
   return (
-    <div className='w-full flex flex-row justify-between px-6'>
-      <Link href={href}>
+    <Link href={href} className='w-full flex flex-row px-6'>
+      <div className='w-full flex flex-row justify-between'>
         <div className='flex flex-row gap-2'>
           {icon}
           <p>{label}</p>
         </div>
-      </Link>
-      <ChevronRight />
-    </div>
+        <div>
+          <ChevronRight />
+        </div>
+      </div>
+    </Link>
   );
 }
 
