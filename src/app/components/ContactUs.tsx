@@ -1,18 +1,6 @@
 import LABELS from "../constants/labels";
 
 export default function ContactUs() {
-//   const contactUs = {
-//     title: "Contact Us",
-//     description:
-//       "Looking for a new place to call home? Contact us today to learn more about our available apartments!",
-//       form: {
-//         fullName: "Full Name",
-//         phone: "Phone",
-//         email: "Email",
-//       },
-//     formSubmitButton: "Send",
-//   };
-
   return (
     <section
       id="contact"
@@ -20,7 +8,9 @@ export default function ContactUs() {
     >
       <section className="max-w-lg flex flex-col items-center">
         <h2 className="text-3xl p-4 mt-8">{LABELS.contactUs.title}</h2>
-        <p className="p-4 text-center text-md">{LABELS.contactUs.description}</p>
+        <p className="p-4 text-center text-md">
+          {LABELS.contactUs.description}
+        </p>
 
         <form
           action=""
