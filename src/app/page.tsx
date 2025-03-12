@@ -1,10 +1,12 @@
-import Header from '@/app/components/Header';
+// should be what people see when they first access our website
+import Hero from "./components/Hero"
+import HeroPool from "./components/HeroPool"
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div>
-      <Header />
-      Home Page
-    </div>
+    <main>
+      <Hero />
+      <HeroPool /> 
+    </main>
   )
 }
