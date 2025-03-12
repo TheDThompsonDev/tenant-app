@@ -10,6 +10,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import NotificationBadge from '@/app/components/NotificationBadge';
 
 interface DropdownLinkProps {
   icon: ReactNode;
@@ -18,6 +19,8 @@ interface DropdownLinkProps {
 }
 
 export function DropdownLink({ icon, label, href }: DropdownLinkProps) {
+  const mockNotificationCount = 4; // TODO: replace this with data from server (hook?)
+
   return (
     <Link href={href} className='w-full flex flex-row px-6'>
       <div className='w-full flex flex-row justify-between'>
@@ -25,7 +28,10 @@ export function DropdownLink({ icon, label, href }: DropdownLinkProps) {
           {icon}
           <p>{label}</p>
         </div>
-        <div>
+        <div className='flex flex-row gap-2'>
+          {label === 'Messages' && (
+            <NotificationBadge value={mockNotificationCount} />
+          )}
           <ChevronRight />
         </div>
       </div>
