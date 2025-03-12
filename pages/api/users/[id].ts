@@ -21,6 +21,7 @@ export default async function handler(
       }
       break;
 
+    // ------------ Please do not remove this code as I am still working on it -------------
     // case "PATCH":
     //   try {
     //     const { id } = req.query;
@@ -43,6 +44,8 @@ export default async function handler(
     //     res.status(500).json({ error: "Failed to update user" });
     //   }
     //   break;
+
+    // ------------ Please do not remove this code as I am still working on it -------------
 
     default:
       res.setHeader("Allow", ["GET", "PUT"]);
