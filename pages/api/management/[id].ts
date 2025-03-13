@@ -21,7 +21,7 @@ export default async function managementCompany(
       }
       break;
 
-      // case "PATCH":
+    case "PATCH":
       try {
         const { id } = req.query;
         const { companyName, address: addressData, websiteURL } = req.body;
@@ -32,25 +32,16 @@ export default async function managementCompany(
             .json({ error: "Management Company  ID is required" });
         }
 
-        const existingAddress = await prisma.address.findUnique({
-          where: { id: addressData.id },
-        });
-
-        if (!existingAddress) {
-          return res.status(404).json({ error: "Address not found" });
-        }
-
-        const address = await prisma.address.update({
-          where: { id: addressData.id },
-          data: addressData,
-        });
-
         const managementCompany = await prisma.managementCompany.update({
           where: { id: id as string },
           data: {
             ...(companyName && { companyName }),
-            ...(address && { addressId: address.id }),
             ...(websiteURL && { websiteURL }),
+            address: {
+              update: {
+                ...addressData,
+              },
+            },
             updatedAt: new Date(),
           },
         });
