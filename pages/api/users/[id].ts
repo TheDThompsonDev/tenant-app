@@ -21,31 +21,32 @@ export default async function handler(
       }
       break;
 
-    // ------------ Please do not remove this code as I am still working on it -------------
-    // case "PATCH":
-    //   try {
-    //     const { id } = req.query;
-    //     const updateData = req.body;
+    case "PATCH":
+      try {
+        const { id } = req.query;
+        const { firstName, lastName, email, password, phoneNumber } = req.body;
 
-    //     if (!id) {
-    //       return res.status(400).json({ error: "User ID is required" });
-    //     }
+        if (!id) {
+          return res.status(400).json({ error: "User ID is required" });
+        }
 
-    //     const user = await prisma.user.update({
-    //       where: { id: id as string },
-    //       data: {
-    //         ...updateData,
-    //         updatedAt: new Date(),
-    //       },
-    //     });
-    //     res.status(200).json(user);
-    //   } catch (error) {
-    //     console.error("Error updating user:", error);
-    //     res.status(500).json({ error: "Failed to update user" });
-    //   }
-    //   break;
-
-    // ------------ Please do not remove this code as I am still working on it -------------
+        const user = await prisma.user.update({
+          where: { id: id as string },
+          data: {
+            ...(firstName && { firstName }),
+            ...(lastName && { lastName }),
+            ...(email && { email }),
+            ...(password && { password }),
+            ...(phoneNumber && { phoneNumber }),
+            updatedAt: new Date(),
+          },
+        });
+        res.status(200).json(user);
+      } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: "Failed to update user" });
+      }
+      break;
 
     default:
       res.setHeader("Allow", ["GET", "PUT"]);
