@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'APPLICANT', 'TENANT', 'PROPERTY_MANAGER', 'LEASING_AGENT');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'APPLICANT', 'TENANT', 'PROSPECT', 'PROPERTY_MANAGER', 'LEASING_AGENT');
 
 -- CreateEnum
 CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'TERMINATED');
@@ -53,6 +53,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "dateOfBirth" TIMESTAMP(3) NOT NULL,
     "phoneNumber" VARCHAR(40) NOT NULL,
+    "userRole" "Role" NOT NULL DEFAULT 'PROSPECT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -63,7 +64,6 @@ CREATE TABLE "User" (
 CREATE TABLE "Admin" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "userRole" "Role" NOT NULL DEFAULT 'ADMIN',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -74,7 +74,6 @@ CREATE TABLE "Admin" (
 CREATE TABLE "PropertyManager" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "userRole" "Role" NOT NULL DEFAULT 'PROPERTY_MANAGER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -85,7 +84,6 @@ CREATE TABLE "PropertyManager" (
 CREATE TABLE "LeasingAgent" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "userRole" "Role" NOT NULL DEFAULT 'LEASING_AGENT',
     "addressId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -155,14 +153,14 @@ CREATE TABLE "Apartment" (
 -- CreateTable
 CREATE TABLE "Listing" (
     "id" TEXT NOT NULL,
-    "apartmentId" TEXT NOT NULL,
     "petFriendly" BOOLEAN NOT NULL,
     "furnished" BOOLEAN NOT NULL,
     "leaseLength" INTEGER NOT NULL,
     "monthlyRent" DOUBLE PRECISION NOT NULL,
+    "status" "ApartmentAvailabilityStatus" NOT NULL DEFAULT 'AVAILABLE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "status" "ApartmentAvailabilityStatus" NOT NULL DEFAULT 'AVAILABLE',
+    "apartmentId" TEXT NOT NULL,
 
     CONSTRAINT "Listing_pkey" PRIMARY KEY ("id")
 );
@@ -184,7 +182,6 @@ CREATE TABLE "RentalApplication" (
 CREATE TABLE "Applicant" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "userRole" "Role" NOT NULL DEFAULT 'APPLICANT',
     "rentalApplicationId" TEXT NOT NULL,
     "addressId" TEXT NOT NULL,
     "governmentId" TEXT NOT NULL,
@@ -204,10 +201,8 @@ CREATE TABLE "Applicant" (
 CREATE TABLE "Tenant" (
     "id" TEXT NOT NULL,
     "applicantId" TEXT NOT NULL,
-    "userRole" "Role" NOT NULL DEFAULT 'TENANT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "propertyId" TEXT,
     "leaseId" TEXT,
 
     CONSTRAINT "Tenant_pkey" PRIMARY KEY ("id")
@@ -269,11 +264,11 @@ CREATE TABLE "Guest" (
 -- CreateTable
 CREATE TABLE "ParkingPass" (
     "id" TEXT NOT NULL,
-    "guestId" TEXT NOT NULL,
     "vehicleId" TEXT NOT NULL,
     "parkingPassNumber" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expirationDate" TIMESTAMP(3) NOT NULL,
+    "guestId" TEXT NOT NULL,
 
     CONSTRAINT "ParkingPass_pkey" PRIMARY KEY ("id")
 );
@@ -330,8 +325,7 @@ CREATE TABLE "PackageLockerAccess" (
 -- CreateTable
 CREATE TABLE "ContactUs" (
     "id" TEXT NOT NULL,
-    "listingId" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
     "email" TEXT,
     "phoneNumber" TEXT NOT NULL,
     "title" TEXT,
@@ -384,10 +378,13 @@ CREATE UNIQUE INDEX "Lease_rentalApplicationId_key" ON "Lease"("rentalApplicatio
 CREATE UNIQUE INDEX "Guest_tenantId_key" ON "Guest"("tenantId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ParkingPass_guestId_key" ON "ParkingPass"("guestId");
+CREATE UNIQUE INDEX "ParkingPass_vehicleId_key" ON "ParkingPass"("vehicleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ParkingPass_parkingPassNumber_key" ON "ParkingPass"("parkingPassNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ParkingPass_guestId_key" ON "ParkingPass"("guestId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SmartLock_apartmentId_key" ON "SmartLock"("apartmentId");
@@ -398,9 +395,6 @@ CREATE UNIQUE INDEX "DigitalAccessKey_tenantId_key" ON "DigitalAccessKey"("tenan
 -- CreateIndex
 CREATE UNIQUE INDEX "PackageLockerAccess_tenantId_key" ON "PackageLockerAccess"("tenantId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "ContactUs_listingId_key" ON "ContactUs"("listingId");
-
 -- AddForeignKey
 ALTER TABLE "Admin" ADD CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -408,22 +402,22 @@ ALTER TABLE "Admin" ADD CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") RE
 ALTER TABLE "PropertyManager" ADD CONSTRAINT "PropertyManager_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LeasingAgent" ADD CONSTRAINT "LeasingAgent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LeasingAgent" ADD CONSTRAINT "LeasingAgent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LeasingAgent" ADD CONSTRAINT "LeasingAgent_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LeasingAgent" ADD CONSTRAINT "LeasingAgent_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LeasingAgent" ADD CONSTRAINT "LeasingAgent_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ManagementCompany" ADD CONSTRAINT "ManagementCompany_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ManagementCompany" ADD CONSTRAINT "ManagementCompany_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Property" ADD CONSTRAINT "Property_managementCompanyId_fkey" FOREIGN KEY ("managementCompanyId") REFERENCES "ManagementCompany"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Property" ADD CONSTRAINT "Property_managementCompanyId_fkey" FOREIGN KEY ("managementCompanyId") REFERENCES "ManagementCompany"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Property" ADD CONSTRAINT "Property_propertyManagerId_fkey" FOREIGN KEY ("propertyManagerId") REFERENCES "PropertyManager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Property" ADD CONSTRAINT "Property_propertyManagerId_fkey" FOREIGN KEY ("propertyManagerId") REFERENCES "PropertyManager"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Property" ADD CONSTRAINT "Property_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -435,64 +429,58 @@ ALTER TABLE "Amenity" ADD CONSTRAINT "Amenity_propertyId_fkey" FOREIGN KEY ("pro
 ALTER TABLE "Apartment" ADD CONSTRAINT "Apartment_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Listing" ADD CONSTRAINT "Listing_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Listing" ADD CONSTRAINT "Listing_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RentalApplication" ADD CONSTRAINT "RentalApplication_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "RentalApplication" ADD CONSTRAINT "RentalApplication_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_rentalApplicationId_fkey" FOREIGN KEY ("rentalApplicationId") REFERENCES "RentalApplication"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Applicant" ADD CONSTRAINT "Applicant_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Tenant" ADD CONSTRAINT "Tenant_applicantId_fkey" FOREIGN KEY ("applicantId") REFERENCES "Applicant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Tenant" ADD CONSTRAINT "Tenant_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Tenant" ADD CONSTRAINT "Tenant_applicantId_fkey" FOREIGN KEY ("applicantId") REFERENCES "Applicant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Tenant" ADD CONSTRAINT "Tenant_leaseId_fkey" FOREIGN KEY ("leaseId") REFERENCES "Lease"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lease" ADD CONSTRAINT "Lease_rentalApplicationId_fkey" FOREIGN KEY ("rentalApplicationId") REFERENCES "RentalApplication"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Lease" ADD CONSTRAINT "Lease_rentalApplicationId_fkey" FOREIGN KEY ("rentalApplicationId") REFERENCES "RentalApplication"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Guest" ADD CONSTRAINT "Guest_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Guest" ADD CONSTRAINT "Guest_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_guestId_fkey" FOREIGN KEY ("guestId") REFERENCES "Guest"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_guestId_fkey" FOREIGN KEY ("guestId") REFERENCES "Guest"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SmartLock" ADD CONSTRAINT "SmartLock_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "SmartLock" ADD CONSTRAINT "SmartLock_apartmentId_fkey" FOREIGN KEY ("apartmentId") REFERENCES "Apartment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DigitalAccessKey" ADD CONSTRAINT "DigitalAccessKey_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "DigitalAccessKey" ADD CONSTRAINT "DigitalAccessKey_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DigitalAccessKey" ADD CONSTRAINT "DigitalAccessKey_smartLockId_fkey" FOREIGN KEY ("smartLockId") REFERENCES "SmartLock"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PackageLocker" ADD CONSTRAINT "PackageLocker_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "PackageLocker" ADD CONSTRAINT "PackageLocker_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PackageLockerAccess" ADD CONSTRAINT "PackageLockerAccess_packageLockerId_fkey" FOREIGN KEY ("packageLockerId") REFERENCES "PackageLocker"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "PackageLockerAccess" ADD CONSTRAINT "PackageLockerAccess_packageLockerId_fkey" FOREIGN KEY ("packageLockerId") REFERENCES "PackageLocker"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PackageLockerAccess" ADD CONSTRAINT "PackageLockerAccess_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ContactUs" ADD CONSTRAINT "ContactUs_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "PackageLockerAccess" ADD CONSTRAINT "PackageLockerAccess_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -628,8 +628,7 @@ async function main() {
   // contact us
   const contactUs1 = await prisma.contactUs.create({
     data: {
-      listingId: listing1.id,
-      name: "contact name",
+      fullName: "contact name",
       email: "contact@contact.com",
       phoneNumber: "123-456-7890",
       title: "contact title",

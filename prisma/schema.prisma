@@ -12,6 +12,7 @@ enum Role {
   ADMIN
   APPLICANT
   TENANT
+  PROSPECT
   PROPERTY_MANAGER
   LEASING_AGENT
 }
@@ -91,6 +92,7 @@ model User {
   password        String
   dateOfBirth     DateTime
   phoneNumber     String            @db.VarChar(40)
+  userRole        Role              @default(PROSPECT)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   admin           Admin[]
@@ -100,19 +102,18 @@ model User {
 }
 
 model Admin {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  userRole  Role     @default(ADMIN)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(uuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
+
 
 model PropertyManager {
   id        String    @id @default(uuid())
   userId    String    @unique
   user      User      @relation(fields: [userId], references: [id])
-  userRole  Role      @default(PROPERTY_MANAGER)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   property  Property?
@@ -121,9 +122,8 @@ model PropertyManager {
 model LeasingAgent {
   id         String    @id @default(uuid())
   userId     String    @unique
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole   Role      @default(LEASING_AGENT)
-  address    Address   @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id])
+  address    Address   @relation(fields: [addressId], references: [id])
   addressId  String    @unique
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -134,7 +134,7 @@ model LeasingAgent {
 model ManagementCompany {
   id          String     @id @default(uuid())
   companyName String
-  address     Address    @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  address     Address    @relation(fields: [addressId], references: [id])
   addressId   String     @unique
   websiteURL  String?
   createdAt   DateTime   @default(now())
@@ -144,10 +144,10 @@ model ManagementCompany {
 
 model Property {
   id                  String            @id @default(uuid())
-  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id], onDelete: Cascade)
+  managementCompany   ManagementCompany @relation(fields: [managementCompanyId], references: [id])
   managementCompanyId String            @unique
   propertyManagerId   String            @unique
-  propertyManager     PropertyManager   @relation(fields: [propertyManagerId], references: [id], onDelete: Cascade)
+  propertyManager     PropertyManager   @relation(fields: [propertyManagerId], references: [id])
   address             Address           @relation(fields: [addressId], references: [id])
   addressId           String            @unique
   propertyName        String
@@ -199,15 +199,14 @@ model Listing {
   status            ApartmentAvailabilityStatus @default(AVAILABLE)
   createdAt         DateTime                    @default(now())
   updatedAt         DateTime                    @updatedAt
-  RentalApplication RentalApplication?
-  ContactUs         ContactUs?  
+  RentalApplication RentalApplication? 
   apartmentId       String
-  Apartment         Apartment                   @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  Apartment         Apartment                   @relation(fields: [apartmentId], references: [id])
 }
 
 model RentalApplication {
   id          String                  @id @default(uuid())
-  listing     Listing                 @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing     Listing                 @relation(fields: [listingId], references: [id])
   listingId   String                  @unique
   status      RentalApplicationStatus @default(PENDING)
   startDate   DateTime
@@ -221,15 +220,14 @@ model RentalApplication {
 model Applicant {
   id                  String             @id @default(uuid())
   userId              String             @unique
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userRole            Role               @default(APPLICANT)
+  user                User               @relation(fields: [userId], references: [id])
   rentalApplication   RentalApplication @relation(fields: [rentalApplicationId], references: [id])
   rentalApplicationId String
   addressId           String
-  address             Address            @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  address             Address            @relation(fields: [addressId], references: [id])
   governmentId        String // government_id column from SQL
   socialSecurity      String // social_security column
-  Vehicle             Vehicle?           @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  Vehicle             Vehicle?           @relation(fields: [vehicleId], references: [id])
   vehicleId           String?
   smoker              Boolean
   annualIncome        Float // annual_income
@@ -243,8 +241,7 @@ model Applicant {
 model Tenant {
   id                  String                @id @default(uuid())
   applicantId         String                @unique
-  Applicant           Applicant             @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  userRole            Role                  @default(TENANT)
+  Applicant           Applicant             @relation(fields: [applicantId], references: [id])
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   notifications       Notification[]
@@ -269,7 +266,7 @@ model Vehicle {
 
 model Lease {
   id                  String            @id @default(uuid())
-  rentalApplication   RentalApplication @relation(fields: [rentalApplicationId], references: [id], onDelete: Cascade)
+  rentalApplication   RentalApplication @relation(fields: [rentalApplicationId], references: [id])
   rentalApplicationId String            @unique
   leaseStart          DateTime
   leaseEnd            DateTime
@@ -284,7 +281,7 @@ model Lease {
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
   tenantId         String
-  tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant           Tenant               @relation(fields: [tenantId], references: [id])
   notificationType NotificationType     @default(NOISE_COMPLAINT)
   title            String
   message          String?
@@ -296,7 +293,7 @@ model Notification {
 
 model Guest {
   id          String        @id @default(uuid())
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
   tenantId    String        @unique
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -306,18 +303,18 @@ model Guest {
 model ParkingPass {
   id                String   @id @default(uuid())
   vehicleId         String   @unique
-  Vehicle           Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  Vehicle           Vehicle  @relation(fields: [vehicleId], references: [id])
   parkingPassNumber String   @unique
   createdAt         DateTime @default(now())
   expirationDate    DateTime
   guestId           String   @unique
-  Guest             Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  Guest             Guest    @relation(fields: [guestId], references: [id])
 }
 
 model SmartLock {
   id               String             @id @default(uuid())
   apartmentId      String             @unique
-  apartment        Apartment          @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  apartment        Apartment          @relation(fields: [apartmentId], references: [id])
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   digitalAccessKey DigitalAccessKey[]
@@ -326,7 +323,7 @@ model SmartLock {
 model DigitalAccessKey {
   id             String     @id @default(uuid())
   tenantId       String     @unique
-  tenant         Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant         Tenant     @relation(fields: [tenantId], references: [id])
   code           String
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
@@ -338,7 +335,7 @@ model DigitalAccessKey {
 model PackageLocker {
   id                  String                @id @default(uuid())
   propertyId          String
-  property            Property              @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  property            Property              @relation(fields: [propertyId], references: [id])
   lockerNumber        String
   location            String?
   packageLockerStatus PackageLockerStatus
@@ -350,9 +347,9 @@ model PackageLocker {
 model PackageLockerAccess {
   id              String        @id @default(uuid())
   packageLockerId String
-  packageLocker   PackageLocker @relation(fields: [packageLockerId], references: [id], onDelete: Cascade)
+  packageLocker   PackageLocker @relation(fields: [packageLockerId], references: [id])
   tenantId        String        @unique
-  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
   accessCode      String
   action          Action        @default(READY_FOR_PICKUP)
   createdAt       DateTime      @default(now())
@@ -361,9 +358,7 @@ model PackageLockerAccess {
 
 model ContactUs {
   id          String   @id @default(uuid())
-  listingId   String   @unique
-  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  name        String
+  fullName    String
   email       String?
   phoneNumber String
   title       String?
