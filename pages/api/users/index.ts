@@ -26,15 +26,22 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           phoneNumber,
         } = req.body;
 
-        if (
-          !firstName ||
-          !lastName ||
-          !email ||
-          !password ||
-          !dateOfBirth ||
-          !phoneNumber
-        ) {
-          return res.status(400).json({ error: "All fields are required" });
+        const requiredFields = [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "dateOfBirth",
+          "phoneNumber",
+        ];
+        const missingFields = requiredFields.filter(
+          (field) => !req.body[field]
+        );
+
+        if (missingFields.length > 0) {
+          return res
+            .status(400)
+            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
         const user = await prisma.user.create({
@@ -52,7 +59,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         res.status(201).json(user);
       } catch (error) {
         console.error("Error creating user:", error);
-        res.status(500).json({ error: "failed to create user" });
+        res.status(500).json({
+          error: "failed to create user",
+        });
       }
       break;
 
