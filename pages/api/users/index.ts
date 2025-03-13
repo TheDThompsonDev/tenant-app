@@ -15,7 +15,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       }
       break;
 
-    case "POST":
+      // case "POST":
       try {
         const {
           firstName,
