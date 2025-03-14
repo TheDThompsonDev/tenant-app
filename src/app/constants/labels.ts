@@ -71,6 +71,19 @@ const LABELS = {
         },
       },
   
+  GuestParkingPassForm: {
+    title: 'Guest Parking Pass',
+    vehicleMake: 'Make',
+    vehicleModel: 'Model',
+    vehicleColor: 'Color',
+    licensePlate: 'License Plate',
+    apartmentNumber: 'Resident Apartment Number',
+    submitButton: 'Request a Pass',
+    parkingPassId: 'Parking Pass ID',
+    created: 'Pass created for',
+    expires: 'Pass expires: ',
+  },
+
   contactUs: {
     title: 'Contact Us',
     description:
