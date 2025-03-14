@@ -1,18 +1,21 @@
 ![image](https://github.com/user-attachments/assets/9a57c707-8fa9-42c1-a642-45a1acf42814)
 
 # Tenants face delays, security concerns, and communication gaps in modern apartment living.
+
 ## Our portal streamlines leasing with digital signatures, automates smart lock access, and enables one-tap reporting for disturbances. By integrating AI escalation, smart package lockers, and guest parking permits, we boost tenant satisfaction and retention.
 
-
 # Technologies Used
-<img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/appwrite/appwrite-original.svg" />  <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original-wordmark.svg" />   <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" />
+
+<img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/appwrite/appwrite-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original-wordmark.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" />
 
 ## Docs for this project
-| Next.js   | Appwrite | Supabase   | React.js | 
-| ------- | ------- | ------- | ------- |
+
+| Next.js                               | Appwrite                                  | Supabase                                    | React.js                         |
+| ------------------------------------- | ----------------------------------------- | ------------------------------------------- | -------------------------------- |
 | [Next Docs ](https://nextjs.org/docs) | [Appwrite Docs](https://appwrite.io/docs) | [Supabase Docs ](https://supabase.com/docs) | [React Docs](https://react.dev/) |
 
 ## Team Contributors To The Project
+
 <table>
   <tr>
     <td align="center" width="175">
@@ -43,7 +46,7 @@
   <tr>
     <td align="center" width="175">
       <a href="https://www.linkedin.com/in/andrew-sm1th/">
-        <img src="url-to-image" height="150" width="150" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/bc9f85bd-06a2-49b9-a14f-6e37715f069d" height="150" width="150" style="border-radius:50%;" /><br />
         <sub><b>Andrew Smith</b></sub>
       </a>
     </td>
@@ -62,10 +65,6 @@
     </td>
   </tr>
 </table>
-
-
-
-
 
 ## Jira/Git Workflow
 
