@@ -1,39 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![image](https://github.com/user-attachments/assets/9a57c707-8fa9-42c1-a642-45a1acf42814)
 
-## Getting Started
+# Tenants face delays, security concerns, and communication gaps in modern apartment living.
+## Our portal streamlines leasing with digital signatures, automates smart lock access, and enables one-tap reporting for disturbances. By integrating AI escalation, smart package lockers, and guest parking permits, we boost tenant satisfaction and retention.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Technologies Used
+<img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/appwrite/appwrite-original.svg" />  <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original-wordmark.svg" />   <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" /> <img style="height:125px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jest/jest-plain.svg" /> 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Docs for this project
+| Next.js   | Appwrite | Supabase   | React.js | 
+| ------- | ------- | ------- | ------- |
+| [Next Docs ](https://nextjs.org/docs) | [Appwrite Docs](https://appwrite.io/docs) | [Supabase Docs ](https://supabase.com/docs) | [React Docs](https://react.dev/) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Team Contributors To The Project
+<table>
+  <tr>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/casacava/">
+        <img src="https://github.com/user-attachments/assets/72674182-94f6-45bf-bbe6-7f8cef92338d" height="150" width="200" style="border-radius:50%;" /><br />
+        <sub><b>Cass Cavazos</b></sub>
+      </a>
+    </td>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/joeaguado/">
+        <img src="https://github.com/user-attachments/assets/ed822669-8b90-4d8e-bd15-82513aaffe3e" height="150" width="200" style="border-radius:50%;" /><br />
+        <sub><b>Joe Aguado</b></sub>
+      </a>
+    </td>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/damianpad/">
+        <img src="https://github.com/user-attachments/assets/44d0ee64-babe-4c43-a252-79daac03058e" height="150" width="200" style="border-radius:50%;" /><br />
+        <sub><b>Damian Padilla</b></sub>
+      </a>
+    </td>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/tatibertazoli/">
+        <img src="https://github.com/user-attachments/assets/288e8740-1f5a-4e4d-a172-da2558ea7ac1" height="150" width="200" style="border-radius:50%;" /><br />
+        <sub><b>Tatiana Bertazoli</b></sub>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/andrew-sm1th/">
+        <img src="url-to-image" height="150" width="150" style="border-radius:50%;" /><br />
+        <sub><b>Andrew Smith</b></sub>
+      </a>
+    </td>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/staci-southerland-649549a8/">
+        <img src="url-to-image" height="150" width="150" style="border-radius:50%;" /><br />
+        <sub><b>Staci Southerland</b></sub>
+      </a>
+    </td>
+    <td align="center" width="175">
+      <a href="https://www.linkedin.com/in/dthompsondev/">
+        <img src="https://github.com/user-attachments/assets/8dc36ff7-8e09-4ea0-9ee1-e9bc3062745b" height="150" width="150" style="border-radius:50%;" /><br />
+        <sub><b>Danny Thompson</b></sub>
+        <br /><sub>(Tech Lead)</sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 ## Jira/Git Workflow
 
