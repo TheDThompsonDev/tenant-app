@@ -46,6 +46,15 @@ const LABELS = {
           },
         formSubmitButton: "Send",
       },
+
+      buttons:{
+        FooterSignUp: {
+          label: "Sign Up",
+          href: "/signup",
+          style: "bg-primary-green text-white md:block hidden"
+        },
+      }
+      
 };
 
 export default LABELS;
