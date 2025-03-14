@@ -5,7 +5,7 @@ import LABELS from "../constants/labels";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
-    <p className="text-red-400 text-sm font-thin ml-4">
+    <p className="text-red-400 text-sm font-thin ml-2">
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
         <em>{field.state.meta.errors.join(", ")}</em>
       ) : null}
@@ -68,7 +68,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -107,7 +107,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -146,7 +146,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
