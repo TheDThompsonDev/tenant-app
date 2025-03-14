@@ -10,7 +10,11 @@ export default async function management(
   switch (method) {
     case "GET":
       try {
-        const managementCompany = await prisma.managementCompany.findMany();
+        const managementCompany = await prisma.managementCompany.findMany({
+          include: {
+            address: true,
+          },
+        });
         res.status(200).json(managementCompany);
       } catch (error) {
         console.error("Error finding management company:", error);

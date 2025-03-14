@@ -10,7 +10,15 @@ export default async function properties(
   switch (method) {
     case "GET":
       try {
-        const properties = await prisma.property.findMany();
+        const { managementCompanyId } = req.query;
+
+        const properties = await prisma.property.findMany({
+          where: { managementCompanyId: managementCompanyId as string },
+          include: {
+            address: true,
+            propertyManager: true,
+          },
+        });
         res.status(200).json(properties);
       } catch (error) {
         console.error("Error finding property:", error);
@@ -18,7 +26,7 @@ export default async function properties(
       }
       break;
 
-    case "POST":
+      // case "POST":
       try {
         const {
           managementCompany: managementData,

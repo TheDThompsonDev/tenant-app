@@ -13,14 +13,12 @@ export default async function managementCompany(
         const { id } = req.query;
         const managementCompany = await prisma.managementCompany.findUnique({
           where: { id: id as string },
+          include: {
+            address: true,
+            properties: true,
+          },
         });
-        const address = await prisma.address.findUnique({
-          where: { id: managementCompany?.addressId },
-        });
-        const properties = await prisma.property.findMany({
-          where: { managementCompanyId: managementCompany?.id },
-        });
-        res.status(200).json({ managementCompany, address, properties });
+        res.status(200).json(managementCompany);
       } catch (error) {
         console.error("Error finding management company:", error);
         res.status(500).json({ error: "failed to fecth management company" });
