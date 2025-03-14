@@ -1,6 +1,31 @@
+"use client";
+import { useForm } from "@tanstack/react-form";
+import type { AnyFieldApi } from "@tanstack/react-form";
 import LABELS from "../constants/labels";
 
+function FieldInfo({ field }: { field: AnyFieldApi }) {
+  return (
+    <p className="text-red-400 text-sm font-thin ml-4">
+      {field.state.meta.isTouched && field.state.meta.errors.length ? (
+        <em>{field.state.meta.errors.join(", ")}</em>
+      ) : null}
+      {field.state.meta.isValidating ? "Validating..." : null}
+    </p>
+  );
+}
+
 export default function ContactUs() {
+  const form = useForm({
+    defaultValues: {
+      fullName: "Full Name",
+      phone: "Phone",
+      email: "Email",
+    },
+    onSubmit: async ({ value }) => {
+      console.log(value);
+    },
+  });
+
   return (
     <section
       id="contact"
@@ -13,32 +38,145 @@ export default function ContactUs() {
         </p>
 
         <form
-          action=""
           className="flex flex-col justify-items items-center p-4 w-full"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
         >
-          <input
-            type="text"
-            placeholder={LABELS.contactUs.form.fullName}
-            className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
-          />
-
-          <input
-            type="text"
-            placeholder={LABELS.contactUs.form.phone}
-            className="outline-2 outline-gray-300 rounded-md py-2 px-2 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
-          />
-
-          <input
-            type="email"
-            placeholder={LABELS.contactUs.form.email}
-            className="outline-2 outline-gray-300 rounded-md py-2 px-2 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
-          />
-          <button
-            type="submit"
-            className="bg-secondary-blue text-white w-50 rounded-md p-2 m-2 w-full cursor-pointer"
+          <form.Field
+            name="fullName"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? "A name is required"
+                  : value.length < 3
+                  ? "Name must be at least 3 characters"
+                  : undefined,
+              onChangeAsyncDebounceMs: 100,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                return (
+                  value.includes("error") && 'No "error" allowed in first name'
+                );
+              },
+            }}
           >
-            {LABELS.contactUs.formSubmitButton}
-          </button>
+            {(field) => {
+              return (
+                <div className="w-full py-1">
+                  <label htmlFor={field.name} />
+                  <input
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onFocus={(e) => {
+                      if (!field.state.meta.isTouched) {
+                        field.handleChange("");
+                      }
+                    }}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              );
+            }}
+          </form.Field>
+
+          <form.Field
+            name="phone"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? "A phone number is required"
+                  : value.replace(/\D/g, "").length !== 10
+                  ? "Phone number must be 10 digits"
+                  : undefined,
+              onChangeAsyncDebounceMs: 100,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                return value.includes("error") && 'No "error" allowed in phone';
+              },
+            }}
+          >
+            {(field) => {
+              return (
+                <div className="w-full py-1">
+                  <label htmlFor={field.name} />
+                  <input
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onFocus={(e) => {
+                      if (!field.state.meta.isTouched) {
+                        field.handleChange("");
+                      }
+                    }}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              );
+            }}
+          </form.Field>
+
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? "An email is required"
+                  : !/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(value)
+                  ? "Invalid email format"
+                  : undefined,
+              onChangeAsyncDebounceMs: 100,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                return value.includes("error") && 'No "error" allowed in email';
+              },
+            }}
+          >
+            {(field) => {
+              return (
+                <div className="w-full py-1">
+                  <label htmlFor={field.name} />
+                  <input
+                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black m-2 w-full font-bold focus:placeholder-transparent"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onFocus={(e) => {
+                      if (!field.state.meta.isTouched) {
+                        field.handleChange("");
+                      }
+                    }}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              );
+            }}
+          </form.Field>
+
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+          >
+            {([canSubmit, isSubmitting]) => (
+              <button
+                type="submit"
+                className="hover:translate-0.5 hover:cursor-pointer bg-secondary-blue text-white p-2 rounded-md disabled:opacity-40 w-full my-2"
+                disabled={!canSubmit}
+              >
+                {isSubmitting ? "..." : "Submit"}
+              </button>
+            )}
+          </form.Subscribe>
         </form>
       </section>
     </section>
