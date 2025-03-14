@@ -49,7 +49,7 @@
     </td>
     <td align="center" width="175">
       <a href="https://www.linkedin.com/in/staci-southerland-649549a8/">
-        <img src="url-to-image" height="150" width="150" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/9660d25b-1111-41e5-8a90-9f91ec928533" height="150" width="150" style="border-radius:50%;" /><br />
         <sub><b>Staci Southerland</b></sub>
       </a>
     </td>
@@ -64,6 +64,7 @@
 </table>
 
 
+https://github.com/user-attachments/assets/9660d25b-1111-41e5-8a90-9f91ec928533
 
 
 
