@@ -56,8 +56,45 @@ export default async function managementCompany(
       }
       break;
 
+      //Please do not delete this code, it will be used in the future after Auth is implemented
+      // case "POST":
+      // try {
+      //   const { id } = req.query;
+      //   const {
+      //     propertyName,
+      //     address: addressData,
+      //     websiteURL,
+      //     propertyManagerId: propertyManagerData,
+      //   } = req.body;
+
+      //   const propertyManager = await prisma.propertyManager.create({
+      //     data: propertyManagerData,
+      //   });
+
+      //   const address = await prisma.address.create({
+      //     data: addressData,
+      //   });
+
+      //   const properties = await prisma.property.create({
+      //     data: {
+      //       managementCompanyId: id as string,
+      //       propertyManagerId: propertyManager.id,
+      //       propertyName,
+      //       addressId: address.id,
+      //       websiteURL,
+      //       createdAt: new Date(),
+      //       updatedAt: new Date(),
+      //     },
+      //   });
+      //   res.status(201).json(properties);
+      // } catch (error) {
+      //   console.error("Error creating property:", error);
+      //   res.status(500).json({ error: "Failed to create property" });
+      // }
+      break;
+
     default:
-      res.setHeader("Allow", ["GET", "PUT"]);
+      res.setHeader("Allow", ["GET", "PUT", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
