@@ -68,9 +68,8 @@ const LABELS = {
         FooterSignUp: {
           label: "Sign Up",
           href: "/signup",
-          style: "bg-primary-green text-white md:block hidden"
         },
-      }
+      },
   
   contactUs: {
     title: 'Contact Us',

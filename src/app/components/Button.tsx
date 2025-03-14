@@ -1,4 +1,6 @@
-const ReuseableButton = ({
+
+
+const Button = ({
   label,
   href,
   style,
@@ -18,4 +20,4 @@ const ReuseableButton = ({
   );
 };
 
-export default ReuseableButton;
+export default Button;
