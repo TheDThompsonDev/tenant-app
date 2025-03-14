@@ -12,11 +12,9 @@ export default function Header() {
   const closeMenu = () => setIsMenuOpen(false);
 
   const profileImage = '/Animal.jpg'; // TODO: Replace with the actual profile image source
-  const userName = 'Animal';
-  const userEmail = 'wildanimal@email.com';
 
   return (
-    <header className='relative text-white bg-[url("/street-view.jpeg")] bg-cover bg-center lg:bg-none lg:bg-white lg:text-black py-4 px-6'>
+    <header className='relative text-white bg-transparent lg:bg-white lg:text-black py-4 px-6'>
       <div className='absolute inset-0 bg-black/20 lg:hidden' />
 
       {/* Mobile View */}
@@ -29,18 +27,6 @@ export default function Header() {
             toggleMenu={toggleMenu}
             closeMenu={closeMenu}
           />
-        </div>
-
-        <div className='mt-14 flex flex-col items-center'>
-          <Image
-            src={profileImage}
-            width={24}
-            height={24}
-            alt='Profile Picture'
-            className='w-24 h-24 rounded-full object-cover ring-4 ring-white'
-          />
-          <h3 className='mt-6 text-3xl'>{userName}</h3>
-          <p>{userEmail}</p>
         </div>
       </div>
 
