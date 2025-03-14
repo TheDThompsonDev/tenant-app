@@ -26,7 +26,7 @@ const Footer = () => {
         <p className="tracking-wider">Address: {FooterData.address}</p>
         <div className="flex justify-center gap-1 tracking-wider">
           <p className="">Website:</p>
-          <Link className="underline" href={`${FooterData.website}`}>
+          <Link className="underline" href={FooterData.website}>
             {FooterData.website}
           </Link>
         </div>
