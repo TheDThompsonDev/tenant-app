@@ -8,25 +8,25 @@ export default async function properties(
   const { method } = req;
 
   switch (method) {
-    case "GET":
-      try {
-        const { managementCompanyId } = req.query;
+    // case "GET":
+    //   try {
+    //     const { managementCompanyId } = req.query;
 
-        const properties = await prisma.property.findMany({
-          where: { managementCompanyId: managementCompanyId as string },
-          include: {
-            address: true,
-            propertyManager: true,
-          },
-        });
-        res.status(200).json(properties);
-      } catch (error) {
-        console.error("Error finding property:", error);
-        res.status(500).json({ error: "failed to fecth property" });
-      }
-      break;
+    //     const properties = await prisma.property.findMany({
+    //       where: { managementCompanyId: managementCompanyId as string },
+    //       include: {
+    //         address: true,
+    //         propertyManager: true,
+    //       },
+    //     });
+    //     res.status(200).json(properties);
+    //   } catch (error) {
+    //     console.error("Error finding property:", error);
+    //     res.status(500).json({ error: "failed to fecth property" });
+    //   }
+    //   break;
 
-      // case "POST":
+      case "POST":
       try {
         const {
           managementCompany: managementData,
@@ -51,8 +51,7 @@ export default async function properties(
         const property = await prisma.property.create({
           data: {
             managementCompanyId: managementCompany
-              ? managementCompany.id
-              : null,
+   
             propertyManagerId: propertyManager.id,
             propertyName,
             addressId: address.id,

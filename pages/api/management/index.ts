@@ -26,6 +26,16 @@ export default async function management(
       try {
         const { companyName, address: addressData, websiteURL } = req.body;
 
+        const requiredFields = ["companyName", "address"];
+        const missingFields = requiredFields.filter(
+          (field) => !req.body[field]
+        );
+        if (missingFields.length > 0) {
+          return res
+            .status(400)
+            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
+        }
+
         const address = await prisma.address.create({
           data: addressData,
         });
