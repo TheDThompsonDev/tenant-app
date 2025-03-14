@@ -1,5 +1,6 @@
 import React from "react";
 import ReuseableButton from "./ReuseableButton";
+import LABELS from "../constants/labels";
 import Link from "next/link";
 
 const FooterData = {
@@ -29,7 +30,11 @@ const Footer = () => {
       </div>
 
       <div className="flex items-center gap-10">
-        <ReuseableButton />
+        <ReuseableButton 
+        href={LABELS.buttons.FooterSignUp.href}
+        label={LABELS.buttons.FooterSignUp.label}
+        style={LABELS.buttons.FooterSignUp.style}
+        />
         <h1 className="text-3xl md:text-2xl font-semibold text-primary-black md:text-alternate-light-gray uppercase">
           {FooterData.logoName}
         </h1>

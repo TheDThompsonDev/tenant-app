@@ -1,10 +1,20 @@
-import LABELS from "../constants/labels";
-
-const ReuseableButton = () => {
+const ReuseableButton = ({
+  label,
+  href,
+  style,
+}: {
+  label: string;
+  href: string;
+  style: string;
+}) => {
   return (
-    <button className={`${LABELS.buttons.FooterSignUp.style} min-w-[8rem] tracking-wider rounded-md p-3 text-lg hover:translate-0.5`}>
-      {LABELS.buttons.FooterSignUp.label}
-    </button>
+    <a href={href}>
+      <button
+        className={`${style} min-w-[8rem] tracking-wider rounded-md p-3 text-lg hover:translate-0.5 hover:cursor-pointer`}
+      >
+        {label}
+      </button>
+    </a>
   );
 };
 
