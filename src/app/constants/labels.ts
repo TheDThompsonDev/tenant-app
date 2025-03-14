@@ -48,6 +48,7 @@ const LABELS = {
         title: 'Guest Parking Permits',
         description: 'Generate digital parking passes for guests in seconds.',
       },
+
       {
         id: 'feature-005',
         title: 'One-Tap Noise Reporting',
@@ -63,6 +64,13 @@ const LABELS = {
     ],
   },
 
+        buttons:{
+        FooterSignUp: {
+          label: "Sign Up",
+          href: "/signup",
+        },
+      },
+  
   contactUs: {
     title: 'Contact Us',
     description:
@@ -74,6 +82,7 @@ const LABELS = {
     },
     formSubmitButton: 'Send',
   },
+
 };
 
 export default LABELS;
