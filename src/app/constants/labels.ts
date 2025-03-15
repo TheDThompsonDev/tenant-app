@@ -1,7 +1,7 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: '/',
+      href: '/messaging',
       text: 'Messages',
       icon: 'messageIcon',
     },
@@ -16,7 +16,7 @@ const LABELS = {
       icon: 'packageIcon',
     },
     parking: {
-      href: '/',
+      href: '/parking',
       text: 'Guest Parking Pass',
       icon: 'parkingIcon',
     },
@@ -64,12 +64,12 @@ const LABELS = {
     ],
   },
 
-        buttons:{
-        FooterSignUp: {
-          label: "Sign Up",
-          href: "/signup",
+  buttons: {
+   FooterSignUp: {
+      label: "Sign Up",
+      href: "/signup",
         },
-      },
+  },
   
   GuestParkingPassForm: {
     title: 'Guest Parking Pass',
@@ -84,6 +84,15 @@ const LABELS = {
     expires: 'Pass expires: ',
   },
 
+  messaging: {
+    title: 'Messages',
+    loading: 'Loading messages...',
+    compose: 'New Message',
+    NewMessage: 'New Message',
+    errorLoading: 'Could not load messages. Please try again later.',
+    ariaLabel: 'Compose new message',
+  },
+
   contactUs: {
     title: 'Contact Us',
     description:
@@ -96,6 +105,57 @@ const LABELS = {
     formSubmitButton: 'Send',
   },
 
+  login: {
+    title: 'Login',
+    emailPlaceholder: 'Email',
+    passwordPlaceholder: 'Password',
+    submitButton: 'Login',
+    loggingInText: 'Logging in...',
+    orLoginWithText: 'Or login with',
+    errorMessages: {
+      invalidCredentials: 'Invalid email or password',
+      missingFields: 'Please enter both email and password',
+      generalError: 'An error occurred during login'
+    },
+    page: {
+      backLink: 'Back',
+      noAccountText: 'Don\'t have an account?',
+      contactUsLink: 'Contact us',
+      imageAlt: 'Apartment Building'
+    }
+  },
+  dashboardBtns: {
+    viewLease: {
+      href: '/',
+      text: 'View Lease',
+      icon: 'leaseIcon',
+    },
+    guestParking: {
+      href: '/',
+      text: 'Guest Parking Pass',
+      icon: 'guestParkingIcon',
+    },
+    viewMessages: {
+      href: '/',
+      text: 'View Messages',
+      icon: 'mailIcon',
+    },
+    viewPackages: {
+      href: '/',
+      text: 'View Packages',
+      icon: 'packagesIcon',
+    },
+    reportProblem: {
+      href: '/',
+      text: 'Report a Problem',
+      icon: 'problemIcon',
+    },
+    unlockDoor: {
+      href: '/',
+      text: 'Unlock My Door',
+      icon: 'unlockIcon',
+    },
+  },
 };
 
 export default LABELS;

@@ -1,5 +1,8 @@
 import '@testing-library/jest-dom';
 
+import { jest } from '@jest/globals';
+global.jest = jest;
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -9,5 +12,3 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '',
   useSearchParams: () => new URLSearchParams(),
 }));
-
-global.jest = jest;

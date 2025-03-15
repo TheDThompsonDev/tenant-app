@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useRef  } from "react";
+import React, { useState, useRef } from "react";
 import { useTanstackForm } from '@/app/hooks/useTanstackForm';
 import LABELS from "@/app/constants/labels";
 import { useStore } from '@tanstack/react-form';
@@ -13,7 +13,7 @@ type GuestParkingFormValues = {
   apartmentNumber: string;
 };
 
-export function GuestParkingPassForm() {
+export default function GuestParkingPassForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const formRef = useRef(
     useTanstackForm<GuestParkingFormValues>({
@@ -175,5 +175,3 @@ export function GuestParkingPassForm() {
     </main>
   );
 }
-
-export default GuestParkingPassForm;
