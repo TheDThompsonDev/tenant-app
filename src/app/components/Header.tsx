@@ -45,9 +45,7 @@ export default function Header() {
     }
 
     return () => {
-      if (headerRef.current) {
-        observer.unobserve(headerRef.current);
-      }
+      observer.disconnect();
     };
   }, []);
 
