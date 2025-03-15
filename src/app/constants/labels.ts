@@ -124,6 +124,38 @@ const LABELS = {
       imageAlt: 'Apartment Building'
     }
   },
+  dashboardBtns: {
+    viewLease: {
+      href: '/',
+      text: 'View Lease',
+      icon: 'leaseIcon',
+    },
+    guestParking: {
+      href: '/',
+      text: 'Guest Parking Pass',
+      icon: 'guestParkingIcon',
+    },
+    viewMessages: {
+      href: '/',
+      text: 'View Messages',
+      icon: 'mailIcon',
+    },
+    viewPackages: {
+      href: '/',
+      text: 'View Packages',
+      icon: 'packagesIcon',
+    },
+    reportProblem: {
+      href: '/',
+      text: 'Report a Problem',
+      icon: 'problemIcon',
+    },
+    unlockDoor: {
+      href: '/',
+      text: 'Unlock My Door',
+      icon: 'unlockIcon',
+    },
+  },
 };
 
 export default LABELS;
