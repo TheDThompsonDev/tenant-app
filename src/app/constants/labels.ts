@@ -65,12 +65,12 @@ const LABELS = {
   },
 
   buttons: {
-   FooterSignUp: {
-      label: "Sign Up",
-      href: "/signup",
-        },
+    FooterSignUp: {
+      label: 'Sign Up',
+      href: '/signup',
+    },
   },
-  
+
   GuestParkingPassForm: {
     title: 'Guest Parking Pass',
     vehicleMake: 'Make',
@@ -115,14 +115,14 @@ const LABELS = {
     errorMessages: {
       invalidCredentials: 'Invalid email or password',
       missingFields: 'Please enter both email and password',
-      generalError: 'An error occurred during login'
+      generalError: 'An error occurred during login',
     },
     page: {
       backLink: 'Back',
-      noAccountText: 'Don\'t have an account?',
+      noAccountText: "Don't have an account?",
       contactUsLink: 'Contact us',
-      imageAlt: 'Apartment Building'
-    }
+      imageAlt: 'Apartment Building',
+    },
   },
   dashboardBtns: {
     viewLease: {
@@ -154,6 +154,15 @@ const LABELS = {
       href: '/',
       text: 'Unlock My Door',
       icon: 'unlockIcon',
+    },
+  },
+  editProfile: {
+    title: 'Edit Profile',
+    formLabels: {
+      name: 'Name',
+      email: 'Email',
+      cancelBtn: 'Cancel',
+      saveBtn: 'Save changes',
     },
   },
 };
