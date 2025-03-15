@@ -4,6 +4,9 @@ import NotificationBadge from '@/app/components/NotificationBadge';
 import { X, LogOut, Menu, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import ICON_MAP from '@/app/constants/icons';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { logout } from '@/lib/appwrite';
 
 const ProfileImage = ({ size = 40, className = '' }) => {
   const profileImage = '/Animal.jpg'; // TODO: Replace with the actual profile image source
@@ -35,8 +38,25 @@ export default function Navbar({
   const navigationData = Object.entries(LABELS.navigation);
   const mockNotificationCount = 4; // TODO: replace this with data from server (hook?)
 
-  const handleLogoutClick = () => {
-    console.log('Logging out user...'); // TODO: replace with actual logout logic
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
+
+  const handleLogoutClick = async () => {
+    try {
+      setIsLoggingOut(true);
+      const result = await logout();
+
+      if (result.success) {
+        // Redirect to login page after successful logout
+        router.push('/login');
+      } else {
+        console.error('Logout failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const renderIcon = (iconName: string) => {
@@ -78,9 +98,10 @@ export default function Navbar({
         <button
           className='flex flex-row gap-2 mt-auto text-red-600 p-6'
           onClick={handleLogoutClick}
+          disabled={isLoggingOut}
         >
           <LogOut />
-          <p>Logout</p>
+          <p>{isLoggingOut ? 'Logging out...' : 'Logout'}</p>
         </button>
       </div>
     );
