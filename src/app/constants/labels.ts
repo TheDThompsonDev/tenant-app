@@ -1,7 +1,7 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: '/Messaging',
+      href: '/messaging',
       text: 'Messages',
       icon: 'messageIcon',
     },
@@ -105,6 +105,25 @@ const LABELS = {
     formSubmitButton: 'Send',
   },
 
+  login: {
+    title: 'Login',
+    emailPlaceholder: 'Email',
+    passwordPlaceholder: 'Password',
+    submitButton: 'Login',
+    loggingInText: 'Logging in...',
+    orLoginWithText: 'Or login with',
+    errorMessages: {
+      invalidCredentials: 'Invalid email or password',
+      missingFields: 'Please enter both email and password',
+      generalError: 'An error occurred during login'
+    },
+    page: {
+      backLink: 'Back',
+      noAccountText: 'Don\'t have an account?',
+      contactUsLink: 'Contact us',
+      imageAlt: 'Apartment Building'
+    }
+  },
 };
 
 export default LABELS;
