@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { connect } from "http2";
 
 const prisma = new PrismaClient();
 
@@ -17,19 +16,16 @@ async function main() {
   await prisma.digitalAccessKey.deleteMany();
   await prisma.smartLock.deleteMany();
   await prisma.parkingPass.deleteMany();
+  await prisma.rentalApplication.deleteMany();
   await prisma.listing.deleteMany();
   await prisma.lease.deleteMany();
   await prisma.tenant.deleteMany();
-  await prisma.rentalApplication.deleteMany();
   await prisma.applicant.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.apartment.deleteMany();
   await prisma.property.deleteMany();
   await prisma.managementCompany.deleteMany();
   await prisma.address.deleteMany();
-  await prisma.leasingAgent.deleteMany();
-  await prisma.propertyManager.deleteMany();
-  await prisma.admin.deleteMany();
   await prisma.user.deleteMany();
   // ----------------------------------------------------------------------------
   // This ensures the database is clean before seeding new data.
@@ -37,11 +33,12 @@ async function main() {
 
   const user1 = await prisma.user.create({
     data: {
+      appwriteId: "1234567890",
       firstName: "Test",
       lastName: "Test",
       email: "test@gmail.com",
-      password: "password",
       dateOfBirth: new Date("2002-02-02"),
+      userRole: "SUPER_ADMIN",
       phoneNumber: "123-456-7890",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -50,11 +47,12 @@ async function main() {
 
   const user2 = await prisma.user.create({
     data: {
+      appwriteId: "0987654321",
       firstName: "Jane",
       lastName: "Doe",
       email: "jane.doe@example.com",
-      password: "securepassword",
       dateOfBirth: new Date("1990-01-01"),
+      userRole: "ADMIN",
       phoneNumber: "987-654-3210",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -63,12 +61,13 @@ async function main() {
 
   const user3 = await prisma.user.create({
     data: {
+      appwriteId: "1122334455",
       firstName: "John",
       lastName: "Smith",
       email: "john.smith@example.com",
-      password: "anotherpassword",
       dateOfBirth: new Date("1985-05-15"),
       phoneNumber: "555-555-5555",
+      userRole: "PROPERTY_MANAGER",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -76,37 +75,81 @@ async function main() {
 
   const user4 = await prisma.user.create({
     data: {
+      appwriteId: "5566778899",
       firstName: "Alice",
       lastName: "Johnson",
       email: "alice.johnson@example.com",
-      password: "yetanotherpassword",
       dateOfBirth: new Date("1992-07-20"),
       phoneNumber: "444-444-4444",
+      userRole: "LEASING_AGENT",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   });
   const user5 = await prisma.user.create({
     data: {
+      appwriteId: "9988776655",
       firstName: "Bob",
       lastName: "Brown",
       email: "bob.brown@example.com",
-      password: "finalpassword",
       dateOfBirth: new Date("1988-11-11"),
       phoneNumber: "555-555-5555",
+      userRole: "PROSPECTIVE_TENANT",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  const user6 = await prisma.user.create({
+    data: {
+      appwriteId: "99887766345",
+      firstName: "Robert",
+      lastName: "Brown",
+      email: "robert.brown@example.com",
+      dateOfBirth: new Date("1988-11-11"),
+      phoneNumber: "555-555-5555",
+      userRole: "APPLICANT",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  const user7 = await prisma.user.create({
+    data: {
+      appwriteId: "6677889900",
+      firstName: "Charlie",
+      lastName: "Davis",
+      email: "charlie.davis@example.com",
+      dateOfBirth: new Date("1995-12-12"),
+      phoneNumber: "333-333-3333",
+      userRole: "TENANT",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  const user8 = await prisma.user.create({
+    data: {
+      appwriteId: "6677889901",
+      firstName: "Charlie",
+      lastName: "Davis",
+      email: "charlie.davis2@example.com",
+      dateOfBirth: new Date("1995-12-13"),
+      phoneNumber: "333-333-3334",
+      userRole: "TENANT",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   });
 
   // create admin
-  const admin1 = await prisma.admin.create({
-    data: {
-      userId: user1.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
+  // const admin1 = await prisma.admin.create({
+  //   data: {
+  //     userId: user1.id,
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //   },
+  // });
 
   // Create addresses
   const address1 = await prisma.address.create({
@@ -182,6 +225,7 @@ async function main() {
   // Create management company
   const managementCompany1 = await prisma.managementCompany.create({
     data: {
+      userId: user2.id,
       companyName: "Sunrise Management",
       addressId: address1.id,
       websiteURL: "https://sunrisemgmt.com",
@@ -191,13 +235,13 @@ async function main() {
   });
 
   //property manager
-  const propertyManager1 = await prisma.propertyManager.create({
-    data: {
-      userId: user2.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
+  // const propertyManager1 = await prisma.propertyManager.create({
+  //   data: {
+  //     userId: user2.id,
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //   },
+  // });
 
   // Create amenities
   const amenity1 = await prisma.amenity.create({
@@ -261,23 +305,25 @@ async function main() {
   });
 
   //leasing agent
-  const leasingAgent1 = await prisma.leasingAgent.create({
-    data: {
-      userId: user3.id,
-      addressId: address3.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
+  // const leasingAgent1 = await prisma.leasingAgent.create({
+  //   data: {
+  //     userId: user3.id,
+  //     addressId: address3.id,
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //   },
+  // });
 
   // Create properties
   const property = await prisma.property.create({
     data: {
       managementCompanyId: managementCompany1.id,
-      propertyManagerId: propertyManager1.id,
       addressId: address2.id,
       propertyName: "Sunset Apartments",
       websiteURL: "https://sunsetapts.com",
+      propertyImage:
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
+      description: "Luxury apartments with modern amenities",
       createdAt: new Date(),
       updatedAt: new Date(),
       amenities: {
@@ -286,9 +332,6 @@ async function main() {
           { id: amenity2.id },
           { id: amenity3.id },
         ],
-      },
-      leasingAgents: {
-        connect: [{ id: leasingAgent1.id }],
       },
     },
   });
@@ -399,7 +442,7 @@ async function main() {
   const rentalApplication1 = await prisma.rentalApplication.create({
     data: {
       listingId: listing1.id,
-      status: "PENDING",
+      status: "APPROVED",
       startDate: new Date("2025-03-15"),
       leaseLength: 12,
       createdAt: new Date(),
@@ -455,7 +498,7 @@ async function main() {
   //leasing applicant
   const applicant1 = await prisma.applicant.create({
     data: {
-      userId: user4.id,
+      userId: user7.id,
       addressId: address4.id,
       rentalApplicationId: rentalApplication1.id,
       governmentId: "GOV-001",
@@ -472,7 +515,7 @@ async function main() {
 
   const applicant2 = await prisma.applicant.create({
     data: {
-      userId: user5.id,
+      userId: user8.id,
       addressId: address5.id,
       rentalApplicationId: rentalApplication1.id,
       governmentId: "GOV-002",
@@ -505,6 +548,7 @@ async function main() {
   const tenant1 = await prisma.tenant.create({
     data: {
       applicantId: applicant1.id,
+      userId: user7.id,
       leaseId: lease1.id,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -514,6 +558,7 @@ async function main() {
   const tenant2 = await prisma.tenant.create({
     data: {
       applicantId: applicant2.id,
+      userId: user8.id,
       leaseId: lease1.id,
       createdAt: new Date(),
       updatedAt: new Date(),
