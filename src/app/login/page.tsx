@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import LoginForm from "./Loginform"
+import LABELS from "@/app/constants/labels"
 
 export default function LoginPage() {
   return (
@@ -10,24 +11,24 @@ export default function LoginPage() {
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
         <Image
           src="/login.jpeg"
-          alt="Apartment Building"
-          layout="fill"
-          objectFit="cover"
+          alt={LABELS.login.page.imageAlt}
+          fill
+          className="object-cover"
         />
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6">
         <div className="max-w-md w-full">
           <Link href="/" className="text-sm text-gray-500 mb-4 inline-block">
-            &larr; Back
+            &larr; {LABELS.login.page.backLink}
           </Link>
 
           <LoginForm />
 
           <p className="text-center text-gray-600 mt-4">
-            Don&apos;t have an account?{" "}
+            {LABELS.login.page.noAccountText}{" "}
             <Link href="/contact" className="text-blue-600">
-              Contact us
+              {LABELS.login.page.contactUsLink}
             </Link>
           </p>
         </div>
@@ -35,4 +36,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
