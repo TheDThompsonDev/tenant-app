@@ -1,7 +1,7 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: '/',
+      href: '/Messaging',
       text: 'Messages',
       icon: 'messageIcon',
     },
@@ -16,7 +16,7 @@ const LABELS = {
       icon: 'packageIcon',
     },
     parking: {
-      href: '/',
+      href: '/parking',
       text: 'Guest Parking Pass',
       icon: 'parkingIcon',
     },
@@ -64,12 +64,12 @@ const LABELS = {
     ],
   },
 
-        buttons:{
-        FooterSignUp: {
-          label: "Sign Up",
-          href: "/signup",
+  buttons: {
+   FooterSignUp: {
+      label: "Sign Up",
+      href: "/signup",
         },
-      },
+  },
   
   GuestParkingPassForm: {
     title: 'Guest Parking Pass',
@@ -82,6 +82,15 @@ const LABELS = {
     parkingPassId: 'Parking Pass ID',
     created: 'Pass created for',
     expires: 'Pass expires: ',
+  },
+
+  messaging: {
+    title: 'Messages',
+    loading: 'Loading messages...',
+    compose: 'New Message',
+    NewMessage: 'New Message',
+    errorLoading: 'Could not load messages. Please try again later.',
+    ariaLabel: 'Compose new message',
   },
 
   contactUs: {
