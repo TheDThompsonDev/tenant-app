@@ -38,8 +38,6 @@ export default function Header() {
 
   return (
     <header className='relative text-white bg-transparent lg:bg-white lg:text-black py-4 px-6'>
-      <div className='absolute inset-0 bg-black/20 lg:hidden' />
-
       {/* Mobile View */}
       <div className='relative z-10 lg:hidden'>
         <div className='flex justify-between items-center'>
