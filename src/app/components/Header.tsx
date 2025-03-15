@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CompanyLogo from '@/app/components/CompanyLogo';
 import Navbar from '@/app/components/Navbar';
@@ -10,6 +10,8 @@ import { getCurrentUser } from '@/lib/appwrite';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDarkText, setIsDarkText] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,9 +29,31 @@ export default function Header() {
     checkAuthStatus();
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsDarkText(entry.isIntersecting);
+      },
+      {
+        root: null, // Observe relative to viewport
+        threshold: 0.5, // Trigger when at least 50% of the header is over a white background
+      }
+    );
+
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+
+    return () => {
+      if (headerRef.current) {
+        observer.unobserve(headerRef.current);
+      }
+    };
+  }, []);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
-  
+
   const handleLoginClick = () => {
     router.push('/login');
   };
@@ -37,7 +61,12 @@ export default function Header() {
   const profileImage = '/Animal.jpg'; // TODO: Replace with the actual profile image source
 
   return (
-    <header className='relative text-white bg-transparent lg:bg-white lg:text-black py-4 px-6'>
+    <header
+      ref={headerRef}
+      className={`relative py-4 px-6 ${
+        isDarkText ? 'text-black bg-white' : 'text-white bg-transparent'
+      }`}
+    >
       {/* Mobile View */}
       <div className='relative z-10 lg:hidden'>
         <div className='flex justify-between items-center'>
