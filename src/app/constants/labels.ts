@@ -1,12 +1,12 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: '/messaging',
+      href: '/Messaging',
       text: 'Messages',
       icon: 'messageIcon',
     },
     unlock_door: {
-      href: '/',
+      href: '/passkey',
       text: 'Unlock My Door',
       icon: 'lockIcon',
     },
