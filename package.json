@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "jest"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@tanstack/react-form": "^1.0.5",
