@@ -161,6 +161,8 @@ const LABELS = {
     formLabels: {
       name: 'Name',
       email: 'Email',
+    },
+    formBtns: {
       cancelBtn: 'Cancel',
       saveBtn: 'Save changes',
     },
