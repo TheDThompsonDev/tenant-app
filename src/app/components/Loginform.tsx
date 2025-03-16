@@ -25,7 +25,7 @@ export default function LoginForm() {
 
     try {
       const result = await loginWithEmailPassword(email, password);
-      
+      console.log(result);
       if (result.success) {
         router.push('/dashboard');
       } else {

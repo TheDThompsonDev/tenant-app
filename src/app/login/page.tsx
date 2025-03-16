@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import LoginForm from "./Loginform"
+import LoginForm from "../components/Loginform"
 import LABELS from "@/app/constants/labels"
 
 export default function LoginPage() {
