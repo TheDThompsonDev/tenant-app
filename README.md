@@ -81,10 +81,10 @@
   git pull origin main
   ```
 
-- Create a new branch locally. Make sure to include the Jira ticket and a description:
+- Create a new branch locally. Make sure to only use the Jira ticket:
 
   ```bash
-  git checkout -b AP-12345-modal
+  git checkout -b AP-12345
   ```
 
 - Make your changes and then stage them. Commits should be either feat, chore, or fix. Make sure the Jira ticket is at the end in parentheses:
