@@ -156,6 +156,47 @@ const LABELS = {
       icon: 'unlockIcon',
     },
   },
+  package:{
+    back: "Back", 
+    packageCards: [
+        {
+        id: 'package-001',
+        date: '3/15/25',
+        time: '3:00 PM',
+        locker: 'A1',
+        lockerCode: '1234',
+        status: 'Ready for pickup',
+        pickupDate: '',
+      },
+      {
+        id: 'package-002',
+        date: '3/11/25',
+        time: '10:08 AM',
+        locker: 'A3',
+        lockerCode: '2468',
+        status: 'Ready for pickup',
+        pickupDate: '',
+      },
+      {
+        id: 'package-003',
+        date: '3/1/25',
+        time: '10:08 AM',
+        locker: 'A2',
+        lockerCode: '1200',
+        status: 'Picked up',
+        pickupDate: '3/2/25',
+      },
+      {
+        id: 'package-004',
+        date: '2/15/25',
+        time: '11:08 AM',
+        locker: 'A1',
+        lockerCode: '0101',
+        status: 'Picked up',
+        pickupDate: '2/15/25',
+      },
+    ],
+  },
 };
 
 export default LABELS;
