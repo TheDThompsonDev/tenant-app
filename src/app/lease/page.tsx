@@ -1,7 +1,7 @@
 "use client"
 
-import LeaseView from "./LeaseView"
-import ActionButtons from "./ActionButtons"
+import LeaseView from "../components/lease/LeaseView"
+import ActionButtons from "../components/lease/ActionButtons"
 import Header from "../components/Header"
 
 export default function LeasePage() {
