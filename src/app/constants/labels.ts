@@ -156,6 +156,23 @@ const LABELS = {
       icon: 'unlockIcon',
     },
   },
+
+  doorlock:{
+    title: 'Door Lock',
+    unit: 'Unit #2',
+    ButtonLabel: 'Generate Key',
+  },
+
+  passcode:{
+    searchParams:'Loading...',
+    title:'New Key Details',
+    message: 'created a new guest key code!',
+    date: 'Date:',
+    status: 'Status:',
+    unit: 'Unit #',
+    button: 'Make another key',
+    emailBody: 'Hello, here is your guest key code: {code}'
+  }
 };
 
 export default LABELS;
