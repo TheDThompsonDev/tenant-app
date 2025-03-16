@@ -1,7 +1,19 @@
 'use client';
 import React from 'react';
 import { useForm } from '@tanstack/react-form';
+import type { AnyFieldApi } from '@tanstack/react-form';
 import LABELS from '@/app/constants/labels';
+
+function FieldInfo({ field }: { field: AnyFieldApi }) {
+  return (
+    <div className='h-4 text-alternate-light-gray text-sm font-thin ml-2'>
+      {field.state.meta.isTouched && field.state.meta.errors.length ? (
+        <em>{field.state.meta.errors.join(', ')}</em>
+      ) : null}
+      {field.state.meta.isValidating ? 'Validating...' : null}
+    </div>
+  );
+}
 
 export default function EditProfileForm() {
   // TODO: the default values should come from the logged in users data
@@ -14,6 +26,11 @@ export default function EditProfileForm() {
       console.log('Form submitted:', value);
     },
   });
+
+  // TODO: add logic for cancel
+  const handleCancelClick = () => {
+    console.log('Edit profile cancelled');
+  };
 
   const labelClasses = 'text-white text-xl';
   const inputClasses =
@@ -30,24 +47,66 @@ export default function EditProfileForm() {
         }}
         className='space-y-4 max-w-[400px] mx-auto'
       >
-        <form.Field name='name'>
+        <form.Field
+          name='name'
+          validators={{
+            onChange: ({ value }) =>
+              !value ? 'A name is required' : undefined,
+            onChangeAsyncDebounceMs: 100,
+            onChangeAsync: async ({ value }) => {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              return value.includes('error') && 'No "error" allowed in name';
+            },
+          }}
+        >
           {(field) => (
             <div>
-              <label htmlFor='name' className={labelClasses}>
+              <label htmlFor={field.name} className={labelClasses}>
                 {LABELS.editProfile.formLabels.name}
               </label>
-              <input id='name' type='text' className={inputClasses} />
+              <input
+                className={inputClasses}
+                id={field.name}
+                name={field.name}
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
             </div>
           )}
         </form.Field>
 
-        <form.Field name='email'>
+        <form.Field
+          name='email'
+          validators={{
+            onChange: ({ value }) =>
+              !value
+                ? 'An email is required'
+                : !/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(value)
+                ? 'Invalid email format'
+                : undefined,
+            onChangeAsyncDebounceMs: 100,
+            onChangeAsync: async ({ value }) => {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              return value.includes('error') && 'No "error" allowed in email';
+            },
+          }}
+        >
           {(field) => (
             <div>
-              <label htmlFor='email' className={labelClasses}>
+              <label htmlFor={field.name} className={labelClasses}>
                 {LABELS.editProfile.formLabels.email}
               </label>
-              <input id='email' type='email' className={inputClasses} />
+              <input
+                className={inputClasses}
+                id={field.name}
+                name={field.name}
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
             </div>
           )}
         </form.Field>
@@ -56,12 +115,12 @@ export default function EditProfileForm() {
           <button
             type='button'
             className={btnClasses}
-            onClick={() => console.log('Edit profile cancelled')}
+            onClick={handleCancelClick}
           >
-            {LABELS.editProfile.formLabels.cancelBtn}
+            {LABELS.editProfile.formBtns.cancelBtn}
           </button>
           <button type='submit' className={btnClasses}>
-            {LABELS.editProfile.formLabels.saveBtn}
+            {LABELS.editProfile.formBtns.saveBtn}
           </button>
         </div>
       </form>
