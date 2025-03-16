@@ -68,7 +68,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
+                    className="rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent border border-secondary-dark-gray"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -107,7 +107,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
+                    className="border border-secondary-dark-gray rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -146,7 +146,7 @@ export default function ContactUs() {
                 <div className="w-full py-1">
                   <label htmlFor={field.name} />
                   <input
-                    className="outline-2 outline-gray-300 rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
+                    className="border border-secondary-dark-gray rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
