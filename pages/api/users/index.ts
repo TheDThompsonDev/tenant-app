@@ -21,20 +21,22 @@ export default async function handler(
     case "POST":
       try {
         const {
+          appwriteId,
           firstName,
           lastName,
           email,
-          password,
-          dateOfBirth,
+          apartmentNumber,
           phoneNumber,
+          leaseId,
         } = req.body;
 
         const requiredFields = [
+          "appwriteId",
           "firstName",
           "lastName",
           "email",
-          "password",
-          "dateOfBirth",
+          "apartmentNumber",
+          "leaseId",
           "phoneNumber",
         ];
         const missingFields = requiredFields.filter(
@@ -49,11 +51,12 @@ export default async function handler(
 
         const user = await prisma.user.create({
           data: {
+            appwriteId,
             firstName,
             lastName,
             email,
-            password,
-            dateOfBirth: new Date(dateOfBirth),
+            apartmentNumber,
+            leaseId,
             phoneNumber,
             createdAt: new Date(),
             updatedAt: new Date(),
