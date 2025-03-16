@@ -1,12 +1,12 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: '/messaging',
+      href: '/Messaging',
       text: 'Messages',
       icon: 'messageIcon',
     },
     unlock_door: {
-      href: '/',
+      href: '/passkey',
       text: 'Unlock My Door',
       icon: 'lockIcon',
     },
@@ -156,47 +156,23 @@ const LABELS = {
       icon: 'unlockIcon',
     },
   },
-  package:{
-    back: "Back", 
-    packageCards: [
-        {
-        id: 'package-001',
-        date: '3/15/25',
-        time: '3:00 PM',
-        locker: 'A1',
-        lockerCode: '1234',
-        status: 'Ready for pickup',
-        pickupDate: '',
-      },
-      {
-        id: 'package-002',
-        date: '3/11/25',
-        time: '10:08 AM',
-        locker: 'A3',
-        lockerCode: '2468',
-        status: 'Ready for pickup',
-        pickupDate: '',
-      },
-      {
-        id: 'package-003',
-        date: '3/1/25',
-        time: '10:08 AM',
-        locker: 'A2',
-        lockerCode: '1200',
-        status: 'Picked up',
-        pickupDate: '3/2/25',
-      },
-      {
-        id: 'package-004',
-        date: '2/15/25',
-        time: '11:08 AM',
-        locker: 'A1',
-        lockerCode: '0101',
-        status: 'Picked up',
-        pickupDate: '2/15/25',
-      },
-    ],
+
+  doorlock:{
+    title: 'Door Lock',
+    unit: 'Unit #2',
+    ButtonLabel: 'Generate Key',
   },
+
+  passcode:{
+    searchParams:'Loading...',
+    title:'New Key Details',
+    message: 'created a new guest key code!',
+    date: 'Date:',
+    status: 'Status:',
+    unit: 'Unit #',
+    button: 'Make another key',
+    emailBody: 'Hello, here is your guest key code: {code}'
+  }
 };
 
 export default LABELS;

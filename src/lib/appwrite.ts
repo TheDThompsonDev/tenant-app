@@ -22,6 +22,7 @@ export const loginWithEmailPassword = async (email: string, password: string) =>
 export const getCurrentUser = async () => {
   try {
     const user = await account.get();
+    console.log('User:', user);
     return { success: true, data: user };
   } catch (error) {
     return { success: false, error };
