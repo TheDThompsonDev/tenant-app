@@ -1,3 +1,4 @@
+import LABELS from "../constants/labels";
 interface PackageCardProps {
   id: string;
   date: string;
@@ -23,14 +24,23 @@ export default function PackageCard({
       }`}
     >
       <div className="flex flex-col">
-        <span className="text-xl font-bold">{id}</span>
-        <span>Date: {date}</span>
-        {status.toLowerCase() === "ready for pickup" ? (
-          <span>Time delivered: {time}</span>
-        ) : (
-          <span>Picked up: {pickupDate}</span>
-        )}
-        <span className="font-bold">{status}</span>
+        <span className="text-xl font-bold">{status}</span>
+        <div className="flex flex-col m-4">
+          <span>
+            {LABELS.package.dateTitle} {date}
+          </span>
+          {status.toLowerCase() === "ready for pickup" ? (
+            <span>
+              {LABELS.package.timeTitle} {time}
+            </span>
+          ) : (
+            <span>
+              {LABELS.package.pickupTitle} {pickupDate}
+            </span>
+          )}
+        </div>
+
+        <span className="font-bold">{LABELS.packageList.actionBtn}</span>
       </div>
     </button>
   );

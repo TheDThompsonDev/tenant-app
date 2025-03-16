@@ -1,3 +1,5 @@
+import PackageDetails from "../components/LockerDetails";
+
 const LABELS = {
   navigation: {
     messages: {
@@ -172,7 +174,35 @@ const LABELS = {
     unit: 'Unit #',
     button: 'Make another key',
     emailBody: 'Hello, here is your guest key code: {code}'
-  }
+  },
+
+  PackageLocker: {
+    numberTitle: 'Locker: ',
+    accessCodeTitle: 'Digital Access Code: ',
+  },
+
+  PackageDetails: {
+    title: 'Package Details',
+    numberTitle: 'Package #:',
+    statusTitle: 'Package Status: ',
+    deliveredTitle: 'Time delivered: ',
+    pickupTitle: 'Picked up: ',
+    pickedupStatus: 'This package was picked up',
+    notify: 'Notify us if there are any issues',
+    messageBtn: 'send a message'
+  },
+
+  packageList:{
+    title: 'My Packages',
+    actionBtn: 'View',
+  },
+  package:{
+    dateTitle: 'Date delivered: ',
+    timeTitle: 'Time delivered: ',
+    pickupTitle: 'Picked up: ',
+    back: "Back", 
+    notfoundError: "Package not found."
+  },
 };
 
 export default LABELS;
