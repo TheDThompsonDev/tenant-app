@@ -2,7 +2,7 @@
 import Header from '@/app/components/Header';
 import Image from 'next/image';
 import LABELS from '@/app/constants/labels';
-import EditProfileForm from '@/app/editProfile/EditProfileForm';
+import EditProfileForm from '@/app/components/EditProfileForm';
 
 function ApartmentBg() {
   return (
