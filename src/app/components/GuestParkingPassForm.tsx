@@ -26,32 +26,17 @@ export default function GuestParkingPassForm() {
         parkingPassNumber: "",
         expirationDate: "",
       },
-      onSubmit: async () => {
+      onSubmit: async (values) => {
         setIsSubmitted(true);
-        await saveOnDB();
+        await saveOnDB(values);
         return { status: "success" };
       },
     })
   );
 
   const generateParkingPassNumber = async () => {
-    try {
-      const response = await fetch("/api/parking/proxy", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate parking pass number");
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Error generating parking pass number:", error);
-      return null;
-    }
+    const number = Math.floor(Math.random() * 1000000);
+    return number;
   };
 
   const saveOnDB = async (values: GuestParkingFormValues) => {

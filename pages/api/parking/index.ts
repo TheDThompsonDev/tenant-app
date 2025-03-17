@@ -1,5 +1,6 @@
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
+import {} from "appwrite";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,18 +11,32 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
+        const parkingPermit = await prisma.parkingPass.findMany();
+        res.status(200).json(parkingPermit);
       } catch (error) {
-        console.error("Error finding user:", error);
-        res.status(500).json({ error: "failed to fecth users" });
+        console.error("Error finding Parking Permit:", error);
+        res.status(500).json({ error: "failed to fecth Parking Permit" });
       }
       break;
 
     case "POST":
+      //   const appwriteId = sessionStorage.getItem("id");
+      //   console.log("appwriteId", appwriteId);
+      //   if (!appwriteId) {
+      //     return res
+      //       .status(401)
+      //       .json({ error: "Unauthorized: No appwriteId found in request body" });
+      //   }
+      //   const findUser = await prisma.user.findUnique({
+      //     where: {
+      //       appwriteId: appwriteId,
+      //     },
+      //   });
+      //   const userId = findUser?.id;
+
       try {
         const {
-          userId,
+          userId: userId,
           make,
           model,
           color,
@@ -30,28 +45,33 @@ export default async function handler(
           expirationDate,
         } = req.body;
 
-        const requiredFields = [
-          "appwriteId",
-          "firstName",
-          "lastName",
-          "email",
-          "apartmentNumber",
-          "leaseId",
-          "phoneNumber",
-        ];
-        const missingFields = requiredFields.filter(
-          (field) => !req.body[field]
-        );
+        // const userId = findUser?.id;
+        // if (!userId) {
+        //   return res.status(404).json({ error: "User not found" });
+        // }
 
-        if (missingFields.length > 0) {
-          return res
-            .status(400)
-            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
-        }
+        // const requiredFields = [
+        //   "appwriteId",
+        //   "firstName",
+        //   "lastName",
+        //   "email",
+        //   "apartmentNumber",
+        //   "leaseId",
+        //   "phoneNumber",
+        // ];
+        // const missingFields = requiredFields.filter(
+        //   (field) => !req.body[field]
+        // );
 
-        const user = await prisma.user.create({
+        // if (missingFields.length > 0) {
+        //   return res
+        //     .status(400)
+        //     .json({ error: `Missing fields: ${missingFields.join(", ")}` });
+        // }
+
+        const parkingPass = await prisma.parkingPass.create({
           data: {
-            userId,
+            userId: userId,
             make,
             model,
             color,
@@ -59,14 +79,13 @@ export default async function handler(
             parkingPassNumber,
             expirationDate,
             createdAt: new Date(),
-            updatedAt: new Date(),
           },
         });
-        res.status(201).json(user);
+        res.status(201).json(parkingPass);
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating parking pass:", error);
         res.status(500).json({
-          error: "failed to create user",
+          error: "failed to create parking pass",
         });
       }
       break;
