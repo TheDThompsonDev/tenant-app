@@ -85,15 +85,13 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
   };
 
   const Address = ({user}: {user:UserType}) => {
-    const textColor = user.name === 'admin' ? 'text-alternate-light-gray' : 'text-black'
+    const textColor = user.name === 'admin' ? 'text-black' : 'text-white'
     return (
-      <div className='p-6 font-thin text-sm text-white'>
-        <h2 className='text-2xl text-white'>Willow Creek Apartments</h2>
-        <p className='text-white'>
-          Address: 1250 Willow Creek Dr. Brookdale, TX 75201
-        </p>
-        <p className='text-white'>Website: www.willowcreekapts.com</p>
-        <p className='text-white'>Phone: (555) 867 - 3412</p>
+      <div className={`${textColor} p-6 font-thin text-sm`}>
+        <h2 className="text-2xl">Willow Creek Apartments</h2>
+        <p>Address: 1250 Willow Creek Dr. Brookdale, TX 75201</p>
+        <p>Website: www.willowcreekapts.com</p>
+        <p>Phone: (555) 867 - 3412</p>
       </div>
     );
   };
