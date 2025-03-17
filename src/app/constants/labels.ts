@@ -156,6 +156,18 @@ const LABELS = {
       icon: "unlockIcon",
     },
   },
+  adminDashboardBtns: {
+    viewLease: {
+      href: "/",
+      text: "View Lease",
+      icon: "leaseIcon",
+    },
+    guestParking: {
+      href: "/",
+      text: "Guest Parking Pass",
+      icon: "guestParkingIcon",
+    },
+  },
 
   editProfile: {
     title: "Edit Profile",
