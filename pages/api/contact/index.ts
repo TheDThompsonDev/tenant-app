@@ -22,7 +22,7 @@ export default async function handler(
       try {
         const { fullName, email, phoneNumber, subject, message } = req.body;
 
-        const requiredFields = ["fullName", "phoneNumber"];
+        const requiredFields = ["fullName", "phoneNumber", "email"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
