@@ -37,6 +37,6 @@ export const packages = [
         locker: 'A1',
         lockerCode: '0101',
         status: 'Picked up',
-        pickupDate: '2/15/25',
+        pickupDate: '2/16/25',
       }
 ];
