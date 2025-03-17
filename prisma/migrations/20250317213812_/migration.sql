@@ -186,22 +186,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Property_addressId_key" ON "Property"("addressId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ParkingPass_userId_key" ON "ParkingPass"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "ParkingPass_parkingPassNumber_key" ON "ParkingPass"("parkingPassNumber");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Notification_userId_key" ON "Notification"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "SmartDoorKey_userId_key" ON "SmartDoorKey"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "SmartDoorKey_accessCode_key" ON "SmartDoorKey"("accessCode");
-
--- CreateIndex
-CREATE UNIQUE INDEX "PackageLocker_userId_key" ON "PackageLocker"("userId");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_leaseId_fkey" FOREIGN KEY ("leaseId") REFERENCES "Lease"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
