@@ -1,6 +1,5 @@
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
-import {} from "appwrite";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,23 +19,9 @@ export default async function handler(
       break;
 
     case "POST":
-      //   const appwriteId = sessionStorage.getItem("id");
-      //   console.log("appwriteId", appwriteId);
-      //   if (!appwriteId) {
-      //     return res
-      //       .status(401)
-      //       .json({ error: "Unauthorized: No appwriteId found in request body" });
-      //   }
-      //   const findUser = await prisma.user.findUnique({
-      //     where: {
-      //       appwriteId: appwriteId,
-      //     },
-      //   });
-      //   const userId = findUser?.id;
-
       try {
         const {
-          userId: userId,
+          user,
           make,
           model,
           color,
@@ -45,19 +30,24 @@ export default async function handler(
           expirationDate,
         } = req.body;
 
-        // const userId = findUser?.id;
-        // if (!userId) {
-        //   return res.status(404).json({ error: "User not found" });
-        // }
+        const appwriteUser = await prisma.user.findUnique({
+          where: {
+            appwriteId: user,
+          },
+        });
+
+        if (!appwriteUser) {
+          return res.status(404).json({ error: "User not found" });
+        }
 
         // const requiredFields = [
-        //   "appwriteId",
-        //   "firstName",
-        //   "lastName",
-        //   "email",
-        //   "apartmentNumber",
-        //   "leaseId",
-        //   "phoneNumber",
+        //   "user",
+        //   "make",
+        //   "model",
+        //   "color",
+        //   "licensePlate",
+        //   "parkingPassNumber",
+        //   "expirationDate",
         // ];
         // const missingFields = requiredFields.filter(
         //   (field) => !req.body[field]
@@ -71,7 +61,7 @@ export default async function handler(
 
         const parkingPass = await prisma.parkingPass.create({
           data: {
-            userId: userId,
+            userId: appwriteUser.id,
             make,
             model,
             color,

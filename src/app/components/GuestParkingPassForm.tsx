@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { useTanstackForm } from "@/app/hooks/useTanstackForm";
 import LABELS from "@/app/constants/labels";
 import { useStore } from "@tanstack/react-form";
+import { getCurrentUser } from "@/lib/appwrite";
 
 type GuestParkingFormValues = {
   make: string;
@@ -11,11 +12,18 @@ type GuestParkingFormValues = {
   color: string;
   licensePlate: string;
   parkingPassNumber: string;
-  expirationDate: string;
+  expirationDate: Date;
+  user?: string;
 };
 
 export default function GuestParkingPassForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const get24HoursFromNow = () =>
+    new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString("en-US");
+
+  const expireDate = get24HoursFromNow();
+
   const formRef = useRef(
     useTanstackForm<GuestParkingFormValues>({
       defaultValues: {
@@ -24,11 +32,17 @@ export default function GuestParkingPassForm() {
         color: "",
         licensePlate: "",
         parkingPassNumber: "",
-        expirationDate: "",
+        expirationDate: new Date(expireDate),
       },
       onSubmit: async (values) => {
         setIsSubmitted(true);
-        await saveOnDB(values);
+
+        const user = await getCurrentUser();
+        if (user?.data?.$id) {
+          await saveOnDB({ ...values, user: user.data.$id });
+        } else {
+          console.error("User data is undefined");
+        }
         return { status: "success" };
       },
     })
@@ -36,7 +50,7 @@ export default function GuestParkingPassForm() {
 
   const generateParkingPassNumber = async () => {
     const number = Math.floor(Math.random() * 1000000);
-    return number;
+    return number.toString();
   };
 
   const saveOnDB = async (values: GuestParkingFormValues) => {
@@ -58,12 +72,11 @@ export default function GuestParkingPassForm() {
     form.store,
     (state) => state.values.licensePlate
   );
+
   // const apartmentNumber = useStore(
   //   form.store,
   //   (state) => state.values.apartmentNumber
   // );
-  const get24HoursFromNow = () => new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const expiresDate = get24HoursFromNow().toLocaleString("en-US");
 
   if (isSubmitted) {
     return (
@@ -82,7 +95,7 @@ export default function GuestParkingPassForm() {
             </p>
             <p>{form.state.values.parkingPassNumber}</p>
             <p>
-              {LABELS.GuestParkingPassForm.expires} {expiresDate}
+              {LABELS.GuestParkingPassForm.expires} {expireDate}
             </p>
           </article>
         </section>
