@@ -194,6 +194,12 @@ const LABELS = {
     emailBody: 'Hello, here is your guest key code: {code}'
   },
 
+  doorlock: {
+    title: "Door Lock",
+    unit: "Unit #2",
+    ButtonLabel: "Generate Key",
+  },
+
   PackageLocker: {
     numberTitle: 'Locker: ',
     accessCodeTitle: 'Digital Access Code: ',
