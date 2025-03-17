@@ -35,11 +35,10 @@ export default function GuestParkingPassForm() {
         expirationDate: new Date(expireDate),
       },
       onSubmit: async (values) => {
-        setIsSubmitted(true);
-
         const user = await getCurrentUser();
         if (user?.data?.$id) {
           await saveOnDB({ ...values, user: user.data.$id });
+          setIsSubmitted(true);
         } else {
           console.error("User data is undefined");
         }
