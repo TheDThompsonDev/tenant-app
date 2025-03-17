@@ -14,7 +14,7 @@ const renderIcon = (iconName: string) => {
 function EditProfileBtn() {
   return (
     <Link
-      href='/'
+      href='/editProfile'
       className='bg-primary-green border-4 border-white p-1 rounded-lg relative left-10 bottom-[110px] lg:static lg:border-none lg:px-4 lg:py-2 lg:mt-4'
     >
       <div className='block lg:hidden'>

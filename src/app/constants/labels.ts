@@ -65,12 +65,12 @@ const LABELS = {
   },
 
   buttons: {
-   FooterSignUp: {
-      label: "Sign Up",
-      href: "/signup",
-        },
+    FooterSignUp: {
+      label: 'Sign Up',
+      href: '/signup',
+    },
   },
-  
+
   GuestParkingPassForm: {
     title: 'Guest Parking Pass',
     vehicleMake: 'Make',
@@ -115,14 +115,14 @@ const LABELS = {
     errorMessages: {
       invalidCredentials: 'Invalid email or password',
       missingFields: 'Please enter both email and password',
-      generalError: 'An error occurred during login'
+      generalError: 'An error occurred during login',
     },
     page: {
       backLink: 'Back',
-      noAccountText: 'Don\'t have an account?',
+      noAccountText: "Don't have an account?",
       contactUsLink: 'Contact us',
-      imageAlt: 'Apartment Building'
-    }
+      imageAlt: 'Apartment Building',
+    },
   },
   dashboardBtns: {
     viewLease: {
@@ -156,23 +156,34 @@ const LABELS = {
       icon: 'unlockIcon',
     },
   },
+  editProfile: {
+    title: 'Edit Profile',
+    formLabels: {
+      name: 'Name',
+      email: 'Email',
+    },
+    formBtns: {
+      cancelBtn: 'Cancel',
+      saveBtn: 'Save changes',
+    },
+  },
 
-  doorlock:{
+  doorlock: {
     title: 'Door Lock',
     unit: 'Unit #2',
     ButtonLabel: 'Generate Key',
   },
 
-  passcode:{
-    searchParams:'Loading...',
-    title:'New Key Details',
+  passcode: {
+    searchParams: 'Loading...',
+    title: 'New Key Details',
     message: 'created a new guest key code!',
     date: 'Date:',
     status: 'Status:',
     unit: 'Unit #',
     button: 'Make another key',
-    emailBody: 'Hello, here is your guest key code: {code}'
-  }
+    emailBody: 'Hello, here is your guest key code: {code}',
+  },
 };
 
 export default LABELS;
