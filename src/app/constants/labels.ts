@@ -184,6 +184,8 @@ const LABELS = {
     unit: "Unit #",
     button: "Make another key",
     emailBody: "Hello, here is your guest key code: {code}",
+  },
+
     package: {
       back: "Back",
       packageCards: [
@@ -225,7 +227,7 @@ const LABELS = {
         },
       ],
     },
-  },
+
 };
 
 export default LABELS;
