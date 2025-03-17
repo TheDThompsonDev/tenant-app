@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { useTanstackForm } from '@/app/hooks/useTanstackForm';
+import { useTanstackForm } from "@/app/hooks/useTanstackForm";
 import LABELS from "@/app/constants/labels";
-import { useStore } from '@tanstack/react-form';
+import { useStore } from "@tanstack/react-form";
 
 type GuestParkingFormValues = {
   make: string;
   model: string;
   color: string;
   licensePlate: string;
-  apartmentNumber: string;
+  parkingPassNumber: string;
+  expirationDate: string;
 };
 
 export default function GuestParkingPassForm() {
@@ -22,21 +23,60 @@ export default function GuestParkingPassForm() {
         model: "",
         color: "",
         licensePlate: "",
-        apartmentNumber: "",
+        parkingPassNumber: "",
+        expirationDate: "",
       },
-    onSubmit: async () => {
-      setIsSubmitted(true);
-      return { status: 'success' };
-    },
-  })
+      onSubmit: async () => {
+        setIsSubmitted(true);
+        await saveOnDB();
+        return { status: "success" };
+      },
+    })
   );
-  
+
+  const generateParkingPassNumber = async () => {
+    try {
+      const response = await fetch("/api/parking/proxy", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate parking pass number");
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error generating parking pass number:", error);
+      return null;
+    }
+  };
+
+  const saveOnDB = async (values: GuestParkingFormValues) => {
+    const response = await fetch("/api/parking", {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  };
+
   const form = formRef.current;
   const make = useStore(form.store, (state) => state.values.make);
   const model = useStore(form.store, (state) => state.values.model);
   const color = useStore(form.store, (state) => state.values.color);
-  const licensePlate = useStore(form.store, (state) => state.values.licensePlate);
-  const apartmentNumber = useStore(form.store, (state) => state.values.apartmentNumber);
+  const licensePlate = useStore(
+    form.store,
+    (state) => state.values.licensePlate
+  );
+  // const apartmentNumber = useStore(
+  //   form.store,
+  //   (state) => state.values.apartmentNumber
+  // );
   const get24HoursFromNow = () => new Date(Date.now() + 24 * 60 * 60 * 1000);
   const expiresDate = get24HoursFromNow().toLocaleString("en-US");
 
@@ -55,7 +95,10 @@ export default function GuestParkingPassForm() {
               {form.state.values.make}, {form.state.values.model} -{" "}
               {form.state.values.licensePlate}
             </p>
-            <p>{LABELS.GuestParkingPassForm.expires} {expiresDate}</p>
+            <p>{form.state.values.parkingPassNumber}</p>
+            <p>
+              {LABELS.GuestParkingPassForm.expires} {expiresDate}
+            </p>
           </article>
         </section>
       </main>
@@ -75,7 +118,10 @@ export default function GuestParkingPassForm() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              void form.handleSubmit();
+              generateParkingPassNumber().then((number) => {
+                form.setFieldValue("parkingPassNumber", number);
+                void form.handleSubmit();
+              });
             }}
           >
             <fieldset className="space-y-4">
@@ -148,7 +194,7 @@ export default function GuestParkingPassForm() {
                 <label htmlFor="apartmentNumber" className="sr-only">
                   {LABELS.GuestParkingPassForm.apartmentNumber}
                 </label>
-                <input
+                {/* <input
                   id="apartmentNumber"
                   type="text"
                   placeholder={LABELS.GuestParkingPassForm.apartmentNumber}
@@ -159,7 +205,7 @@ export default function GuestParkingPassForm() {
                   className="w-full p-2 rounded border border-gray-300 
                              bg-white text-black
                              focus:outline-none focus:ring-2 focus:ring-secondary-blue"
-                />
+                /> */}
               </div>
               <button
                 type="submit"
