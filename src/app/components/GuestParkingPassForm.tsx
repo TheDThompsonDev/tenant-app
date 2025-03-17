@@ -72,11 +72,6 @@ export default function GuestParkingPassForm() {
     (state) => state.values.licensePlate
   );
 
-  // const apartmentNumber = useStore(
-  //   form.store,
-  //   (state) => state.values.apartmentNumber
-  // );
-
   if (isSubmitted) {
     return (
       <main className="min-h-screen flex justify-center p-4 bg-white text-black">
@@ -191,18 +186,6 @@ export default function GuestParkingPassForm() {
                 <label htmlFor="apartmentNumber" className="sr-only">
                   {LABELS.GuestParkingPassForm.apartmentNumber}
                 </label>
-                {/* <input
-                  id="apartmentNumber"
-                  type="text"
-                  placeholder={LABELS.GuestParkingPassForm.apartmentNumber}
-                  value={apartmentNumber}
-                  onChange={(e) =>
-                    form.setFieldValue("apartmentNumber", e.target.value)
-                  }
-                  className="w-full p-2 rounded border border-gray-300 
-                             bg-white text-black
-                             focus:outline-none focus:ring-2 focus:ring-secondary-blue"
-                /> */}
               </div>
               <button
                 type="submit"
