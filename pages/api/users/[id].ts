@@ -24,7 +24,14 @@ export default async function handler(
     case "PATCH":
       try {
         const { id } = req.query;
-        const { firstName, lastName, email, password, phoneNumber } = req.body;
+        const {
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          apartmentNumber,
+          leaseId,
+        } = req.body;
 
         if (!id) {
           return res.status(400).json({ error: "User ID is required" });
@@ -36,8 +43,9 @@ export default async function handler(
             ...(firstName && { firstName }),
             ...(lastName && { lastName }),
             ...(email && { email }),
-            ...(password && { password }),
             ...(phoneNumber && { phoneNumber }),
+            ...(apartmentNumber && { apartmentNumber }),
+            ...(leaseId && { leaseId }),
             updatedAt: new Date(),
           },
         });
@@ -48,8 +56,24 @@ export default async function handler(
       }
       break;
 
+    case "DELETE":
+      try {
+        const { id } = req.query;
+        if (!id) {
+          return res.status(400).json({ error: "User ID is required" });
+        }
+        const user = await prisma.user.delete({
+          where: { id: id as string },
+        });
+        res.status(200).json(user);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        res.status(500).json({ error: "Failed to delete user" });
+      }
+      break;
+
     default:
-      res.setHeader("Allow", ["GET", "PUT"]);
+      res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

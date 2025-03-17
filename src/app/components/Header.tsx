@@ -29,7 +29,7 @@ export default function Header() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
-  
+
   const handleLoginClick = () => {
     router.push('/login');
   };
@@ -37,7 +37,7 @@ export default function Header() {
   const profileImage = '/Animal.jpg'; // TODO: Replace with the actual profile image source
 
   return (
-    <header className='relative text-white bg-transparent lg:bg-white lg:text-black py-4 px-6'>
+    <header className='relative bg-white text-black py-4 px-6'>
       {/* Mobile View */}
       <div className='relative z-10 lg:hidden'>
         <div className='flex justify-between items-center'>

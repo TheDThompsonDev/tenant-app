@@ -10,35 +10,19 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
+        const contactUs = await prisma.contactUs.findMany();
+        res.status(200).json(contactUs);
       } catch (error) {
-        console.error("Error finding user:", error);
-        res.status(500).json({ error: "failed to fecth users" });
+        console.error("Error finding contact Us list:", error);
+        res.status(500).json({ error: "failed to fecth contact us list" });
       }
       break;
 
     case "POST":
       try {
-        const {
-          appwriteId,
-          firstName,
-          lastName,
-          email,
-          apartmentNumber,
-          phoneNumber,
-          leaseId,
-        } = req.body;
+        const { fullName, email, phoneNumber, subject, message } = req.body;
 
-        const requiredFields = [
-          "appwriteId",
-          "firstName",
-          "lastName",
-          "email",
-          "apartmentNumber",
-          "leaseId",
-          "phoneNumber",
-        ];
+        const requiredFields = ["fullName", "phoneNumber", "email"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -49,24 +33,21 @@ export default async function handler(
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
-        const user = await prisma.user.create({
+        const contactUs = await prisma.contactUs.create({
           data: {
-            appwriteId,
-            firstName,
-            lastName,
+            fullName,
             email,
-            apartmentNumber,
-            leaseId,
             phoneNumber,
+            subject,
+            message,
             createdAt: new Date(),
-            updatedAt: new Date(),
           },
         });
-        res.status(201).json(user);
+        res.status(201).json(contactUs);
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating contact info:", error);
         res.status(500).json({
-          error: "failed to create user",
+          error: "failed to create contact info",
         });
       }
       break;

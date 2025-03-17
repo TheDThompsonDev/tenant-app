@@ -12,6 +12,7 @@ export default function PackageDetailsPage() {
   const params = useParams();
 
   if (!params || !params.id) {
+
     return (
       <p className="text-center text-red-500">{LABELS.package.notfoundError}</p>
     );
