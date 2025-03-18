@@ -18,13 +18,25 @@ export default function ContactUs() {
   const form = useForm({
     defaultValues: {
       fullName: "Full Name",
-      phone: "Phone",
+      phoneNumber: "Phone",
       email: "Email",
     },
     onSubmit: async ({ value }) => {
       console.log(value);
+      createContactUsForm(value);
     },
   });
+
+  const createContactUsForm = async (value: unknown) => {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      body: JSON.stringify(value),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  };
 
   return (
     <section
@@ -87,7 +99,7 @@ export default function ContactUs() {
           </form.Field>
 
           <form.Field
-            name="phone"
+            name="phoneNumber"
             validators={{
               onChange: ({ value }) =>
                 !value
