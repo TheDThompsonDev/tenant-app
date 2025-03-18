@@ -129,10 +129,25 @@ async function main() {
 
   const user2 = await prisma.user.create({
     data: {
-      appwriteId: "0987654321",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@gmail.com",
+      appwriteId: "67d48e45000e9af4d586",
+      firstName: "Tatiana",
+      lastName: "Bertazoli",
+      email: "tatianabertazoli@gmail.com",
+      phoneNumber: "987-654-3210",
+      apartmentNumber: "202",
+      leaseId: lease1.id,
+      userRole: "TENANT",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+
+  const user3 = await prisma.user.create({
+    data: {
+      appwriteId: "67d6f6f500318ee7f536",
+      firstName: "Test",
+      lastName: "Test",
+      email: "test@test.com",
       phoneNumber: "987-654-3210",
       apartmentNumber: "202",
       leaseId: lease1.id,
