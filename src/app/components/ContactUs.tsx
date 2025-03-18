@@ -24,6 +24,7 @@ export default function ContactUs() {
     onSubmit: async ({ value }) => {
       console.log(value);
       createContactUsForm(value);
+      form.reset();
     },
   });
 
