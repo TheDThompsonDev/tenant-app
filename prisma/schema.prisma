@@ -32,6 +32,10 @@ enum NotificationType {
   REPAIR
   NOISE_COMPLAINT
   GENERAL
+  PACKAGE
+  PARKING_PASS
+  LEASE
+  MANAGEMENT
 }
 
 enum NotificationStatus {
