@@ -85,21 +85,22 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
   };
 
   const Address = ({user}: {user:UserType}) => {
-    const textColor = user.name === 'admin' ? 'text-black' : 'text-white'
+    const textColor = user.name === 'admin' ? 'text-secondary-blue' : 'text-alternate-light-gray'
     return (
       <div className={`${textColor} p-6 font-thin text-sm`}>
-        <h2 className="text-2xl">Willow Creek Apartments</h2>
-        <p>Address: 1250 Willow Creek Dr. Brookdale, TX 75201</p>
-        <p>Website: www.willowcreekapts.com</p>
-        <p>Phone: (555) 867 - 3412</p>
+        <h2 className="text-2xl">{LABELS.dashboardComponents.propertyName}</h2>
+        <p>{LABELS.dashboardComponents.addressLabel}{LABELS.dashboardComponents.propertyAddress}</p>
+        <p>{LABELS.dashboardComponents.websiteLabel} {LABELS.dashboardComponents.propertyWebsite}</p>
+        <p>{LABELS.dashboardComponents.phoneLabel} {LABELS.dashboardComponents.propertyPhone}</p>
       </div>
     );
   };
 
-  const DashboardBtns = () => {
+  const DashboardBtns = ({user}: {user:UserType}) => {
+    const textColor = user.name === 'admin' ? 'text-secondary-blue' : 'text-alternate-light-gray'
     return (
       <div className="p-6">
-        <h3 className="hidden lg:block text-3xl mb-4">Dashboard</h3>
+        <h3 className={`${textColor} hidden lg:block text-3xl mb-4`}>{LABELS.dashboardComponents.title} </h3>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           {user?.name === "admin"
             ? Object.entries(LABELS.adminDashboardBtns).map(
@@ -162,7 +163,7 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
           <Profile user={user}/>
           <div className="bg-secondary-blue lg:flex lg:flex-row">
             <Address user={user}/>
-            <DashboardBtns />
+            <DashboardBtns user={user}/>
           </div>
         </div>
 
@@ -173,7 +174,7 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
             <Address user={user}/>
           </div>
           <div className='flex-1'>
-            <DashboardBtns />
+            <DashboardBtns user={user}/>
           </div>
         </div>
       </div>
@@ -201,7 +202,7 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
           <Profile user={user}/>
           <div className="bg-alternate-light-gray lg:flex lg:flex-row min-h-screen">
             <Address user={user}/>
-            <DashboardBtns />
+            <DashboardBtns user={user}/>
           </div>
         </div>
 
@@ -212,7 +213,7 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
             <Address user={user}/>
           </div>
           <div className="flex-1">
-            <DashboardBtns />
+            <DashboardBtns user={user}/>
           </div>
         </div>
       </div>

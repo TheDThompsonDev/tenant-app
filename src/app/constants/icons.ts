@@ -10,6 +10,7 @@ import {
   TriangleAlert,
   LockOpen,
   Pencil,
+  UserPlus,
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ComponentType> = {
@@ -24,6 +25,7 @@ const ICON_MAP: Record<string, React.ComponentType> = {
   packagesIcon: Package2,
   problemIcon: TriangleAlert,
   unlockIcon: LockOpen,
+  userPlus: UserPlus
 };
 
 export default ICON_MAP;
