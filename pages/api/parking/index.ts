@@ -40,24 +40,24 @@ export default async function handler(
           return res.status(404).json({ error: "User not found" });
         }
 
-        // const requiredFields = [
-        //   "user",
-        //   "make",
-        //   "model",
-        //   "color",
-        //   "licensePlate",
-        //   "parkingPassNumber",
-        //   "expirationDate",
-        // ];
-        // const missingFields = requiredFields.filter(
-        //   (field) => !req.body[field]
-        // );
+        const requiredFields = [
+          "user",
+          "make",
+          "model",
+          "color",
+          "licensePlate",
+          "parkingPassNumber",
+          "expirationDate",
+        ];
+        const missingFields = requiredFields.filter(
+          (field) => !req.body[field]
+        );
 
-        // if (missingFields.length > 0) {
-        //   return res
-        //     .status(400)
-        //     .json({ error: `Missing fields: ${missingFields.join(", ")}` });
-        // }
+        if (missingFields.length > 0) {
+          return res
+            .status(400)
+            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
+        }
 
         const parkingPass = await prisma.parkingPass.create({
           data: {
