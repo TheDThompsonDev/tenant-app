@@ -11,13 +11,13 @@ export default async function handler(
     case "GET":
       try {
         const { id } = req.query;
-        const contactUs = await prisma.contactUs.findUnique({
+        const parkingPass = await prisma.parkingPass.findUnique({
           where: { id: id as string },
         });
-        res.status(200).json(contactUs);
+        res.status(200).json(parkingPass);
       } catch (error) {
-        console.error("Error finding contact us form:", error);
-        res.status(500).json({ error: "failed to fecth contact us form" });
+        console.error("Error finding Parking Pass:", error);
+        res.status(500).json({ error: "failed to fecth Parking Pass" });
       }
       break;
 
@@ -25,15 +25,15 @@ export default async function handler(
       try {
         const { id } = req.query;
         if (!id) {
-          return res.status(400).json({ error: "Contact ID is required" });
+          return res.status(400).json({ error: "Parking Pass ID is required" });
         }
-        const contactUs = await prisma.contactUs.delete({
+        const parkingPass = await prisma.parkingPass.delete({
           where: { id: id as string },
         });
-        res.status(200).json(contactUs);
+        res.status(200).json(parkingPass);
       } catch (error) {
-        console.error("Error deleting contact form:", error);
-        res.status(500).json({ error: "Failed to delete contact form" });
+        console.error("Error deleting Parking Pass:", error);
+        res.status(500).json({ error: "Failed to delete Parking Pass" });
       }
       break;
 

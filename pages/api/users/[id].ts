@@ -25,6 +25,7 @@ export default async function handler(
       try {
         const { id } = req.query;
         const {
+          appwriteId,
           firstName,
           lastName,
           email,
@@ -40,6 +41,7 @@ export default async function handler(
         const user = await prisma.user.update({
           where: { id: id as string },
           data: {
+            ...(appwriteId && { appwriteId }),
             ...(firstName && { firstName }),
             ...(lastName && { lastName }),
             ...(email && { email }),
