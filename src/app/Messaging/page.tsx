@@ -1,18 +1,18 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import MessageList from '../components/messaging/MessageList';
-import ComposeMessage from '../components/messaging/ComposeMessage';
-import Header from '../components/Header';
-import LABELS from '../constants/labels';
-import { Pencil, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import MessageList from "../components/messaging/MessageList";
+import ComposeMessage from "../components/messaging/ComposeMessage";
+import Header from "../components/Header";
+import LABELS from "../constants/labels";
+import { Pencil, ArrowLeft } from "lucide-react";
 
 type Message = {
   id: string;
   subject: string;
   body: string;
   createdAt: string;
-  from: 'tenant' | 'admin';
-  type?: 'package' | 'management' | 'lease' | 'general';
+  from: "tenant" | "admin";
+  type?: "package" | "management" | "lease" | "general";
 };
 
 export default function MessagesPage() {
@@ -25,23 +25,23 @@ export default function MessagesPage() {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-        const res = await fetch('/api/messages');
-        
+        const res = await fetch("/api/notifications");
+
         if (!res.ok) {
-          throw new Error('Failed to fetch messages');
+          throw new Error("Failed to fetch messages");
         }
-        
+
         const data = await res.json();
         setMessages(data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching messages:', err);
+        console.error("Error fetching messages:", err);
         setError(LABELS.messaging.errorLoading);
       } finally {
         setIsLoading(false);
       }
     }
-    
+
     fetchMessages();
   }, []);
 
@@ -73,11 +73,15 @@ export default function MessagesPage() {
                 >
                   <ArrowLeft size={32} />
                 </button>
-                <h1 className="text-xl font-medium text-black text-center">{LABELS.messaging.compose || LABELS.messaging.NewMessage}</h1>
+                <h1 className="text-xl font-medium text-black text-center">
+                  {LABELS.messaging.compose || LABELS.messaging.NewMessage}
+                </h1>
               </>
             ) : (
               <>
-                <h1 className="text-xl font-medium text-black text-center">{LABELS.messaging.title}</h1>
+                <h1 className="text-xl font-medium text-black text-center">
+                  {LABELS.messaging.title}
+                </h1>
                 <button
                   className="absolute right-0 top-1/2 -translate-y-1/2 text-green-400 hover:text-green-500 transition-colors"
                   onClick={handleComposeClick}
@@ -92,7 +96,9 @@ export default function MessagesPage() {
           {showCompose ? (
             <ComposeMessage onMessageSent={handleMessageSent} />
           ) : isLoading ? (
-            <p className="text-center text-gray-500 my-8">{LABELS.messaging.loading}</p>
+            <p className="text-center text-gray-500 my-8">
+              {LABELS.messaging.loading}
+            </p>
           ) : error ? (
             <p className="text-center text-red-500 my-8">{error}</p>
           ) : (

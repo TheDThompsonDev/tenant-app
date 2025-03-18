@@ -47,7 +47,7 @@ export default function ComposeMessage({ onMessageSent }: ComposeMessageProps) {
             user: (await getCurrentUser())?.data?.$id,
           };
 
-          const res = await fetch("/api/messages", {
+          const res = await fetch("/api/notifications", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newMsg),
