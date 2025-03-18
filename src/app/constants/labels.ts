@@ -128,22 +128,22 @@ const LABELS = {
   },
   dashboardBtns: {
     viewLease: {
-      href: "/",
+      href: "/lease",
       text: "View Lease",
       icon: "leaseIcon",
     },
     guestParking: {
-      href: "/",
+      href: "/parking",
       text: "Guest Parking Pass",
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
     viewPackages: {
-      href: "/",
+      href: "/locker",
       text: "View Packages",
       icon: "packagesIcon",
     },
@@ -153,7 +153,7 @@ const LABELS = {
       icon: "problemIcon",
     },
     unlockDoor: {
-      href: "/",
+      href: "/passkey",
       text: "Unlock My Door",
       icon: "unlockIcon",
     },
