@@ -128,22 +128,22 @@ const LABELS = {
   },
   dashboardBtns: {
     viewLease: {
-      href: "/",
+      href: "/lease",
       text: "View Lease",
       icon: "leaseIcon",
     },
     guestParking: {
-      href: "/",
+      href: "/parking",
       text: "Guest Parking Pass",
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
     viewPackages: {
-      href: "/",
+      href: "/locker",
       text: "View Packages",
       icon: "packagesIcon",
     },
@@ -153,23 +153,44 @@ const LABELS = {
       icon: "problemIcon",
     },
     unlockDoor: {
-      href: "/",
+      href: "/passkey",
       text: "Unlock My Door",
       icon: "unlockIcon",
     },
   },
   adminDashboardBtns: {
-    viewLease: {
+    messages: {
       href: "/",
-      text: "View Lease",
-      icon: "leaseIcon",
+      text: "View Messages",
+      icon: "mailIcon",
     },
     guestParking: {
       href: "/",
-      text: "Guest Parking Pass",
+      text: "Guest Parking",
       icon: "guestParkingIcon",
     },
+    lease: {
+      href: "/",
+      text: "Generate Lease",
+      icon: "leaseIcon",
+    },
+    newTenant: {
+      href: "/",
+      text: "Create Tenant Account",
+      icon: "userPlus",
+    },
   },
+  dashboardComponents: {
+    title: "Dashboard",
+    propertyName: "Willow Creek Apartments",
+    addressLabel: "Address:",
+    propertyAddress: "1250 Willow Creek Dr. Brookdale, TX 75201",
+    websiteLabel: "Website:",
+    propertyWebsite: "www.willowcreekapts.com",
+    phoneLabel: "Phone:",
+    propertyPhone: "(555) 867 - 3412"
+  },
+
 
   editProfile: {
     title: "Edit Profile",
@@ -183,15 +204,15 @@ const LABELS = {
     },
   },
 
-  passcode:{
-    searchParams:'Loading...',
-    title:'New Key Details',
-    message: 'created a new guest key code!',
-    date: 'Date:',
-    status: 'Status:',
-    unit: 'Unit #',
-    button: 'Make another key',
-    emailBody: 'Hello, here is your guest key code: {code}'
+  passcode: {
+    searchParams: "Loading...",
+    title: "New Key Details",
+    message: "created a new guest key code!",
+    date: "Date:",
+    status: "Status:",
+    unit: "Unit #",
+    button: "Make another key",
+    emailBody: "Hello, here is your guest key code: {code}",
   },
 
   doorlock: {
@@ -201,34 +222,32 @@ const LABELS = {
   },
 
   PackageLocker: {
-    numberTitle: 'Locker: ',
-    accessCodeTitle: 'Digital Access Code: ',
+    numberTitle: "Locker: ",
+    accessCodeTitle: "Digital Access Code: ",
   },
 
   PackageDetails: {
-    title: 'Package Details',
-    numberTitle: 'Package #:',
-    statusTitle: 'Package Status: ',
-    deliveredTitle: 'Time delivered: ',
-    pickupTitle: 'Picked up: ',
-    pickedupStatus: 'This package was picked up',
-    notify: 'Notify us if there are any issues',
-    messageBtn: 'send a message'
+    title: "Package Details",
+    numberTitle: "Package #:",
+    statusTitle: "Package Status: ",
+    deliveredTitle: "Time delivered: ",
+    pickupTitle: "Picked up: ",
+    pickedupStatus: "This package was picked up",
+    notify: "Notify us if there are any issues",
+    messageBtn: "send a message",
   },
 
-  packageList:{
-    title: 'My Packages',
-    actionBtn: 'View',
+  packageList: {
+    title: "My Packages",
+    actionBtn: "View",
   },
-  package:{
-    dateTitle: 'Date delivered: ',
-    timeTitle: 'Time delivered: ',
-    pickupTitle: 'Picked up: ',
-    back: "Back", 
-    notfoundError: "Package not found."
+  package: {
+    dateTitle: "Date delivered: ",
+    timeTitle: "Time delivered: ",
+    pickupTitle: "Picked up: ",
+    back: "Back",
+    notfoundError: "Package not found.",
   },
-
-
 };
 
 export default LABELS;
