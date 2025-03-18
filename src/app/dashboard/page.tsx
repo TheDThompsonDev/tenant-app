@@ -1,16 +1,3 @@
-TP-39
-"use client";
-
-import Header from "@/app/components/Header";
-import Image from "next/image";
-import Link from "next/link";
-import { Pencil } from "lucide-react";
-import LABELS from "../constants/labels";
-import ICON_MAP from "../constants/icons";
-import { getCurrentUser } from "@/lib/appwrite";
-import { Models } from "appwrite";
-import { useEffect, useState } from "react";
-import Footer from "../compon
 'use client';
 
 import Header from '@/app/components/Header';
@@ -21,7 +8,8 @@ import LABELS from '../constants/labels';
 import ICON_MAP from '../constants/icons';
 import { getCurrentUser } from '@/lib/appwrite';
 import { Models } from 'appwrite';
-import { useEffect, useState } from 'react';main
+import { useEffect, useState } from 'react';
+import Footer from '../components/Footer';
 
 type UserType = Models.User<Models.Preferences>;
 
