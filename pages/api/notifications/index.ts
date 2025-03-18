@@ -32,12 +32,7 @@ export default async function handler(
           return res.status(404).json({ error: "User not found" });
         }
 
-        const requiredFields = [
-          "user",
-          "subject",
-          "message",
-          "notificationType",
-        ];
+        const requiredFields = ["user", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
