@@ -14,11 +14,23 @@ export default async function handler(
         const notification = await prisma.notification.findUnique({
           where: { id: id as string },
         });
+
+        if (!notification) {
+          return res.status(404).json({ error: "Notification not found" });
+        }
+        await prisma.notification.update({
+          where: { id: id as string },
+          data: {
+            status: "READ",
+          },
+        });
+
         res.status(200).json(notification);
       } catch (error) {
-        console.error("Error finding Notifification:", error);
-        res.status(500).json({ error: "failed to fecth Notification" });
+        console.error("Error finding Notification:", error);
+        res.status(500).json({ error: "Failed to fetch Notification" });
       }
+
       break;
 
     case "PATCH":
