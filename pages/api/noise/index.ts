@@ -21,8 +21,38 @@ export default async function handler(
       }
       break;
 
+    case "POST":
+      try {
+        const { user } = req.body;
+
+        const appwriteUser = await prisma.user.findUnique({
+          where: {
+            appwriteId: user,
+          },
+        });
+
+        if (!appwriteUser) {
+          return res.status(404).json({ error: "User not found" });
+        }
+
+        const notification = await prisma.notification.create({
+          data: {
+            userId: appwriteUser.id,
+            subject: "Noise Complaint",
+            message: "Noise Complaint",
+            notificationType: "NOISE_COMPLAINT",
+            createdAt: new Date(),
+          },
+        });
+        res.status(201).json(notification);
+      } catch (error) {
+        console.error("Error creating notification:", error);
+        res.status(500).json({ error: "Failed to create notification" });
+      }
+      break;
+
     default:
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
