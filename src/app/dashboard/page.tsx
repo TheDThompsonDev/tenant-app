@@ -9,6 +9,7 @@ import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
 import { useEffect, useState } from "react";
+import Footer from "../components/Footer";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -175,6 +176,7 @@ const Dashboard = () => {
             <DashboardBtns />
           </div>
         </div>
+        <Footer />
       </div>
     </div>
   );

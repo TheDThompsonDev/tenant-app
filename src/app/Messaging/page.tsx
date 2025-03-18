@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import MessageList from '../components/messaging/MessageList';
 import ComposeMessage from '../components/messaging/ComposeMessage';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import LABELS from '../constants/labels';
 import { Pencil, ArrowLeft } from 'lucide-react';
 
@@ -100,6 +101,7 @@ export default function MessagesPage() {
           )}
         </div>
       </main>
+      <Footer />
     </>
   );
 }

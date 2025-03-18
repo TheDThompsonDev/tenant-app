@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Lock from "../components/Lock";
 import { v4 as uuidv4 } from "uuid";
 import LABELS from "../constants/labels";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function Home() {
           {LABELS.doorlock.ButtonLabel}
         </button>
       </div>
+      <Footer />
     </>
   );
 }

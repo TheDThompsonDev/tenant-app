@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import { Send } from "lucide-react";
 import Header from "@/app/components/Header";
 import LABELS from "../../constants/labels";
+import Footer from "@/app/components/Footer";
 
 interface Params {
   id: string;
@@ -35,7 +36,7 @@ export default function KeyPage({ params }: KeyPageProps) {
       <Header />
       <div className="flex flex-col items-center pt-10 min-h-screen p-4 bg-white text-center">
         <h1 className="text-2xl font-bold mb-4 text-primary-black">
-         {LABELS.passcode.title}
+          {LABELS.passcode.title}
         </h1>
         <div className="bg-alternate-green rounded-lg shadow-md text-black p-4">
           <span className="flex pb-4 text-lg">
@@ -43,11 +44,17 @@ export default function KeyPage({ params }: KeyPageProps) {
             <p className="pl-1">{LABELS.passcode.message}</p>
           </span>
 
-          <p>{LABELS.passcode.date} {date}</p>
-          <p>{LABELS.passcode.status} {status}</p>
+          <p>
+            {LABELS.passcode.date} {date}
+          </p>
+          <p>
+            {LABELS.passcode.status} {status}
+          </p>
 
           <div className="flex flex-col justify-center items-center">
-            <p className="text-xl font-bold pt-4">{LABELS.passcode.unit} {unit}</p>
+            <p className="text-xl font-bold pt-4">
+              {LABELS.passcode.unit} {unit}
+            </p>
 
             <div className="flex items-center mt-2">
               <div className="flex gap-2">
@@ -73,6 +80,7 @@ export default function KeyPage({ params }: KeyPageProps) {
           {LABELS.passcode.button}
         </a>
       </div>
+      <Footer />
     </>
   );
 }
