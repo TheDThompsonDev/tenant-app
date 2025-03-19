@@ -35,10 +35,11 @@ export const getCurrentUser = async () => {
 export const registerUser = async (
   name: string,
   email: string,
-  password: string
+  password: string,
+  userId: string
 ) => {
   try {
-    const user = await account.create(name, email, password);
+    const user = await account.create(email, name, password, userId);
     return { success: true, data: user };
   } catch (error) {
     return { success: false, error };

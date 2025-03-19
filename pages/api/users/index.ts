@@ -30,12 +30,10 @@ export default async function handler(
         } = req.body;
 
         const requiredFields = [
-          "appwriteId",
           "firstName",
           "lastName",
           "email",
           "apartmentNumber",
-          "phoneNumber",
         ];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
@@ -59,7 +57,7 @@ export default async function handler(
             updatedAt: new Date(),
           },
         });
-        res.status(201).json(user);
+        res.status(201).json(user.id);
       } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({

@@ -25,27 +25,19 @@ export default function CreateTenantForm() {
       firstName: `${LABELS.createTenant.placeholders.firstName}`,
       lastName: `${LABELS.createTenant.placeholders.lastName}`,
       email: `${LABELS.createTenant.placeholders.email}`,
-      apartmentNum: `${LABELS.createTenant.placeholders.apartmentNumber}`,
+      apartmentNumber: `${LABELS.createTenant.placeholders.apartmentNumber}`,
       password: `${LABELS.createTenant.placeholders.password}`,
     },
 
     onSubmit: async ({ value }) => {
-      saveOnDB();
-      const newUser = await registerUser(
-        `${value.firstName} ${value.lastName}`,
+      const userId = await saveOnDB(value);
+      const newUser = registerUser(
         value.email,
-        value.password
+        userId,
+        value.password,
+        `${value.firstName} ${value.lastName}`
       );
-      if (!newUser) {
-        console.log("Error creating user");
-        return;
-      }
-
-      // value = { ...value };
-
-      console.log(value);
-      // saveOnDB(value);
-      // return { status: "success" };
+      console.log("User created successfully:", newUser);
     },
   });
 
@@ -53,7 +45,7 @@ export default function CreateTenantForm() {
     firstName: string;
     lastName: string;
     email: string;
-    apartmentNum: string;
+    apartmentNumber: string;
   }) => {
     const response = await fetch("/api/users", {
       method: "POST",
@@ -62,7 +54,9 @@ export default function CreateTenantForm() {
         "Content-Type": "application/json",
       },
     });
-    return response.json();
+    const data = await response.json();
+    console.log("User created successfully:", data);
+    return data;
   };
 
   return (
@@ -204,7 +198,7 @@ export default function CreateTenantForm() {
         </div>
         <div className="w-full py-2">
           <form.Field
-            name="apartmentNum"
+            name="apartmentNumber"
             validators={{
               onChange: ({ value }) =>
                 !value
