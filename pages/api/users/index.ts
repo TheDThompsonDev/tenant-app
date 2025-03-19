@@ -27,7 +27,6 @@ export default async function handler(
           email,
           apartmentNumber,
           phoneNumber,
-          leaseId,
         } = req.body;
 
         const requiredFields = [
@@ -36,7 +35,6 @@ export default async function handler(
           "lastName",
           "email",
           "apartmentNumber",
-          "leaseId",
           "phoneNumber",
         ];
         const missingFields = requiredFields.filter(
@@ -56,7 +54,6 @@ export default async function handler(
             lastName,
             email,
             apartmentNumber,
-            leaseId,
             phoneNumber,
             createdAt: new Date(),
             updatedAt: new Date(),

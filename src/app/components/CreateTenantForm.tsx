@@ -29,11 +29,31 @@ export default function CreateTenantForm() {
 
     onSubmit: async ({ value }) => {
       {
+        //send this info to appwrite and user account is created we use the response to create the tenant in our database
+        // infor for appwrite (name and email , phone is optional)
         /*TODO: send form data to server endpoiunt */
+        //info i need for database (appwriteId, apartmentNum, email, firstName, lastName)
+        saveOnDB(value);
       }
       console.log(value);
     },
   });
+
+  const saveOnDB = async (value: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    apartmentNum: string;
+  }) => {
+    const response = await fetch("/api/users", {
+      method: "POST",
+      body: JSON.stringify(value),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  };
 
   return (
     <div className="w-full">
