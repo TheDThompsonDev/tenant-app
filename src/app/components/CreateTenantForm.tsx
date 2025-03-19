@@ -1,6 +1,7 @@
 import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
+import { registerUser } from "@/lib/appwrite";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -25,17 +26,26 @@ export default function CreateTenantForm() {
       lastName: `${LABELS.createTenant.placeholders.lastName}`,
       email: `${LABELS.createTenant.placeholders.email}`,
       apartmentNum: `${LABELS.createTenant.placeholders.apartmentNumber}`,
+      password: `${LABELS.createTenant.placeholders.password}`,
     },
 
     onSubmit: async ({ value }) => {
-      {
-        //send this info to appwrite and user account is created we use the response to create the tenant in our database
-        // infor for appwrite (name and email , phone is optional)
-        /*TODO: send form data to server endpoiunt */
-        //info i need for database (appwriteId, apartmentNum, email, firstName, lastName)
-        saveOnDB(value);
+      saveOnDB();
+      const newUser = await registerUser(
+        `${value.firstName} ${value.lastName}`,
+        value.email,
+        value.password
+      );
+      if (!newUser) {
+        console.log("Error creating user");
+        return;
       }
+
+      // value = { ...value };
+
       console.log(value);
+      // saveOnDB(value);
+      // return { status: "success" };
     },
   });
 
@@ -232,6 +242,49 @@ export default function CreateTenantForm() {
             )}
           />
         </div>
+
+        <div className="w-full py-2">
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : value.length < 2
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : undefined,
+              onChangeAsyncDebounceMs: 500,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                return (
+                  value.includes("error") &&
+                  `${LABELS.createTenant.validateMessages.passwordNoError}`
+                );
+              },
+            }}
+          >
+            {(field) => (
+              <>
+                <label htmlFor={field.name} />
+                <input
+                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onFocus={() => {
+                    if (!field.state.meta.isTouched) {
+                      field.handleChange("");
+                    }
+                  }}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </>
+            )}
+          </form.Field>
+        </div>
+
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (

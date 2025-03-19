@@ -38,7 +38,7 @@ export const registerUser = async (
   password: string
 ) => {
   try {
-    const user = await account.create("unique()", email, password);
+    const user = await account.create(name, email, password);
     return { success: true, data: user };
   } catch (error) {
     return { success: false, error };
