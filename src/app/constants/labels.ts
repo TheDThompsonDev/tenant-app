@@ -149,7 +149,7 @@ const LABELS = {
     },
     reportProblem: {
       href: "/",
-      text: "Report a Problem",
+      text: "Report a Noise Complaint",
       icon: "problemIcon",
     },
     unlockDoor: {
