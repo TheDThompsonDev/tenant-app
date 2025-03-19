@@ -160,7 +160,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/",
+      href: "/adminMessage",
       text: "View Messages",
       icon: "mailIcon",
     },
