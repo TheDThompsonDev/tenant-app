@@ -248,6 +248,38 @@ const LABELS = {
     back: "Back",
     notfoundError: "Package not found.",
   },
+  createTenant: {
+    title: 'Create Tenant Account',
+    imageAlt: 'Apartment Image',
+    fieldInfo: {
+      noErrorTitle: 'No error'
+    },
+    validateMessages: {
+      firstNameRequired: 'A first name is required',
+      firstNameLength: 'First name must be at least 3 characters',
+      firstNameNoError: 'No "error" allowed in first name',
+      lastNameRequired: 'A last name is required',
+      lastNameLength: 'Last name must be at least 3 characters',
+      lastNameNoError: 'No "error" allowed in last name',
+      emailRequired: 'An email is required',
+      emailFormat: "Email must contain '@'",
+      emailNoError: 'No "error" allowed in email',
+      apartmentNumRequired: 'An apartment number is required',
+      apartmentNumLength: 'Apartment number must be longer than 2 characters',
+      apartmentNumberNoError: 'No "error" allowed in apartment number',
+    },
+    placeholders: {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      apartmentNumber: 'Apartment Number'
+    },
+    sumbit: {
+      title: 'Create Account',
+      loading: '...'
+    }
+
+  },
 };
 
 export default LABELS;
