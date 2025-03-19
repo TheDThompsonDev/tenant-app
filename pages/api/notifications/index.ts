@@ -10,25 +10,17 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const parkingPermit = await prisma.parkingPass.findMany();
-        res.status(200).json(parkingPermit);
+        const notification = await prisma.notification.findMany();
+        res.status(200).json(notification);
       } catch (error) {
-        console.error("Error finding Parking Permit:", error);
-        res.status(500).json({ error: "failed to fecth Parking Permit" });
+        console.error("Error finding Notification:", error);
+        res.status(500).json({ error: "failed to fecth Notification" });
       }
       break;
 
     case "POST":
       try {
-        const {
-          user,
-          make,
-          model,
-          color,
-          licensePlate,
-          parkingPassNumber,
-          expirationDate,
-        } = req.body;
+        const { user, subject, message, notificationType } = req.body;
 
         const appwriteUser = await prisma.user.findUnique({
           where: {
@@ -40,15 +32,7 @@ export default async function handler(
           return res.status(404).json({ error: "User not found" });
         }
 
-        const requiredFields = [
-          "user",
-          "make",
-          "model",
-          "color",
-          "licensePlate",
-          "parkingPassNumber",
-          "expirationDate",
-        ];
+        const requiredFields = ["user", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -59,23 +43,20 @@ export default async function handler(
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
-        const parkingPass = await prisma.parkingPass.create({
+        const notification = await prisma.notification.create({
           data: {
             userId: appwriteUser.id,
-            make,
-            model,
-            color,
-            licensePlate,
-            parkingPassNumber,
-            expirationDate,
+            subject,
+            message,
+            notificationType,
             createdAt: new Date(),
           },
         });
-        res.status(201).json(parkingPass);
+        res.status(201).json(notification);
       } catch (error) {
-        console.error("Error creating parking pass:", error);
+        console.error("Error creating notification:", error);
         res.status(500).json({
-          error: "failed to create parking pass",
+          error: "failed to create notification",
         });
       }
       break;
