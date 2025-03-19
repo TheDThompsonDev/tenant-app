@@ -3,6 +3,7 @@ import Header from '@/app/components/Header';
 import Image from 'next/image';
 import LABELS from '@/app/constants/labels';
 import EditProfileForm from '@/app/components/EditProfileForm';
+import Footer from '../components/Footer';
 
 function ApartmentBg() {
   return (
@@ -39,6 +40,7 @@ export default function Home() {
         <ProfileHeader />
         <EditProfileForm />
       </div>
+      <Footer />
     </main>
   );
 }

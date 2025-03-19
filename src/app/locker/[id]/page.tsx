@@ -7,6 +7,7 @@ import Header from "@/app/components/Header";
 import LockerDetails from "@/app/components/LockerDetails";
 
 import { packages } from "@/app/api/packages/route";
+import Footer from "@/app/components/Footer";
 
 export default function PackageDetailsPage() {
   const params = useParams();
@@ -82,6 +83,7 @@ export default function PackageDetailsPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

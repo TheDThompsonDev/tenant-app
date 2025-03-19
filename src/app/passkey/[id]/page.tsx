@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import { Send } from "lucide-react";
 import Header from "@/app/components/Header";
 import LABELS from "../../constants/labels";
+import Footer from "@/app/components/Footer";
 
 interface Params {
   id: string;
@@ -73,6 +74,7 @@ export default function KeyPage({ params }: KeyPageProps) {
           {LABELS.passcode.button}
         </a>
       </div>
+      <Footer />
     </>
   );
 }
