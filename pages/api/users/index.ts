@@ -27,17 +27,13 @@ export default async function handler(
           email,
           apartmentNumber,
           phoneNumber,
-          leaseId,
         } = req.body;
 
         const requiredFields = [
-          "appwriteId",
           "firstName",
           "lastName",
           "email",
           "apartmentNumber",
-          "leaseId",
-          "phoneNumber",
         ];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
@@ -56,13 +52,12 @@ export default async function handler(
             lastName,
             email,
             apartmentNumber,
-            leaseId,
             phoneNumber,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
         });
-        res.status(201).json(user);
+        res.status(201).json(user.id);
       } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({
