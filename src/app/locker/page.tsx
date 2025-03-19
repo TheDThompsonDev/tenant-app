@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import PackageCard from "../components/PackageCard";
 
 import { packages } from "@/app/api/packages/route";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function Home() {
           })}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

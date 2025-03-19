@@ -5,6 +5,7 @@ import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import { Pencil, ArrowLeft } from "lucide-react";
+import Footer from "../components/Footer";
 
 type Message = {
   id: string;
@@ -106,6 +107,7 @@ export default function MessagesPage() {
           )}
         </div>
       </main>
+      <Footer />
     </>
   );
 }
