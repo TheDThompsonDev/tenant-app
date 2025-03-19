@@ -4,6 +4,7 @@ import Image from "next/image";
 import LABELS from "../constants/labels";
 import Header from "../components/Header";
 import CreateTenantForm from "../components/CreateTenantForm";
+import Footer from "../components/Footer";
 
 export default function createTenant() {
   return (
@@ -24,6 +25,7 @@ export default function createTenant() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

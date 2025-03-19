@@ -3,6 +3,7 @@
 import LeaseView from "../components/lease/LeaseView"
 import ActionButtons from "../components/lease/ActionButtons"
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 
 export default function LeasePage() {
   return (
@@ -14,6 +15,7 @@ export default function LeasePage() {
         <LeaseView />
         <ActionButtons />
       </div>
+      <Footer />
     </div>
   )
 }
