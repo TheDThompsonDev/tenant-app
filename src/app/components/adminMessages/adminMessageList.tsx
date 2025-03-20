@@ -29,13 +29,13 @@ export default function AdminMessageList({ messages }: MessageListProps) {
         <div className="bg-white p-6 rounded-md shadow-md max-w-2xl mx-auto">
           <button
             onClick={() => setSelectedMessage(null)}
-            className="text-blue-500 mb-4"
+            className="text-primary-green mb-4"
           >
             Back to Messages
           </button>
-          <h3 className="text-2xl font-bold">{selectedMessage.subject}</h3>
-          <p className="text-gray-600 my-4">{selectedMessage.body}</p>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-2xl font-bold text-primary-black">{selectedMessage.subject}</h3>
+          <p className="text-secondary-dark-gray my-4">{selectedMessage.body}</p>
+          <p className="text-sm color-secondary-dark-gray">
             Sent by: {selectedMessage.from} at {formatTime(selectedMessage.createdAt)}
           </p>
         </div>

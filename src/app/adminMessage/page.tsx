@@ -1,11 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import AdminMessageList from '../components/adminMessages/adminMessageList'
+import MessageList from "../components/messaging/MessageList";
 import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import { Pencil, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/lib/appwrite";
+import {Models} from "appwrite"
 
 type Message = {
   id: string;
@@ -16,12 +19,36 @@ type Message = {
   type?: "package" | "management" | "lease" | "general";
 };
 
+type UserType = Models.User<Models.Preferences>
+
 export default function MessagesPage() {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [showCompose, setShowCompose] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType | null> (null)
+  const [userLoading, setUserLoading] = useState(true)
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        if (response.success && response.data) {
+          setUser(response.data as UserType);
+        } else {
+          console.error("Failed to get user:", response.error);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setUserLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     async function fetchMessages() {
@@ -34,7 +61,13 @@ export default function MessagesPage() {
         }
 
         const data = await res.json();
-        setMessages(data);
+
+
+const filteredMessages = user?.name === "admin"
+          ? data.filter((msg: Message) => msg.from === "admin") // Admin sees only admin messages
+          : data.filter((msg: Message) => msg.from === "tenant"); // Tenant sees only tenant messages
+
+        setMessages(filteredMessages);
         setError(null);
       } catch (err) {
         console.error("Error fetching messages:", err);
@@ -44,8 +77,10 @@ export default function MessagesPage() {
       }
     }
 
-    fetchMessages();
-  }, []);
+    if (user) {
+      fetchMessages();
+    }
+  }, [user]); // Re-fetch messages when user data changes
 
   const handleComposeClick = () => {
     setShowCompose(true);
