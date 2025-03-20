@@ -149,7 +149,7 @@ const LABELS = {
     },
     reportProblem: {
       href: "/",
-      text: "Report a Problem",
+      text: "Report a Noise Complaint",
       icon: "problemIcon",
     },
     unlockDoor: {
@@ -188,9 +188,8 @@ const LABELS = {
     websiteLabel: "Website:",
     propertyWebsite: "www.willowcreekapts.com",
     phoneLabel: "Phone:",
-    propertyPhone: "(555) 867 - 3412"
+    propertyPhone: "(555) 867 - 3412",
   },
-
 
   editProfile: {
     title: "Edit Profile",
@@ -249,36 +248,38 @@ const LABELS = {
     notfoundError: "Package not found.",
   },
   createTenant: {
-    title: 'Create Tenant Account',
-    imageAlt: 'Apartment Image',
+    title: "Create Tenant Account",
+    imageAlt: "Apartment Image",
     fieldInfo: {
-      noErrorTitle: 'No error'
+      noErrorTitle: "No error",
     },
     validateMessages: {
-      firstNameRequired: 'A first name is required',
-      firstNameLength: 'First name must be at least 3 characters',
+      firstNameRequired: "A first name is required",
+      firstNameLength: "First name must be at least 3 characters",
       firstNameNoError: 'No "error" allowed in first name',
-      lastNameRequired: 'A last name is required',
-      lastNameLength: 'Last name must be at least 3 characters',
+      lastNameRequired: "A last name is required",
+      lastNameLength: "Last name must be at least 3 characters",
       lastNameNoError: 'No "error" allowed in last name',
-      emailRequired: 'An email is required',
+      emailRequired: "An email is required",
       emailFormat: "Email must contain '@'",
       emailNoError: 'No "error" allowed in email',
-      apartmentNumRequired: 'An apartment number is required',
-      apartmentNumLength: 'Apartment number must be longer than 2 characters',
+      apartmentNumRequired: "An apartment number is required",
+      apartmentNumLength: "Apartment number must be longer than 2 characters",
       apartmentNumberNoError: 'No "error" allowed in apartment number',
+      passwordRequired: " a password is required",
+      passwordNoError: 'No "error" allowed in password',
     },
     placeholders: {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      email: 'Email',
-      apartmentNumber: 'Apartment Number'
+      firstName: "First Name",
+      lastName: "Last Name",
+      email: "Email",
+      apartmentNumber: "Apartment Number",
+      password: "Password",
     },
     sumbit: {
-      title: 'Create Account',
-      loading: '...'
-    }
-
+      title: "Create Account",
+      loading: "...",
+    },
   },
 };
 

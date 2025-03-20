@@ -69,15 +69,15 @@ model Address {
 
 model User {
   id              String          @id @default(uuid())
-  appwriteId      String          @unique
+  appwriteId      String?          @unique
   firstName       String          @db.VarChar(40)
   lastName        String          @db.VarChar(40)
   email           String          @unique
-  phoneNumber     String          @db.VarChar(40)
+  phoneNumber     String?         @db.VarChar(40)
   apartmentNumber String
   image           String?
-  leaseId         String
-  lease           Lease           @relation(fields: [leaseId], references: [id])
+  lease           Lease?          @relation(fields: [leaseId], references: [id])
+  leaseId         String?
   userRole        Role            @default(TENANT)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -141,7 +141,7 @@ model Lease {
 
 model ParkingPass {
   id                String   @id @default(uuid())
-  userId            String   
+  userId            String
   user              User     @relation(fields: [userId], references: [id])
   make              String
   model             String
@@ -154,7 +154,7 @@ model ParkingPass {
 
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
-  userId           String               
+  userId           String
   user             User                 @relation(fields: [userId], references: [id])
   notificationType NotificationType     @default(NOISE_COMPLAINT)
   subject          String?
@@ -167,7 +167,7 @@ model Notification {
 
 model SmartDoorKey {
   id             String   @id @default(uuid())
-  userId         String  
+  userId         String
   user           User     @relation(fields: [userId], references: [id])
   accessCode     String   @unique
   createdAt      DateTime @default(now())
@@ -178,7 +178,7 @@ model SmartDoorKey {
 
 model PackageLocker {
   id                  String              @id @default(uuid())
-  userId              String              
+  userId              String
   user                User                @relation(fields: [userId], references: [id])
   lockerNumber        String
   packageLockerStatus PackageLockerStatus @default(READY_FOR_PICKUP)

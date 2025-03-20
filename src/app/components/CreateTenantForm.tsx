@@ -1,6 +1,7 @@
 import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
+import { registerUser } from "@/lib/appwrite";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -24,16 +25,39 @@ export default function CreateTenantForm() {
       firstName: `${LABELS.createTenant.placeholders.firstName}`,
       lastName: `${LABELS.createTenant.placeholders.lastName}`,
       email: `${LABELS.createTenant.placeholders.email}`,
-      apartmentNum: `${LABELS.createTenant.placeholders.apartmentNumber}`,
+      apartmentNumber: `${LABELS.createTenant.placeholders.apartmentNumber}`,
+      password: `${LABELS.createTenant.placeholders.password}`,
     },
 
     onSubmit: async ({ value }) => {
-      {
-        /*TODO: send form data to server endpoiunt */
-      }
-      console.log(value);
+      const userId = await saveOnDB(value);
+      const newUser = registerUser(
+        value.email,
+        userId,
+        value.password,
+        `${value.firstName} ${value.lastName}`
+      );
+      console.log("User created successfully:", newUser);
     },
   });
+
+  const saveOnDB = async (value: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    apartmentNumber: string;
+  }) => {
+    const response = await fetch("/api/users", {
+      method: "POST",
+      body: JSON.stringify(value),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log("User created successfully:", data);
+    return data;
+  };
 
   return (
     <div className="w-full">
@@ -174,7 +198,7 @@ export default function CreateTenantForm() {
         </div>
         <div className="w-full py-2">
           <form.Field
-            name="apartmentNum"
+            name="apartmentNumber"
             validators={{
               onChange: ({ value }) =>
                 !value
@@ -212,6 +236,49 @@ export default function CreateTenantForm() {
             )}
           />
         </div>
+
+        <div className="w-full py-2">
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : value.length < 2
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : undefined,
+              onChangeAsyncDebounceMs: 500,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                return (
+                  value.includes("error") &&
+                  `${LABELS.createTenant.validateMessages.passwordNoError}`
+                );
+              },
+            }}
+          >
+            {(field) => (
+              <>
+                <label htmlFor={field.name} />
+                <input
+                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onFocus={() => {
+                    if (!field.state.meta.isTouched) {
+                      field.handleChange("");
+                    }
+                  }}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </>
+            )}
+          </form.Field>
+        </div>
+
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
