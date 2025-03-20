@@ -104,9 +104,11 @@ export default function ContactUs() {
             validators={{
               onChange: ({ value }) =>
                 !value
-                  ? "A phone number is required"
-                  : value.replace(/\D/g, "").length !== 10
-                  ? "Phone number must be 10 digits"
+                  ? 'A phone number is required'
+                  : /[a-zA-Z]/.test(value)
+                  ? 'Phone number cannot contain letters'
+                  : value.replace(/\D/g, '').length !== 10
+                  ? 'Phone number must be 10 digits'
                   : undefined,
               onChangeAsyncDebounceMs: 100,
               onChangeAsync: async ({ value }) => {
