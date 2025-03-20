@@ -41,7 +41,7 @@ export default function LeaseForm() {
         fetchUser()
     }, [])
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
         setFormData(prev => ({
             ...prev,
@@ -49,7 +49,7 @@ export default function LeaseForm() {
         }))
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setIsSubmitting(true)
         setSubmitMessage('Generating PDF and sending to Documenso...')
@@ -79,7 +79,7 @@ export default function LeaseForm() {
             }
         } catch (error) {
             console.error('Error:', error)
-            setSubmitMessage(`Error: ${error.message}`)
+            setSubmitMessage(`Error: ${error instanceof Error ? error.message : 'Something went wrong'}`)
         } finally {
             setIsSubmitting(false)
         }
@@ -185,7 +185,7 @@ export default function LeaseForm() {
                                         value={formData.propertyAddress}
                                         onChange={handleChange}
                                         required
-                                        rows="2"
+                                        rows={2}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                 </div>
