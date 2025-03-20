@@ -35,7 +35,7 @@ export default async function handler(
         console.error("Error deleting lease:", error);
         res.status(500).json({ error: "Failed to delete lease" });
       }
-      break;
+      break; 
 
     default:
       res.setHeader("Allow", ["GET", "DELETE"]);
