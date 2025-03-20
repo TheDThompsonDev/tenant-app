@@ -7,7 +7,7 @@ let messages = [
   {
     id: uuidv4(),
     subject: "Package Notification",
-    body: "This is a message preview. I think you have a package waiting for you at the front desk.",
+    body: "This is an admin message. I think you have a package waiting for you at the front desk.",
     createdAt: new Date().toISOString(),
     from: "admin",
     type: "package",
@@ -15,7 +15,7 @@ let messages = [
   {
     id: uuidv4(),
     subject: "Management Notification",
-    body: "This is a message preview. I think we need to discuss your recent maintenance request.",
+    body: "This is an admin message. I think we need to discuss your recent maintenance request.",
     createdAt: new Date().toISOString(),
     from: "admin",
     type: "management",
@@ -23,7 +23,7 @@ let messages = [
   {
     id: uuidv4(),
     subject: "Lease Notification",
-    body: "This is a message preview. I think your lease is up for renewal soon.",
+    body: "This is an admin message. I think your lease is up for renewal soon.",
     createdAt: new Date().toISOString(),
     from: "admin",
     type: "lease",
@@ -31,7 +31,7 @@ let messages = [
   {
     id: uuidv4(),
     subject: "Package Notification",
-    body: "This is a message preview. I think you have another package waiting for you.",
+    body: "This is an admin message. I think you have another package waiting for you.",
     createdAt: new Date().toISOString(),
     from: "admin",
     type: "package",

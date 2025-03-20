@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import AdminMessageList from '../components/adminMessages/adminMessageList'
+import AdminMessageList from "../components/adminMessages/adminMessageList";
 import MessageList from "../components/messaging/MessageList";
 import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
@@ -8,7 +8,7 @@ import LABELS from "../constants/labels";
 import { Pencil, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/lib/appwrite";
-import {Models} from "appwrite"
+import { Models } from "appwrite";
 
 type Message = {
   id: string;
@@ -19,7 +19,7 @@ type Message = {
   type?: "package" | "management" | "lease" | "general";
 };
 
-type UserType = Models.User<Models.Preferences>
+type UserType = Models.User<Models.Preferences>;
 
 export default function MessagesPage() {
   const router = useRouter();
@@ -27,9 +27,8 @@ export default function MessagesPage() {
   const [showCompose, setShowCompose] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<UserType | null> (null)
-  const [userLoading, setUserLoading] = useState(true)
-
+  const [user, setUser] = useState<UserType | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -62,10 +61,10 @@ export default function MessagesPage() {
 
         const data = await res.json();
 
-
-const filteredMessages = user?.name === "admin"
-          ? data.filter((msg: Message) => msg.from === "admin") // Admin sees only admin messages
-          : data.filter((msg: Message) => msg.from === "tenant"); // Tenant sees only tenant messages
+        const filteredMessages =
+          user?.name === "admin"
+            ? data.filter((msg: Message) => msg.from === "admin") // Admin sees admin messages
+            : data.filter((msg: Message) => msg.from === "tenant"); // Tenant sees tenant messages
 
         setMessages(filteredMessages);
         setError(null);
@@ -96,7 +95,7 @@ const filteredMessages = user?.name === "admin"
   };
 
   const handleViewMessage = () => {
-    router.push(`/messaging/`)
+    router.push(`/messaging/`);
   };
 
   return (
