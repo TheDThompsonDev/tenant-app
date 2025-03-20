@@ -1,4 +1,4 @@
-import { prisma } from "../../../utils/prisma";
+import { prisma } from "../../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -20,15 +20,15 @@ export default async function handler(
 
     case "POST":
       try {
-        const { user, subject, message, notificationType } = req.body;
+        const { userId, subject, message, notificationType } = req.body;
 
-        const appwriteUser = await prisma.user.findFirst({
+        const findUser = await prisma.user.findFirst({
           where: {
-            OR: [{ id: user }, { appwriteId: user }],
+            OR: [{ id: userId }, { appwriteId: userId }],
           },
         });
 
-        if (!appwriteUser) {
+        if (!findUser) {
           return res.status(404).json({ error: "User not found" });
         }
 
@@ -45,7 +45,7 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            userId: appwriteUser.id,
+            userId: findUser.id,
             subject,
             message,
             notificationType,

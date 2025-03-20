@@ -1,4 +1,4 @@
-import { prisma } from "../../../utils/prisma";
+import { prisma } from "../../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
