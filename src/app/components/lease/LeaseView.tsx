@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser } from '@/lib/appwrite'
+import { Models } from "appwrite"
 
 export default function LeaseForm() {
     const router = useRouter()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitMessage, setSubmitMessage] = useState('')
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null)
     const [loading, setLoading] = useState(true)
 
     const [formData, setFormData] = useState({
