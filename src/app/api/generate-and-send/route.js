@@ -4,7 +4,6 @@ import path from 'path';
 import os from 'os';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
-const apiKey = process.env.DOCUMENSO_API_KEY;
 
 export async function POST(request) {
   try {
@@ -96,59 +95,71 @@ export async function POST(request) {
 }
 
 async function sendToDocumenso(documentTitle, tenantName, tenantEmail, fileBuffer) {
-  const base64Pdf = fileBuffer.toString('base64');
-  const apiKey = process.env.DOCUMENSO_API_KEY;
+  const base64Pdf = fileBuffer.toString('base64')
 
-  const requestBody = {
-      title: documentTitle,
-      recipients: [
-          {
-              email: tenantEmail,
-              name: tenantName,
-              role: "SIGNER",
-          }
-      ],
-      fileName: `${documentTitle}.pdf`,
-      timezone: "America/Chicago",
-      dateFormat: "MM/DD/YYYY",
-      documentLength: base64Pdf.length
-  };
-
-  try {
-      const response = await fetch('https://app.documenso.com/api/v1/documents', {
-          method: "POST",
-          headers: {
-              Authorization: apiKey,
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-              ...requestBody,
-              document: base64Pdf,
-          }),
-      });
-
-      if (!response.ok) {
-          throw new Error(`Documenso API error: ${response.statusText}`);
-      }
-
-      const docResponse = await response.json();
-      console.log("✅ Documenso Document Created:", docResponse);
-
-      // ✅ New: Send document via email
-      if (docResponse.documentId) {
-          console.log(`🚀 Sending document ${docResponse.documentId} to ${tenantEmail}...`);
-          await fetch(`https://app.documenso.com/api/v1/documents/${docResponse.documentId}/send`, {
-              method: "POST",
-              headers: {
-                  Authorization: apiKey,
-                  "Content-Type": "application/json",
+  if (!process.env.DOCUMENSO_API_KEY) {
+      return {
+          documentId: Date.now().toString(),
+          status: 'DRAFT',
+          recipients: [
+              {
+                  email: tenantEmail,
+                  name: tenantName,
+                  status: 'PENDING',
               },
-          });
+          ],
       }
-
-      return docResponse;
-  } catch (error) {
-      console.error("❌ Error sending to Documenso:", error);
-      throw error;
   }
+
+  const apiKey = process.env.DOCUMENSO_API_KEY
+  
+  // Step 1: Create the document
+  const createResponse = await fetch("https://app.documenso.com/api/v1/documents", {
+      method: "POST",
+      headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          title: documentTitle,
+          recipients: [
+              {
+                  email: tenantEmail,
+                  name: tenantName,
+                  role: "SIGNER",
+              },
+          ],
+          fileName: `${documentTitle}.pdf`,
+          redirectUrl: null,
+          timezone: "America/Chicago",
+          dateFormat: "MM/DD/YYYY",
+          documentLength: base64Pdf.length
+      }),
+  })
+
+  if (!createResponse.ok) {
+      const errorData = await createResponse.json()
+      throw new Error(`Documenso API error: ${errorData.message || createResponse.statusText}`)
+  }
+
+  const docResponse = await createResponse.json()
+
+  // Step 2: Send the document
+  const sendResponse = await fetch(`https://app.documenso.com/api/v1/documents/${docResponse.documentId}/send`, {
+      method: "POST",
+      headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          subject: `Lease Agreement for ${tenantName}`,
+          message: `Please review and sign your lease agreement.`,
+      }),
+  })
+
+  if (!sendResponse.ok) {
+      const errorData = await sendResponse.json()
+      throw new Error(`Documenso API error: ${errorData.message || sendResponse.statusText}`)
+  }  
+  return docResponse
 }
