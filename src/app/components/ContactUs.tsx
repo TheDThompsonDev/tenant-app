@@ -5,12 +5,12 @@ import LABELS from "../constants/labels";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
-    <p className="text-red-400 text-sm font-thin ml-2">
+    <div className="h-4 text-red-400 text-sm font-thin ml-2">
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
         <em>{field.state.meta.errors.join(", ")}</em>
       ) : null}
       {field.state.meta.isValidating ? "Validating..." : null}
-    </p>
+    </div>
   );
 }
 
