@@ -125,6 +125,7 @@ export default function ContactUs() {
                     className="border border-secondary-dark-gray rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
+                    type='tel'
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
