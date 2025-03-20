@@ -25,7 +25,7 @@ export default async function handler(
       try {
         const { id } = req.query;
         if (!id) {
-          return res.status(400).json({ error: "Contact ID is required" });
+          return res.status(400).json({ error: "Lease is required" });
         }
         const lease = await prisma.lease.delete({
           where: { id: id as string },
