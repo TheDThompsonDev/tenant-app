@@ -4,9 +4,10 @@ import React, { useState, useRef } from "react";
 import { useTanstackForm } from "@/app/hooks/useTanstackForm";
 import LABELS from "@/app/constants/labels";
 import { useStore } from "@tanstack/react-form";
-import { getCurrentUser } from "@/lib/appwrite";
 
 type GuestParkingFormValues = {
+  lastName: string;
+  apartmentNumber: string;
   make: string;
   model: string;
   color: string;
@@ -27,6 +28,8 @@ export default function GuestParkingPassForm() {
   const formRef = useRef(
     useTanstackForm<GuestParkingFormValues>({
       defaultValues: {
+        lastName: "",
+        apartmentNumber: "",
         make: "",
         model: "",
         color: "",
@@ -35,13 +38,8 @@ export default function GuestParkingPassForm() {
         expirationDate: new Date(expireDate),
       },
       onSubmit: async (values) => {
-        const user = await getCurrentUser();
-        if (user?.data?.$id) {
-          await saveOnDB({ ...values, user: user.data.$id });
-          setIsSubmitted(true);
-        } else {
-          console.error("User data is undefined");
-        }
+        await saveOnDB({ ...values });
+        setIsSubmitted(true);
         return { status: "success" };
       },
     })
@@ -64,6 +62,11 @@ export default function GuestParkingPassForm() {
   };
 
   const form = formRef.current;
+  const lastName = useStore(form.store, (state) => state.values.lastName);
+  const apartmentNumber = useStore(
+    form.store,
+    (state) => state.values.apartmentNumber
+  );
   const make = useStore(form.store, (state) => state.values.make);
   const model = useStore(form.store, (state) => state.values.model);
   const color = useStore(form.store, (state) => state.values.color);
@@ -120,6 +123,23 @@ export default function GuestParkingPassForm() {
               <legend className="sr-only">
                 {LABELS.GuestParkingPassForm.title}
               </legend>
+              <div>
+                <label htmlFor="lastName" className="sr-only">
+                  {LABELS.GuestParkingPassForm.lastName}
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  placeholder={LABELS.GuestParkingPassForm.lastName}
+                  value={lastName}
+                  onChange={(e) =>
+                    form.setFieldValue("lastName", e.target.value)
+                  }
+                  className="w-full p-2 rounded border border-gray-300 
+                             bg-white text-black 
+                             focus:outline-none focus:ring-2 focus:ring-secondary-blue"
+                />
+              </div>
               <div>
                 <label htmlFor="make" className="sr-only">
                   {LABELS.GuestParkingPassForm.vehicleMake}
@@ -186,6 +206,18 @@ export default function GuestParkingPassForm() {
                 <label htmlFor="apartmentNumber" className="sr-only">
                   {LABELS.GuestParkingPassForm.apartmentNumber}
                 </label>
+                <input
+                  id="apartmentNumber"
+                  type="text"
+                  placeholder={LABELS.GuestParkingPassForm.apartmentNumber}
+                  value={apartmentNumber}
+                  onChange={(e) =>
+                    form.setFieldValue("apartmentNumber", e.target.value)
+                  }
+                  className="w-full p-2 rounded border border-gray-300 
+                             bg-white text-black
+                             focus:outline-none focus:ring-2 focus:ring-secondary-blue"
+                />
               </div>
               <button
                 type="submit"

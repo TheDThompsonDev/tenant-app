@@ -22,9 +22,9 @@ export default async function handler(
       try {
         const { user, subject, message, notificationType } = req.body;
 
-        const appwriteUser = await prisma.user.findUnique({
+        const appwriteUser = await prisma.user.findFirst({
           where: {
-            appwriteId: user,
+            OR: [{ id: user }, { appwriteId: user }],
           },
         });
 
