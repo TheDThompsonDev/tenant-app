@@ -146,3 +146,25 @@ These can be applied to background colors, text colors, and border colors using 
   This div has a primary green background.
 </div>
 ```
+
+#### What's the Difference Between Some of These API Routes?
+`/api/generate-and-send/route.js`
+
+This generates a lease and sends it to Documenso.
+It's triggered when admin fills out the lease form.
+
+Steps:
+- Collects lease details (landlord, tenant, address, rent, dates).
+- Generates a PDF using pdf-lib.
+- Sends the PDF to Documenso.
+- Triggers an email to the tenant (once sending is successful).
+- Redirects to /confirmation?id={documentId} after successful submission.
+
+`/api/document-status/route.js`
+Purpose: Fetches the current status of a lease document from Documenso.
+Triggered by: The /confirmation page to check if the tenant has signed.
+
+Steps:
+- Takes a documentId and queries Documenso.
+- Returns the status (DRAFT, PENDING SIGNATURE, SIGNED, etc.).
+- Used for displaying lease progress on the dashboard.

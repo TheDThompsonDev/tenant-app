@@ -4,6 +4,8 @@ import path from 'path';
 import os from 'os';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
+const apiKey = process.env.DOCUMENSO_API_KEY;
+
 export async function POST(request) {
   try {
     const formData = await request.json();
@@ -95,89 +97,58 @@ export async function POST(request) {
 
 async function sendToDocumenso(documentTitle, tenantName, tenantEmail, fileBuffer) {
   const base64Pdf = fileBuffer.toString('base64');
-
-  if (!process.env.DOCUMENSO_API_KEY) {
-    return {
-      documentId: Date.now().toString(),
-      status: 'DRAFT',
-      recipients: [
-        {
-          email: tenantEmail,
-          name: tenantName,
-          status: 'PENDING',
-        },
-      ],
-    };
-  }
-
   const apiKey = process.env.DOCUMENSO_API_KEY;
+
   const requestBody = {
-    title: documentTitle,
-    recipients: [
-      {
-        email: tenantEmail,
-        name: tenantName,
-        role: 'SIGNER',
-      },
-    ],
-    fileName: `${documentTitle}.pdf`,
-    redirectUrl: null,
-    timezone: 'America/Chicago',
-    dateFormat: 'MM/DD/YYYY',
-    documentLength: base64Pdf.length
+      title: documentTitle,
+      recipients: [
+          {
+              email: tenantEmail,
+              name: tenantName,
+              role: "SIGNER",
+          }
+      ],
+      fileName: `${documentTitle}.pdf`,
+      timezone: "America/Chicago",
+      dateFormat: "MM/DD/YYYY",
+      documentLength: base64Pdf.length
   };
 
   try {
-    const response = await fetch('https://app.documenso.com/api/v1/documents', {
-      method: 'POST',
-      headers: {
-        'Authorization': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...requestBody,
-        document: base64Pdf,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Documenso API error: ${response.statusText}`);
-    }
-
-    const responseData = await response.json();
-    
-    if (responseData.uploadUrl) {
-      try {
-        const uploadResponse = await fetch(responseData.uploadUrl, {
-          method: 'PUT',
+      const response = await fetch('https://app.documenso.com/api/v1/documents', {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/pdf',
+              Authorization: apiKey,
+              "Content-Type": "application/json",
           },
-          body: fileBuffer
-        });
-        
-        if (!uploadResponse.ok) {
-          throw new Error(`Failed to upload PDF: ${uploadResponse.statusText}`);
-        }
-      } catch (uploadError) {
+          body: JSON.stringify({
+              ...requestBody,
+              document: base64Pdf,
+          }),
+      });
+
+      if (!response.ok) {
+          throw new Error(`Documenso API error: ${response.statusText}`);
       }
-    }
-    
-    return responseData;
+
+      const docResponse = await response.json();
+      console.log("✅ Documenso Document Created:", docResponse);
+
+      // ✅ New: Send document via email
+      if (docResponse.documentId) {
+          console.log(`🚀 Sending document ${docResponse.documentId} to ${tenantEmail}...`);
+          await fetch(`https://app.documenso.com/api/v1/documents/${docResponse.documentId}/send`, {
+              method: "POST",
+              headers: {
+                  Authorization: apiKey,
+                  "Content-Type": "application/json",
+              },
+          });
+      }
+
+      return docResponse;
   } catch (error) {
-    const mockResponse = {
-      documentId: Date.now().toString(),
-      status: 'ERROR',
-      error: error.message,
-      recipients: [
-        {
-          email: tenantEmail,
-          name: tenantName,
-          status: 'PENDING',
-        },
-      ],
-    };
-    
-    return mockResponse;
+      console.error("❌ Error sending to Documenso:", error);
+      throw error;
   }
 }
