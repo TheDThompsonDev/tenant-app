@@ -3,7 +3,6 @@
 import React, { useState, useRef } from "react";
 import { useTanstackForm } from "@/app/hooks/useTanstackForm";
 import { useStore } from "@tanstack/react-form";
-import { getCurrentUser } from "@/lib/appwrite";
 
 type Message = {
   id: string;
@@ -22,9 +21,13 @@ type ComposeMessageFormValues = {
 
 type ComposeMessageProps = {
   onMessageSent: (msg: Message) => void;
+  userId?: string;
 };
 
-export default function ComposeMessage({ onMessageSent }: ComposeMessageProps) {
+export default function ComposeMessage({
+  onMessageSent,
+  userId,
+}: ComposeMessageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formRef = useRef(
@@ -43,7 +46,7 @@ export default function ComposeMessage({ onMessageSent }: ComposeMessageProps) {
             createdAt: new Date().toISOString(),
             from: "tenant" as const,
             type: "general" as const,
-            user: (await getCurrentUser())?.data?.$id,
+            user: userId,
           };
 
           const res = await fetch("/api/notifications", {
