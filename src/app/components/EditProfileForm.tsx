@@ -32,6 +32,10 @@ export default function EditProfileForm() {
     },
   });
 
+  const handleChangePasswordClick = () => {
+    console.log('Change password clicked');
+  };
+
   // TODO: add logic for cancel
   const handleCancelClick = () => {
     console.log('Edit profile cancelled');
@@ -157,17 +161,26 @@ export default function EditProfileForm() {
           </form.Field>
         )}
 
-        <div className='flex flex-row gap-4 lg:gap-12 pt-8'>
+        <div className='flex flex-col'>
           <button
             type='button'
             className={btnClasses}
-            onClick={handleCancelClick}
+            onClick={handleChangePasswordClick}
           >
-            {LABELS.editProfile.formBtns.cancelBtn}
+            {LABELS.editProfile.formBtns.changePasswordBtn}
           </button>
-          <button type='submit' className={btnClasses}>
-            {LABELS.editProfile.formBtns.saveBtn}
-          </button>
+          <div className='flex flex-row gap-4 lg:gap-12 pt-8'>
+            <button
+              type='button'
+              className={btnClasses}
+              onClick={handleCancelClick}
+            >
+              {LABELS.editProfile.formBtns.cancelBtn}
+            </button>
+            <button type='submit' className={btnClasses}>
+              {LABELS.editProfile.formBtns.saveBtn}
+            </button>
+          </div>
         </div>
       </form>
     </div>
