@@ -74,6 +74,7 @@ const LABELS = {
   },
 
   GuestParkingPassForm: {
+    lastName: "Tenant Last Name",
     title: "Guest Parking Pass",
     vehicleMake: "Make",
     vehicleModel: "Model",
