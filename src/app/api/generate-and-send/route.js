@@ -143,6 +143,19 @@ async function sendToDocumenso(documentTitle, tenantName, tenantEmail, fileBuffe
   }
 
   const docResponse = await createResponse.json()
+  if (docResponse.uploadUrl) {
+    const uploadResponse = await fetch(docResponse.uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/pdf",
+      },
+      body: fileBuffer,
+    })
+
+    if (!uploadResponse.ok) {
+      throw new Error(`Failed to upload PDF to Documenso: ${uploadResponse.statusText}`)
+    }
+  }
 
   // Step 2: Send the document
   const sendResponse = await fetch(`https://app.documenso.com/api/v1/documents/${docResponse.documentId}/send`, {
