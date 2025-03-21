@@ -11,7 +11,6 @@ export default function LeasePage() {
       <Header />
 
       <div className="flex flex-col items-center justify-center flex-grow p-6">
-        <h2 className="text-xl font-semibold mb-4"></h2>
         <LeaseView />
         <ActionButtons />
       </div>
