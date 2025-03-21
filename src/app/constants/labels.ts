@@ -200,6 +200,7 @@ const LABELS = {
       passwordCheck: "Password required to update email.",
     },
     formBtns: {
+      changePasswordBtn: "Change Password",
       cancelBtn: "Cancel",
       saveBtn: "Save changes",
     },
