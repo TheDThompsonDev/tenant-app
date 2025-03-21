@@ -85,6 +85,20 @@ const LABELS = {
     parkingPassId: "Parking Pass ID",
     created: "Pass created for",
     expires: "Pass expires: ",
+    successMessage: "Your pass has been successfully created",
+    formDescription: "Enter your vehicle details to generate a parking pass",
+    passHeaderTitle: "Parking Pass ID",
+    validityMessage: "Valid for 24 hours",
+    qrPlaceholder: "QR Code Placeholder",
+    qrScanMessage: "Scan for verification",
+    savePassButton: "Save Pass",
+    validityFooter: "Pass will be valid for 24 hours from creation",
+    placeholders: {
+      make: "e.g. Nissan",
+      model: "e.g. Altima",
+      color: "e.g. Silver",
+      licensePlate: "e.g. 123-456"
+    }
   },
 
   messaging: {
@@ -239,8 +253,15 @@ const LABELS = {
   },
 
   packageList: {
-    title: "My Packages",
-    actionBtn: "View",
+    title: "Package Locker",
+    description: "View and manage your package deliveries",
+    readyForPickup: "Ready for pickup",
+    pickedUp: "Picked up",
+    yourPackages: "Your Packages",
+    helpTitle: "Need Help?",
+    helpDescription: "If you have any questions about your packages or need assistance, please contact the property management.",
+    contactButton: "Contact Leasing",
+    actionBtn: "View"
   },
   package: {
     dateTitle: "Date delivered: ",
