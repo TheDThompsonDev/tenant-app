@@ -1,4 +1,4 @@
-import { prisma } from "../../../utils/prisma";
+import { prisma } from "../../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -10,15 +10,7 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const { userId } = req.body;
-        const notification = await prisma.notification.findMany({
-          where: {
-            userId: userId,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
+        const notification = await prisma.notification.findMany();
         res.status(200).json(notification);
       } catch (error) {
         console.error("Error finding Notification:", error);
