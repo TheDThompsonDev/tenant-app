@@ -5,7 +5,7 @@ import { useTanstackForm } from "@/app/hooks/useTanstackForm";
 import LABELS from "@/app/constants/labels";
 import { useStore } from "@tanstack/react-form";
 import { getCurrentUser } from "@/lib/appwrite";
-import { Car, Calendar, Clock, CheckCircle, CreditCard } from "lucide-react";
+import { Car, Calendar, Clock, CheckCircle, CreditCard, User, Home } from "lucide-react";
 
 type GuestParkingFormValues = {
   make: string;
@@ -14,6 +14,8 @@ type GuestParkingFormValues = {
   licensePlate: string;
   parkingPassNumber: string;
   expirationDate: Date;
+  lastName: string;
+  apartmentNumber: string;
   user?: string;
 };
 
@@ -33,6 +35,8 @@ export default function GuestParkingPassForm() {
         color: "",
         licensePlate: "",
         parkingPassNumber: "",
+        lastName: "",
+        apartmentNumber: "",
         expirationDate: new Date(expireDate),
       },
       onSubmit: async (values) => {
@@ -72,6 +76,8 @@ export default function GuestParkingPassForm() {
     form.store,
     (state) => state.values.licensePlate
   );
+  const lastName = useStore(form.store, (state) => state.values.lastName);
+  const apartmentNumber = useStore(form.store, (state) => state.values.apartmentNumber);
 
   if (isSubmitted) {
     return (
@@ -175,6 +181,50 @@ export default function GuestParkingPassForm() {
               <legend className="sr-only">
                 {LABELS.GuestParkingPassForm.title}
               </legend>
+              
+              <div className="space-y-1">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                  {LABELS.GuestParkingPassForm.lastName}
+                </label>
+                <div className="relative">
+                  <input
+                    id="lastName"
+                    type="text"
+                    placeholder={LABELS.GuestParkingPassForm.placeholders.lastName}
+                    value={lastName}
+                    onChange={(e) => form.setFieldValue("lastName", e.target.value)}
+                    className="w-full p-3 pl-10 rounded-md border border-gray-300 
+                              bg-white text-black 
+                              focus:outline-none focus:ring-2 focus:ring-secondary-blue focus:border-transparent"
+                    required
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User size={18} className="text-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="apartmentNumber" className="block text-sm font-medium text-gray-700">
+                  {LABELS.GuestParkingPassForm.apartmentNumber}
+                </label>
+                <div className="relative">
+                  <input
+                    id="apartmentNumber"
+                    type="text"
+                    placeholder={LABELS.GuestParkingPassForm.placeholders.apartmentNumber}
+                    value={apartmentNumber}
+                    onChange={(e) => form.setFieldValue("apartmentNumber", e.target.value)}
+                    className="w-full p-3 pl-10 rounded-md border border-gray-300 
+                              bg-white text-black 
+                              focus:outline-none focus:ring-2 focus:ring-secondary-blue focus:border-transparent"
+                    required
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Home size={18} className="text-gray-400" />
+                  </div>
+                </div>
+              </div>
               
               <div className="space-y-1">
                 <label htmlFor="make" className="block text-sm font-medium text-gray-700">

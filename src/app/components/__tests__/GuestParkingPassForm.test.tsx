@@ -85,11 +85,12 @@ describe('GuestParkingPassForm', () => {
     render(<GuestParkingPassForm />);
     
     expect(screen.getByRole('heading', { name: LABELS.GuestParkingPassForm.title })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.vehicleMake)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.vehicleModel)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.vehicleColor)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.licensePlate)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.apartmentNumber)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.make)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.model)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.color)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.licensePlate)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.apartmentNumber)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.lastName)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: LABELS.GuestParkingPassForm.submitButton })).toBeInTheDocument();
   });
 
@@ -97,8 +98,8 @@ describe('GuestParkingPassForm', () => {
     const user = userEvent.setup();
     render(<GuestParkingPassForm />);
     
-    const makeInput = screen.getByPlaceholderText(LABELS.GuestParkingPassForm.vehicleMake);
-    const modelInput = screen.getByPlaceholderText(LABELS.GuestParkingPassForm.vehicleModel);
+    const makeInput = screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.make);
+    const modelInput = screen.getByPlaceholderText(LABELS.GuestParkingPassForm.placeholders.model);
 
     await user.type(makeInput, 'T');
     await user.type(modelInput, 'C');

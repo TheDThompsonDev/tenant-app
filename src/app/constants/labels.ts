@@ -1,5 +1,3 @@
-import PackageDetails from "../components/LockerDetails";
-
 const LABELS = {
   navigation: {
     messages: {
@@ -97,7 +95,9 @@ const LABELS = {
       make: "e.g. Nissan",
       model: "e.g. Altima",
       color: "e.g. Silver",
-      licensePlate: "e.g. 123-456"
+      licensePlate: "e.g. 123-456",
+      lastName: "e.g. Smith",
+      apartmentNumber: "e.g. 101"
     }
   },
 
@@ -108,6 +108,26 @@ const LABELS = {
     NewMessage: "New Message",
     errorLoading: "Could not load messages. Please try again later.",
     ariaLabel: "Compose new message",
+    noMessages: "No messages yet",
+    noMessagesDescription: "When you receive messages, they will appear here.",
+    composeButton: "Compose a message",
+    backToMessages: "Back to Messages",
+    noSearchResults: "No messages match your search",
+    searchPlaceholder: "Search messages...",
+    fromLabel: "From: ",
+    subjectLabel: "Subject",
+    messageLabel: "Message",
+    subjectPlaceholder: "Enter message subject",
+    messagePlaceholder: "Type your message here...",
+    allFieldsRequired: "All fields are required",
+    sendButton: "Send Message",
+    sending: "Sending...",
+    errorSending: "Failed to send message. Please try again.",
+    errorUserInfo: "Failed to get user information",
+    errorUserInformation: "User information not available",
+    noMessagesFound: "No messages found",
+    noSubject: "No Subject",
+    cancel: "Cancel",
   },
 
   contactUs: {
