@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import Link from 'next/link'
+import LABELS from '../constants/labels'
 
 export default function ConfirmationPage() {
     const searchParams = useSearchParams();
@@ -32,7 +33,7 @@ export default function ConfirmationPage() {
 
             fetchDocumentStatus();
         } else {
-            setLoading(false);
+        setLoading(false);
         }
     }, [documentId, searchParams]);
 
@@ -56,35 +57,35 @@ export default function ConfirmationPage() {
                     </svg>
 
                     <h1 className="mt-4 text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
-                        Lease Agreement Sent!
+                        {LABELS.confirmation.title}
                     </h1>
 
                     <p className="mt-3 text-xl text-gray-500">
-                        Your lease agreement has been successfully generated and sent to the tenant for digital signature.
+                        {LABELS.confirmation.description}
                     </p>
 
                     {loading ? (
                         <div className="mt-6">
-                            <p className="text-gray-500">Loading document status...</p>
+                            <p className="text-gray-500">{LABELS.confirmation.loading}</p>
                         </div>
                     ) : documentStatus ? (
                         <div className="mt-6 bg-white shadow overflow-hidden rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
                                 <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                                     <div>
-                                        <dt className="text-sm font-medium text-gray-500">Document ID</dt>
+                                        <dt className="text-sm font-medium text-gray-500">{LABELS.confirmation.labels.documentId}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">{documentStatus.id}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm font-medium text-gray-500">Status</dt>
+                                        <dt className="text-sm font-medium text-gray-500">{LABELS.confirmation.labels.status}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
                                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                                                {documentStatus.status || 'Pending Signature'}
+                                                {documentStatus.status || LABELS.confirmation.labels.pending}
                                             </span>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm font-medium text-gray-500">Sent To</dt>
+                                        <dt className="text-sm font-medium text-gray-500">{LABELS.confirmation.labels.sentTo}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">{documentStatus.recipients?.map(s => s.email).join(', ') || 'N/A'}</dd>
                                     </div>
                                     <div>
@@ -101,7 +102,7 @@ export default function ConfirmationPage() {
                     ) : (
                         <div className="mt-6">
                             <p className="text-yellow-600">
-                                Document information is not available. The tenant has been notified via email.
+                                {LABELS.confirmation.missingInfo}
                             </p>
                         </div>
                     )}
@@ -111,7 +112,7 @@ export default function ConfirmationPage() {
                             href="/generateLease"
                             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                            Create Another Lease
+                            {LABELS.confirmation.createAnother}
                         </Link>
                     </div>
                 </div>

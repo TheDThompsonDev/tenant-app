@@ -1,5 +1,3 @@
-import PackageDetails from "../components/LockerDetails";
-
 const LABELS = {
   navigation: {
     messages: {
@@ -332,7 +330,20 @@ const LABELS = {
       passwordRequired: " a password is required",
       passwordNoError: 'No "error" allowed in password',
     },
-  }
-};
-
+  },
+  confirmation: {
+    title: "Lease Agreement Sent!",
+    description: "Your lease agreement has been successfully generated and sent to the tenant for digital signature.",
+    loading: "Loading document status...",
+    missingInfo: "Document information is not available. The tenant has been notified via email.",
+    createAnother: "Create Another Lease",
+    labels: {
+      documentId: "Document ID",
+      status: "Status",
+      sentTo: "Sent To",
+      dateSent: "Date Sent",
+      pending: "Pending Signature",
+    },
+  },
+}
 export default LABELS;
