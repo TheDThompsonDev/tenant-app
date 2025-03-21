@@ -3,7 +3,7 @@
 import LABELS from "../constants/labels";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import GenerateLeaseForm from "../components/GenerateLeaseForm";
+import GenerateLeaseForm from "../components/lease/GenerateLeaseForm";
 
 export default function generateLease() {
   return (

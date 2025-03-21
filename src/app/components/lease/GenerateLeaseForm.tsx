@@ -1,6 +1,6 @@
 "use client"
 
-import LABELS from "../constants/labels";
+import LABELS from "../../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { useState } from "react"
@@ -223,9 +223,9 @@ export default function GenerateLeaseForm() {
               validators={{
                 onChange: ({ value }) =>
                   !value
-                    ? `${LABELS.generateLease.validateMessages.firstNameRequired}`
+                    ? `${LABELS.generateLease.validateMessages.landlordFirstNameRequired}`
                     : value.length < 3
-                    ? `${LABELS.generateLease.validateMessages.firstNameLength}`
+                    ? `${LABELS.generateLease.validateMessages.landlordLastNameLength}`
                     : undefined,
                 onChangeAsyncDebounceMs: 500,
                 onChangeAsync: async ({ value }) => {
@@ -240,7 +240,7 @@ export default function GenerateLeaseForm() {
                 return (
                   <div className="w-full">
                     <label htmlFor={field.landlordFirstName} className="p-1">
-                      {LABELS.generateLease.firstNameTitle}
+                      {LABELS.generateLease.landlordFirstName}
                     </label>
                     <input
                       className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
@@ -284,7 +284,7 @@ export default function GenerateLeaseForm() {
               children={(field) => (
                 <>
                   <label htmlFor={field.landlordName} className="p-1">
-                    {LABELS.generateLease.lastNameTitle}
+                    {LABELS.generateLease.landlordLastName}
                   </label>
                   <input
                     className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
