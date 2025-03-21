@@ -2,6 +2,7 @@ import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { registerUser } from "@/lib/appwrite";
+import { useRouter } from "next/navigation";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -20,6 +21,8 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export default function CreateTenantForm() {
+  const router = useRouter();
+
   const form = useForm({
     defaultValues: {
       firstName: `${LABELS.createTenant.placeholders.firstName}`,
@@ -38,6 +41,17 @@ export default function CreateTenantForm() {
         `${value.firstName} ${value.lastName}`
       );
       console.log("User created successfully:", newUser);
+
+      router.push(
+        `/success?firstName=${encodeURIComponent(
+          value.firstName
+        )}&lastName=${encodeURIComponent(
+          value.lastName
+        )}&email=${encodeURIComponent(
+          value.email
+        )}&apartmentNumber=${encodeURIComponent(value.apartmentNumber)}`
+      );
+
     },
   });
 
@@ -71,6 +85,7 @@ export default function CreateTenantForm() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
+          form.reset();
         }}
       >
         <div className="w-full">

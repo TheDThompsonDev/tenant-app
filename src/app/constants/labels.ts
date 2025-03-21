@@ -281,6 +281,10 @@ const LABELS = {
       loading: "...",
     },
   },
+  success: {
+    title:"Success! New Tenant Account Created",
+    back: "Back",
+  },
 };
 
 export default LABELS;
