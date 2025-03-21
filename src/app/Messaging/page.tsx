@@ -50,7 +50,13 @@ export default function MessagesPage() {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-        const res = await fetch("/api/messages");
+
+        const res = await fetch(`/api/notifications?userId=${user?.$id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!res.ok) {
           throw new Error("Failed to fetch messages");
@@ -126,7 +132,10 @@ export default function MessagesPage() {
           </header>
 
           {showCompose ? (
-            <ComposeMessage onMessageSent={handleMessageSent} />
+            <ComposeMessage
+              onMessageSent={handleMessageSent}
+              userId={user?.$id}
+            />
           ) : isLoading ? (
             <p className="text-center text-gray-500 my-8">
               {LABELS.messaging.loading}
