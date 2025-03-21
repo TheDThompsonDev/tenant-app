@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import LABELS from '@/app/constants/labels';
@@ -16,11 +16,15 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export default function EditProfileForm() {
+  const [isEmailChanged, setIsEmailChanged] = useState(false);
   // TODO: the default values should come from the logged in users data
+  const userName = 'Animal';
+  const userEmail = 'wildanimal@email.com';
+
   const form = useForm({
     defaultValues: {
-      name: 'Animal',
-      email: 'wildanimal@email.com',
+      name: userName,
+      email: userEmail,
       passwordCheck: '',
     },
     onSubmit: async ({ value }) => {
@@ -90,6 +94,11 @@ export default function EditProfileForm() {
             onChangeAsyncDebounceMs: 100,
             onChangeAsync: async ({ value }) => {
               await new Promise((resolve) => setTimeout(resolve, 500));
+              if (value !== userEmail) {
+                setIsEmailChanged(true);
+              } else {
+                setIsEmailChanged(false);
+              }
               return value.includes('error') && 'No "error" allowed in email';
             },
           }}
@@ -112,39 +121,41 @@ export default function EditProfileForm() {
           )}
         </form.Field>
 
-        <form.Field
-          name='passwordCheck'
-          validators={{
-            onChange: ({ value }) =>
-              !value ? 'Your password is required' : null,
-            onChangeAsyncDebounceMs: 100,
-            onChangeAsync: async ({ value }) => {
-              await new Promise((resolve) => setTimeout(resolve, 500));
-              return (
-                value.includes('error') &&
-                'No "error" allowed in password check'
-              );
-            },
-          }}
-        >
-          {(field) => (
-            <div className='flex flex-col items-center gap-2'>
-              <label htmlFor={field.name} className='text-white text-md'>
-                {LABELS.editProfile.formLabels.passwordCheck}
-              </label>
-              <input
-                className={inputClasses}
-                id={field.name}
-                type='password'
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-              <FieldInfo field={field} />
-            </div>
-          )}
-        </form.Field>
+        {isEmailChanged && (
+          <form.Field
+            name='passwordCheck'
+            validators={{
+              onChange: ({ value }) =>
+                !value ? 'Your password is required' : null,
+              onChangeAsyncDebounceMs: 100,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                return (
+                  value.includes('error') &&
+                  'No "error" allowed in password check'
+                );
+              },
+            }}
+          >
+            {(field) => (
+              <div className='flex flex-col items-center gap-2'>
+                <label htmlFor={field.name} className='text-white text-md'>
+                  {LABELS.editProfile.formLabels.passwordCheck}
+                </label>
+                <input
+                  className={inputClasses}
+                  id={field.name}
+                  type='password'
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </div>
+            )}
+          </form.Field>
+        )}
 
         <div className='flex flex-row gap-4 lg:gap-12 pt-8'>
           <button
