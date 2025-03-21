@@ -21,6 +21,7 @@ export default function EditProfileForm() {
     defaultValues: {
       name: 'Animal',
       email: 'wildanimal@email.com',
+      passwordCheck: '',
     },
     onSubmit: async ({ value }) => {
       console.log('Form submitted:', value);
@@ -101,6 +102,40 @@ export default function EditProfileForm() {
               <input
                 className={inputClasses}
                 id={field.name}
+                name={field.name}
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        </form.Field>
+
+        <form.Field
+          name='passwordCheck'
+          validators={{
+            onChange: ({ value }) =>
+              !value ? 'Your password is required' : null,
+            onChangeAsyncDebounceMs: 100,
+            onChangeAsync: async ({ value }) => {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              return (
+                value.includes('error') &&
+                'No "error" allowed in password check'
+              );
+            },
+          }}
+        >
+          {(field) => (
+            <div className='flex flex-col items-center gap-2'>
+              <label htmlFor={field.name} className='text-white text-md'>
+                {LABELS.editProfile.formLabels.passwordCheck}
+              </label>
+              <input
+                className={inputClasses}
+                id={field.name}
+                type='password'
                 name={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
