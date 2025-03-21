@@ -6,6 +6,8 @@ import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import { Pencil, ArrowLeft } from "lucide-react";
 import Footer from "../components/Footer";
+import { getCurrentUser } from "@/lib/appwrite";
+import { Models } from "appwrite";
 
 type Message = {
   id: string;
@@ -16,24 +18,52 @@ type Message = {
   type?: "package" | "management" | "lease" | "general";
 };
 
+type UserType = Models.User<Models.Preferences>;
+
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [showCompose, setShowCompose] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        if (response.success && response.data) {
+          setUser(response.data as UserType);
+        } else {
+          console.error("Failed to get user:", response.error);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setUserLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-        const res = await fetch("/api/notifications");
+        const res = await fetch("/api/messages");
 
         if (!res.ok) {
           throw new Error("Failed to fetch messages");
         }
 
         const data = await res.json();
-        setMessages(data);
+
+        const filteredMessages =
+          user?.name === "admin"
+            ? data.filter((msg: Message) => msg.from === "tenant")
+            : data.filter((msg: Message) => msg.from === "admin");
+
+        setMessages(filteredMessages);
         setError(null);
       } catch (err) {
         console.error("Error fetching messages:", err);
@@ -42,9 +72,10 @@ export default function MessagesPage() {
         setIsLoading(false);
       }
     }
-
-    fetchMessages();
-  }, []);
+    if (user) {
+      fetchMessages();
+    }
+  }, [user]);
 
   const handleComposeClick = () => {
     setShowCompose(true);

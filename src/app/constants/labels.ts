@@ -161,7 +161,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
