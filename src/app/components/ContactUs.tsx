@@ -5,12 +5,12 @@ import LABELS from "../constants/labels";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
-    <p className="text-red-400 text-sm font-thin ml-2">
+    <div className="h-4 text-red-400 text-sm font-thin ml-2">
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
         <em>{field.state.meta.errors.join(", ")}</em>
       ) : null}
       {field.state.meta.isValidating ? "Validating..." : null}
-    </p>
+    </div>
   );
 }
 
@@ -104,9 +104,11 @@ export default function ContactUs() {
             validators={{
               onChange: ({ value }) =>
                 !value
-                  ? "A phone number is required"
-                  : value.replace(/\D/g, "").length !== 10
-                  ? "Phone number must be 10 digits"
+                  ? 'A phone number is required'
+                  : /[a-zA-Z]/.test(value)
+                  ? 'Phone number cannot contain letters'
+                  : value.replace(/\D/g, '').length !== 10
+                  ? 'Phone number must be 10 digits'
                   : undefined,
               onChangeAsyncDebounceMs: 100,
               onChangeAsync: async ({ value }) => {
@@ -123,6 +125,7 @@ export default function ContactUs() {
                     className="border border-secondary-dark-gray rounded-md py-2 px-3 placeholder-black my-2 w-full font-bold focus:placeholder-transparent"
                     id={field.name}
                     name={field.name}
+                    type='tel'
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
