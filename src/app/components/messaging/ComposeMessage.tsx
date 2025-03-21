@@ -27,10 +27,7 @@ type ComposeMessageProps = {
   userId?: string;
 };
 
-export default function ComposeMessage({
-  onMessageSent,
-  userId,
-}: ComposeMessageProps) {
+export default function ComposeMessage({ onMessageSent }: ComposeMessageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +54,6 @@ export default function ComposeMessage({
             user: userResponse.data.$id,
             from: "tenant" as const,
             type: "general" as const,
-            user: userId,
           };
 
           const res = await fetch("/api/notifications", {
