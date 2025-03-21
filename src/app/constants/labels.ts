@@ -196,6 +196,7 @@ const LABELS = {
     formLabels: {
       name: "Name",
       email: "Email",
+      passwordCheck: "Password required to update email.",
     },
     formBtns: {
       cancelBtn: "Cancel",
