@@ -20,9 +20,6 @@ export default function PackageDetailsPage() {
 
   const id = params.id as string;
 
-  {
-    /*TODO: Fetch Package Details from database instead of hardcoded api */
-  }
   const packageData = packages.find((item) => item.id === id);
 
   if (!packageData)
@@ -75,7 +72,7 @@ export default function PackageDetailsPage() {
 
           <div className="flex flex-col justify-center items-center lg:m-auto w-full lg:w-1/2 p-4">
             <p className="text-black">{LABELS.PackageDetails.notify}</p>
-            <Link href="/Messaging">
+            <Link href="/messaging">
               <button className="bg-primary-green text-white p-4 rounded-md">
                 {LABELS.PackageDetails.messageBtn}
               </button>
