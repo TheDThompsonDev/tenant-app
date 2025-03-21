@@ -1,7 +1,7 @@
 const LABELS = {
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -11,7 +11,7 @@ const LABELS = {
       icon: "lockIcon",
     },
     packages: {
-      href: "/",
+      href: "/locker",
       text: "My Packages",
       icon: "packageIcon",
     },
@@ -98,7 +98,14 @@ const LABELS = {
       licensePlate: "e.g. 123-456",
       lastName: "e.g. Smith",
       apartmentNumber: "e.g. 101"
-    }
+    },
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    secureAccessMessage: "Secure access code",
+    vehicleDetails: "Vehicle Details",
+    parkingPassCode: "Parking Pass Code",
+    hoursAccess: "24h Access",
+    shareButton: "Share"
   },
 
   messaging: {
@@ -173,7 +180,7 @@ const LABELS = {
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -195,7 +202,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -249,6 +256,12 @@ const LABELS = {
     unit: "Unit #",
     button: "Make another key",
     emailBody: "Hello, here is your guest key code: {code}",
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    shareButton: "Share",
+    secureAccessMessage: "Secure access code",
+    hoursAccess: "24h Access",
+    emailSubject: "Guest Key Code"
   },
 
   doorlock: {
@@ -260,6 +273,7 @@ const LABELS = {
   PackageLocker: {
     numberTitle: "Locker: ",
     accessCodeTitle: "Digital Access Code: ",
+    digitLabel: "Access Code Digit"
   },
 
   PackageDetails: {
