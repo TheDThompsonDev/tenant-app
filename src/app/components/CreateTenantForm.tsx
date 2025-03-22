@@ -30,6 +30,11 @@ export default function CreateTenantForm() {
       email: "",
       apartmentNumber: "",
       password: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      apartmentNumber: "",
+      password: "",
     },
 
     onSubmit: async ({ value }) => {
@@ -105,7 +110,8 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.firstNameNoError}`
                 );
               },
-            }}>
+            }}
+          >
             {(field) => (
               <div className="w-full">
                 <label htmlFor={field.name} />
@@ -146,7 +152,8 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.lastNameNoError}`
                 );
               },
-            }}>
+            }}
+          >
             {(field) => (
               <>
                 <label htmlFor={field.name} />
@@ -188,7 +195,8 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.emailNoError}`
                 );
               },
-            }}>
+            }}
+          >
             {(field) => (
               <>
                 <label htmlFor={field.name} />
@@ -229,7 +237,8 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.apartmentNumberNoError}`
                 );
               },
-            }}>
+            }}
+          >
             {(field) => (
               <>
                 <label htmlFor={field.name} />
@@ -297,7 +306,8 @@ export default function CreateTenantForm() {
         </div>
 
         <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+        >
           {([canSubmit, isSubmitting]) => (
             <button
               type="submit"

@@ -82,9 +82,10 @@ model User {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   parkingPass     ParkingPass[]
-  notification    Notification[]
   smartDoorKey    SmartDoorKey[]
   packageLocker   PackageLocker[]
+  sender          Notification[]   @relation("Sender")
+  receiver        Notification[]   @relation("Receiver")
 }
 
 model Property {
@@ -154,8 +155,10 @@ model ParkingPass {
 
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
-  userId           String
-  user             User                 @relation(fields: [userId], references: [id])
+  senderId         String
+  sender           User                 @relation("Sender", fields: [senderId], references: [id])
+  receiverId       String
+  receiver         User                 @relation("Receiver", fields: [receiverId], references: [id])
   notificationType NotificationType     @default(NOISE_COMPLAINT)
   subject          String?
   message          String?
