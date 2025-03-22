@@ -1,4 +1,5 @@
 const LABELS = {
+  loading: "Loading...",
   navigation: {
     messages: {
       href: "/Messaging",
@@ -239,6 +240,8 @@ const LABELS = {
   packageList: {
     title: "My Packages",
     actionBtn: "View",
+    errorLoading: "Could not load packages. Please try again later.",
+    noPackages: "No packages found."
   },
   package: {
     dateTitle: "Date delivered: ",

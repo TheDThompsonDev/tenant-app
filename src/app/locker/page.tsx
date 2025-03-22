@@ -4,12 +4,68 @@ import { useRouter } from "next/navigation";
 import LABELS from "../constants/labels";
 import Header from "../components/Header";
 import PackageCard from "../components/PackageCard";
-
-import { packages } from "@/app/api/packages/route";
+import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
+
+type Package = {
+  id: string;
+  date: string;
+  time: string;
+  locker: string;
+  lockerCode: string;
+  status: string;
+  pickupDate: string;
+};
 
 export default function Home() {
   const router = useRouter();
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    async function fetchPackages() {
+      try {
+        const response = await fetch('/api/packages');
+        if (!response.ok) {
+          throw new Error('Failed to fetch packages');
+        }
+        const data = await response.json();
+        setPackages(data);
+      } catch (err) {
+        console.error('Error fetching packages:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPackages();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="bg-white min-h-screen flex justify-center items-center">
+          <p>{LABELS.loading}</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <div className="bg-white min-h-screen flex justify-center items-center">
+          <p className="text-red-500">{LABELS.packageList.errorLoading || "Error loading packages"}</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -19,10 +75,9 @@ export default function Home() {
           {LABELS.packageList.title}
         </h2>
 
-        {/* TODO: Fetch package list from the database instead of using hardcoded data*/}
         <div className=" flex items-center flex-col justify-center m-4">
-          {packages.map((item) => {
-            return (
+          {packages.length > 0 ? (
+            packages.map((item) => (
               <div
                 className="w-full md:w-1/2 m-4"
                 key={item.id}
@@ -36,8 +91,10 @@ export default function Home() {
                   pickupDate={item.pickupDate}
                 />
               </div>
-            );
-          })}
+            ))
+          ) : (
+            <p>{LABELS.packageList.noPackages || "No packages found"}</p>
+          )}
         </div>
       </div>
       <Footer />

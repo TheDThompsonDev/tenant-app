@@ -1,20 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link'
 import LABELS from '../constants/labels'
 
-export default function ConfirmationPage() {
+type DocumentStatus = {
+    id: string;
+    status: string;
+    recipients: Array<{ email: string; name: string }>;
+    createdAt: string;
+} | null;
+
+function ConfirmationContent() {
     const searchParams = useSearchParams();
-    const documentId = searchParams.get('id');
-    const [documentStatus, setDocumentStatus] = useState(null);
+    const documentId = searchParams?.get('id') || '';
+    const [documentStatus, setDocumentStatus] = useState<DocumentStatus>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (documentId) {
-            const tenantEmail = searchParams.get('email');
-            const tenantName = searchParams.get('name');
+            const tenantEmail = searchParams?.get('email') || '';
+            const tenantName = searchParams?.get('name') || '';
 
             const fetchDocumentStatus = async () => {
                 try {
@@ -33,7 +40,7 @@ export default function ConfirmationPage() {
 
             fetchDocumentStatus();
         } else {
-        setLoading(false);
+            setLoading(false);
         }
     }, [documentId, searchParams]);
 
@@ -118,5 +125,13 @@ export default function ConfirmationPage() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function ConfirmationPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading...</div>}>
+            <ConfirmationContent />
+        </Suspense>
     );
 }

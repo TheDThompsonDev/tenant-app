@@ -72,11 +72,9 @@ export default function GenerateLeaseForm() {
         }
 
         setSubmitMessage("Lease successfully generated and sent!")
-setTimeout(() => {
-  router.push(
-    `/confirmation?id=${data.documentId}&email=${encodeURIComponent(leaseData.tenantEmail)}&name=${encodeURIComponent(leaseData.tenantName)}`
-  )
-}, 300)
+        router.push(
+          `/confirmation?id=${data.documentId}&email=${encodeURIComponent(leaseData.tenantEmail)}&name=${encodeURIComponent(leaseData.tenantName)}`
+        )
       } catch (error) {
         console.error("Error:", error)
         setSubmitMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`)
