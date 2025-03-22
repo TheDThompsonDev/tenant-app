@@ -15,7 +15,13 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
   );
 }
 
-export default function EditProfileForm() {
+interface EditProfileFormProps {
+  displayChangePassword: () => void;
+}
+
+export default function EditProfileForm({
+  displayChangePassword,
+}: EditProfileFormProps) {
   const [isEmailChanged, setIsEmailChanged] = useState(false);
   // TODO: the default values should come from the logged in users data
   const userName = 'Animal';
@@ -33,7 +39,7 @@ export default function EditProfileForm() {
   });
 
   const handleChangePasswordClick = () => {
-    console.log('Change password clicked');
+    displayChangePassword();
   };
 
   // TODO: add logic for cancel
