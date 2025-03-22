@@ -2,6 +2,7 @@ import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { registerUser } from "@/lib/appwrite";
+import { useRouter } from "next/navigation";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -20,6 +21,8 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export default function CreateTenantForm() {
+  const router = useRouter();
+
   const form = useForm({
     defaultValues: {
       firstName: "",
@@ -30,14 +33,23 @@ export default function CreateTenantForm() {
     },
 
     onSubmit: async ({ value }) => {
-      const userId = await saveOnDB(value);
-      const newUser = registerUser(
-        value.email,
-        userId,
-        value.password,
-        `${value.firstName} ${value.lastName}`
-      );
-      console.log("User created successfully:", newUser);
+      try {
+        const userId = await saveOnDB(value);
+        const newUser = registerUser(
+          value.email,
+          userId,
+          value.password,
+          `${value.firstName} ${value.lastName}`
+        );
+        console.log("User created successfully:", newUser);
+        router.push(
+          `/success?lastName=${encodeURIComponent(
+            value.lastName
+          )}&apartmentNumber=${encodeURIComponent(value.apartmentNumber)}`
+        );
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
     },
   });
 
@@ -46,6 +58,7 @@ export default function CreateTenantForm() {
     lastName: string;
     email: string;
     apartmentNumber: string;
+    password: string;
   }) => {
     const response = await fetch("/api/users", {
       method: "POST",
@@ -56,6 +69,8 @@ export default function CreateTenantForm() {
     });
     const data = await response.json();
     console.log("User created successfully:", data);
+
+    sessionStorage.setItem("password", value.password);
     return data;
   };
 

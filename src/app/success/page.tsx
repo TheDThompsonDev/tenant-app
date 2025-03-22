@@ -4,18 +4,27 @@ import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
-  const firstName = searchParams ? searchParams.get("firstName") : null;
   const lastName = searchParams ? searchParams.get("lastName") : null;
-  const email = searchParams ? searchParams.get("email") : null;
   const apartmentNumber = searchParams
     ? searchParams.get("apartmentNumber")
     : null;
 
   const username =
     lastName && apartmentNumber ? `${lastName}${apartmentNumber}` : "";
+  
+  const [password, setPassword] = useState("");
+  
+  useEffect(() => {
+    const storedPassword = sessionStorage.getItem("password");
+    if (storedPassword) {
+      setPassword(storedPassword);
+      sessionStorage.removeItem("password"); 
+    }
+  }, []);
 
   return (
     <div>
@@ -38,7 +47,7 @@ export default function SuccessPage() {
           <p className="ml-5">
             <span className="font-semibold underline">Temporary Password:</span>{" "}
             <br />
-            Southerland101
+            {password}
           </p>
         </div>
       </div>
