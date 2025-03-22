@@ -1,8 +1,10 @@
 'use client';
+import { useState } from 'react';
 import Header from '@/app/components/Header';
 import Image from 'next/image';
 import LABELS from '@/app/constants/labels';
 import EditProfileForm from '@/app/components/EditProfileForm';
+import ChangePasswordForm from '@/app/components/ChangePasswordForm';
 import Footer from '../components/Footer';
 
 function ApartmentBg() {
@@ -32,13 +34,23 @@ function ProfileHeader() {
 }
 
 export default function EditProfilePage() {
+  const [isChangePasswordDisplayed, setIsChangePasswordDisplayed] =
+    useState(false);
+
+  const displayChangePassword = () => setIsChangePasswordDisplayed(true);
+  const displayEditProfile = () => setIsChangePasswordDisplayed(false);
+
   return (
     <main className='bg-white relative'>
       <Header />
       <ApartmentBg />
       <div className='bg-secondary-blue h-screen flex flex-col items-stretch lg:pt-6'>
         <ProfileHeader />
-        <EditProfileForm />
+        {isChangePasswordDisplayed ? (
+          <ChangePasswordForm displayEditProfile={displayEditProfile} />
+        ) : (
+          <EditProfileForm displayChangePassword={displayChangePassword} />
+        )}
       </div>
       <Footer />
     </main>
