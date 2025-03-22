@@ -100,6 +100,7 @@ export default function CreateTenantForm() {
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.firstName}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -141,6 +142,7 @@ export default function CreateTenantForm() {
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.lastName}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -183,6 +185,7 @@ export default function CreateTenantForm() {
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.email}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -224,6 +227,7 @@ export default function CreateTenantForm() {
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.apartmentNumber}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -264,11 +268,12 @@ export default function CreateTenantForm() {
                 <label htmlFor={field.name} />
                 <input
                   type="password"
-                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500"
+                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.password}
                   value={field.state.value}
-                  onFocus={() => {
+                  onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
                       field.handleChange("");
                     }
