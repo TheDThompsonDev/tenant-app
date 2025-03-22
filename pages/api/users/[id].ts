@@ -32,6 +32,7 @@ export default async function handler(
           phoneNumber,
           apartmentNumber,
           leaseId,
+          userRole,
         } = req.body;
 
         if (!id) {
@@ -48,6 +49,7 @@ export default async function handler(
             ...(phoneNumber && { phoneNumber }),
             ...(apartmentNumber && { apartmentNumber }),
             ...(leaseId && { leaseId }),
+            ...(userRole && { userRole }),
             updatedAt: new Date(),
           },
         });

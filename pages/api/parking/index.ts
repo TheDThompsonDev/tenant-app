@@ -21,7 +21,8 @@ export default async function handler(
     case "POST":
       try {
         const {
-          user,
+          lastName,
+          apartmentNumber,
           make,
           model,
           color,
@@ -30,18 +31,23 @@ export default async function handler(
           expirationDate,
         } = req.body;
 
-        const appwriteUser = await prisma.user.findUnique({
+        const findUser = await prisma.user.findFirst({
           where: {
-            appwriteId: user,
+            lastName: {
+              equals: lastName,
+              mode: "insensitive",
+            },
+            apartmentNumber: apartmentNumber,
           },
         });
 
-        if (!appwriteUser) {
+        if (!findUser) {
           return res.status(404).json({ error: "User not found" });
         }
 
         const requiredFields = [
-          "user",
+          "lastName",
+          "apartmentNumber",
           "make",
           "model",
           "color",
@@ -61,7 +67,7 @@ export default async function handler(
 
         const parkingPass = await prisma.parkingPass.create({
           data: {
-            userId: appwriteUser.id,
+            userId: findUser.id,
             make,
             model,
             color,

@@ -17,55 +17,58 @@
 
 ## Team Contributors To The Project
 
-<table>
-  <tr>
-    <td align="center" width="175">
+<table style="width: 100%; display: flex; flex-wrap: wrap; justify-content: center;">
+  <tr style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/casacava/">
-        <img src="https://github.com/user-attachments/assets/72674182-94f6-45bf-bbe6-7f8cef92338d" height="150" width="200" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/72674182-94f6-45bf-bbe6-7f8cef92338d" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Cass Cavazos</b></sub>
       </a>
     </td>
-    <td align="center" width="175">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/joeaguado/">
-        <img src="https://github.com/user-attachments/assets/ed822669-8b90-4d8e-bd15-82513aaffe3e" height="150" width="200" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/ed822669-8b90-4d8e-bd15-82513aaffe3e" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Joe Aguado</b></sub>
       </a>
     </td>
-    <td align="center" width="175">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/damianpad/">
-        <img src="https://github.com/user-attachments/assets/44d0ee64-babe-4c43-a252-79daac03058e" height="150" width="200" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/44d0ee64-babe-4c43-a252-79daac03058e" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Damian Padilla</b></sub>
       </a>
     </td>
-    <td align="center" width="175">
+    </tr>
+   <tr style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/tatibertazoli/">
-        <img src="https://github.com/user-attachments/assets/288e8740-1f5a-4e4d-a172-da2558ea7ac1" height="150" width="200" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/288e8740-1f5a-4e4d-a172-da2558ea7ac1" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Tatiana Bertazoli</b></sub>
       </a>
     </td>
-  </tr>
-  <tr>
-    <td align="center" width="175">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/andrew-sm1th/">
-        <img src="https://github.com/user-attachments/assets/bc9f85bd-06a2-49b9-a14f-6e37715f069d" height="150" width="150" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/bc9f85bd-06a2-49b9-a14f-6e37715f069d" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Andrew Smith</b></sub>
       </a>
     </td>
-    <td align="center" width="175">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/staci-southerland-649549a8/">
-        <img src="https://github.com/user-attachments/assets/9660d25b-1111-41e5-8a90-9f91ec928533" height="150" width="150" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/9660d25b-1111-41e5-8a90-9f91ec928533" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Staci Southerland</b></sub>
       </a>
     </td>
-    <td align="center" width="175">
+       </tr>
+   <tr style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
+    <td align="center" width="200" style="flex: 1; max-width: 200px; padding: 10px;">
       <a href="https://www.linkedin.com/in/dthompsondev/">
-        <img src="https://github.com/user-attachments/assets/8dc36ff7-8e09-4ea0-9ee1-e9bc3062745b" height="150" width="150" style="border-radius:50%;" /><br />
+        <img src="https://github.com/user-attachments/assets/8dc36ff7-8e09-4ea0-9ee1-e9bc3062745b" style="width: 100%; max-width: 150px; height: auto; border-radius: 50%;" /><br />
         <sub><b>Danny Thompson</b></sub>
         <br /><sub>(Tech Lead)</sub>
       </a>
     </td>
   </tr>
 </table>
+
 
 ## Jira/Git Workflow
 
@@ -146,3 +149,25 @@ These can be applied to background colors, text colors, and border colors using 
   This div has a primary green background.
 </div>
 ```
+
+#### What's the Difference Between Some of These API Routes?
+`/api/generate-and-send/route.js`
+
+This generates a lease and sends it to Documenso.
+It's triggered when admin fills out the lease form.
+
+Steps:
+- Collects lease details (landlord, tenant, address, rent, dates).
+- Generates a PDF using pdf-lib.
+- Sends the PDF to Documenso.
+- Triggers an email to the tenant (once sending is successful).
+- Redirects to /confirmation?id={documentId} after successful submission.
+
+`/api/document-status/route.js`
+Purpose: Fetches the current status of a lease document from Documenso.
+Triggered by: The /confirmation page to check if the tenant has signed.
+
+Steps:
+- Takes a documentId and queries Documenso.
+- Returns the status (DRAFT, PENDING SIGNATURE, SIGNED, etc.).
+- Used for displaying lease progress on the dashboard.

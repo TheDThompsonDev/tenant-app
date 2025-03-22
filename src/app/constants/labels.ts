@@ -1,9 +1,8 @@
-import PackageDetails from "../components/LockerDetails";
-
 const LABELS = {
+  loading: "Loading...",
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -13,7 +12,7 @@ const LABELS = {
       icon: "lockIcon",
     },
     packages: {
-      href: "/",
+      href: "/locker",
       text: "My Packages",
       icon: "packageIcon",
     },
@@ -74,6 +73,7 @@ const LABELS = {
   },
 
   GuestParkingPassForm: {
+    lastName: "Tenant Last Name",
     title: "Guest Parking Pass",
     vehicleMake: "Make",
     vehicleModel: "Model",
@@ -84,6 +84,29 @@ const LABELS = {
     parkingPassId: "Parking Pass ID",
     created: "Pass created for",
     expires: "Pass expires: ",
+    successMessage: "Your pass has been successfully created",
+    formDescription: "Enter your vehicle details to generate a parking pass",
+    passHeaderTitle: "Parking Pass ID",
+    validityMessage: "Valid for 24 hours",
+    qrPlaceholder: "QR Code Placeholder",
+    qrScanMessage: "Scan for verification",
+    savePassButton: "Save Pass",
+    validityFooter: "Pass will be valid for 24 hours from creation",
+    placeholders: {
+      make: "e.g. Nissan",
+      model: "e.g. Altima",
+      color: "e.g. Silver",
+      licensePlate: "e.g. 123-456",
+      lastName: "e.g. Smith",
+      apartmentNumber: "e.g. 101"
+    },
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    secureAccessMessage: "Secure access code",
+    vehicleDetails: "Vehicle Details",
+    parkingPassCode: "Parking Pass Code",
+    hoursAccess: "24h Access",
+    shareButton: "Share"
   },
 
   messaging: {
@@ -93,6 +116,26 @@ const LABELS = {
     NewMessage: "New Message",
     errorLoading: "Could not load messages. Please try again later.",
     ariaLabel: "Compose new message",
+    noMessages: "No messages yet",
+    noMessagesDescription: "When you receive messages, they will appear here.",
+    composeButton: "Compose a message",
+    backToMessages: "Back to Messages",
+    noSearchResults: "No messages match your search",
+    searchPlaceholder: "Search messages...",
+    fromLabel: "From: ",
+    subjectLabel: "Subject",
+    messageLabel: "Message",
+    subjectPlaceholder: "Enter message subject",
+    messagePlaceholder: "Type your message here...",
+    allFieldsRequired: "All fields are required",
+    sendButton: "Send Message",
+    sending: "Sending...",
+    errorSending: "Failed to send message. Please try again.",
+    errorUserInfo: "Failed to get user information",
+    errorUserInformation: "User information not available",
+    noMessagesFound: "No messages found",
+    noSubject: "No Subject",
+    cancel: "Cancel",
   },
 
   contactUs: {
@@ -138,7 +181,7 @@ const LABELS = {
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -160,7 +203,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -196,8 +239,10 @@ const LABELS = {
     formLabels: {
       name: "Name",
       email: "Email",
+      passwordCheck: "Password required to update email.",
     },
     formBtns: {
+      changePasswordBtn: "Change Password",
       cancelBtn: "Cancel",
       saveBtn: "Save changes",
     },
@@ -212,6 +257,12 @@ const LABELS = {
     unit: "Unit #",
     button: "Make another key",
     emailBody: "Hello, here is your guest key code: {code}",
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    shareButton: "Share",
+    secureAccessMessage: "Secure access code",
+    hoursAccess: "24h Access",
+    emailSubject: "Guest Key Code"
   },
 
   doorlock: {
@@ -223,6 +274,7 @@ const LABELS = {
   PackageLocker: {
     numberTitle: "Locker: ",
     accessCodeTitle: "Digital Access Code: ",
+    digitLabel: "Access Code Digit"
   },
 
   PackageDetails: {
@@ -237,8 +289,17 @@ const LABELS = {
   },
 
   packageList: {
-    title: "My Packages",
-    actionBtn: "View",
+    errorLoading: "Could not load packages. Please try again later.",
+    noPackages: "No packages found.",
+    title: "Package Locker",
+    description: "View and manage your package deliveries",
+    readyForPickup: "Ready for pickup",
+    pickedUp: "Picked up",
+    yourPackages: "Your Packages",
+    helpTitle: "Need Help?",
+    helpDescription: "If you have any questions about your packages or need assistance, please contact the property management.",
+    contactButton: "Contact Leasing",
+    actionBtn: "View"
   },
   package: {
     dateTitle: "Date delivered: ",
@@ -281,6 +342,69 @@ const LABELS = {
       loading: "...",
     },
   },
-};
-
+  generateLease: {
+    title: "Generate Lease",
+    noErrorTitle: "No error",
+    firstNameTitle: 'Tenant First Name',
+    lastNameTitle: 'Tenant Last Name',
+    phoneTitle: 'Tenant Phone',
+    tenantEmail: 'Tenant Email',
+    landlordFirstName: 'Landlord First Name',
+    landlordLastName: 'Landlord Last Name',
+    landlordEmail: 'Landlord Email',
+    securityDepositTitle: 'Security Deposit',
+    apartmentTitle: 'Apartment Number',
+    leaseStartTitle: 'Lease Start Date',
+    leaseEndTitle: 'Lease End Date',
+    monthlyRentTitle: 'Monthly Rent',
+    submitTitle: 'Generate New Lease',
+    validateMessages: {
+      firstNameRequired: "A first name is required",
+      firstNameLength: "First name must be at least 3 characters",
+      firstNameNoError: 'No "error" allowed in first name',
+      lastNameRequired: "A last name is required",
+      lastNameLength: "Last name must be at least 3 characters",
+      lastNameNoError: 'No "error" allowed in last name',
+      phoneRequired: 'A phone number is required',
+      phoneFormat: 'Invalid phone number',
+      phoneNoError: 'No "error" allowed in phone',
+      landlordFirstNameRequired: "A first name is required",
+      landlordFirstNameNoError: 'No "error" allowed in first name',
+      landlordLastNameRequired: "A last name is required",
+      landlordLastNameLength: "Last name must be at least 3 characters",
+      securityDepositRequired: 'Security deposit is required',
+      securityDepositNoError: 'No "error" allowed in Security Deposit',
+      leaseStartRequired: "Lease start date required",
+      leaseStartFormat: 'Invalid start date',
+      leaseEndDateRequired: 'Lease end date required',
+      leaseEndFormat: 'Invalid end date',
+      monthlyRentRequired: 'Monthly rent required',
+      monthlyRentFormat: 'Invalid monthly Rent',
+      tenantEmailRequired: "An email is required",
+      tenantemailFormat: "Email must contain '@'",
+      landlordEmailRequired: "An email is required",
+      landlordEmailFormat: "Email must contain '@'",
+      emailNoError: 'No "error" allowed in email',
+      apartmentNumRequired: "An apartment number is required",
+      apartmentNumLength: "Apartment number must be longer than 2 characters",
+      apartmentNumberNoError: 'No "error" allowed in apartment number',
+      passwordRequired: " a password is required",
+      passwordNoError: 'No "error" allowed in password',
+    },
+  },
+  confirmation: {
+    title: "Lease Agreement Sent!",
+    description: "Your lease agreement has been successfully generated and sent to the tenant for digital signature.",
+    loading: "Loading document status...",
+    missingInfo: "Document information is not available. The tenant has been notified via email.",
+    createAnother: "Create Another Lease",
+    labels: {
+      documentId: "Document ID",
+      status: "Status",
+      sentTo: "Sent To",
+      dateSent: "Date Sent",
+      pending: "Pending Signature",
+    },
+  },
+}
 export default LABELS;

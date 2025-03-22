@@ -14,7 +14,7 @@ export default async function handler(
         res.status(200).json(contactUs);
       } catch (error) {
         console.error("Error finding contact Us list:", error);
-        res.status(500).json({ error: "failed to fecth contact us list" });
+        res.status(500).json({ error: "failed to fetch contact us list" });
       }
       break;
 

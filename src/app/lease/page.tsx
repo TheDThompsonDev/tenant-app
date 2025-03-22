@@ -1,9 +1,9 @@
 "use client"
 
-import LeaseView from "../components/lease/LeaseView"
 import ActionButtons from "../components/lease/ActionButtons"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
+import GenerateLeaseForm from "../components/lease/GenerateLeaseForm"
 
 export default function LeasePage() {
   return (
@@ -11,8 +11,7 @@ export default function LeasePage() {
       <Header />
 
       <div className="flex flex-col items-center justify-center flex-grow p-6">
-        <h2 className="text-xl font-semibold mb-4">Lease Management</h2>
-        <LeaseView />
+        <GenerateLeaseForm />
         <ActionButtons />
       </div>
       <Footer />
