@@ -15,8 +15,9 @@ type Message = {
   body: string;
   createdAt: string;
   from: "tenant" | "admin";
-  type?: "package" | "management" | "lease" | "general";
+  type?: "package" | "management" | "lease" | "general" | "noise";
   user?: string;
+  apartmentNumber?: string;
 };
 
 type UserType = Models.User<Models.Preferences>;
@@ -31,6 +32,7 @@ type NotificationData = {
   status: string;
   priority: string;
   updatedAt: string;
+  apartmentNumber?: string;
 };
 
 export default function MessagesPage() {
@@ -39,6 +41,7 @@ export default function MessagesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,6 +49,10 @@ export default function MessagesPage() {
         const response = await getCurrentUser();
         if (response.success && response.data) {
           setUser(response.data as UserType);
+          const userEmail = response.data.email || "";
+          const isUserAdmin = userEmail.includes("admin") || 
+                            (response.data.prefs && response.data.prefs.role === "admin");
+          setIsAdmin(isUserAdmin);
         } else {
           console.error("Failed to get user:", response.error);
         }
@@ -89,14 +96,33 @@ export default function MessagesPage() {
         console.log("Fetched notifications:", data);
 
         const transformedMessages = data.map(
-          (notification: NotificationData) => ({
-            id: notification.id,
-            subject: notification.subject || LABELS.messaging.noSubject,
-            body: notification.message || "",
-            createdAt: notification.createdAt,
-            from: "admin",
-            type: notification.notificationType?.toLowerCase() || "general",
-          })
+          (notification: NotificationData) => {
+            const subject = notification.subject || LABELS.messaging.noSubject;
+            const body = notification.message || "";
+            const combinedText = (subject + " " + body).toLowerCase();
+
+            let type = notification.notificationType?.toLowerCase() || "general";
+            
+            if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
+              type = "noise";
+            } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
+              type = "package";
+            } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
+              type = "lease";
+            } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
+              type = "management";
+            }
+            
+            return {
+              id: notification.id,
+              subject: subject,
+              body: body,
+              createdAt: notification.createdAt,
+              from: "admin",
+              type: type,
+              apartmentNumber: notification.apartmentNumber,
+            };
+          }
         );
 
         setMessages(transformedMessages);
@@ -180,6 +206,7 @@ export default function MessagesPage() {
                           setMessages((prev) => [msg, ...prev]);
                           setShowCompose(false);
                         }}
+                        isAdmin={isAdmin}
                       />
                     </div>
                   )}
