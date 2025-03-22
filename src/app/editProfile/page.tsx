@@ -31,7 +31,7 @@ function ProfileHeader() {
   );
 }
 
-export default function Home() {
+export default function EditProfilePage() {
   return (
     <main className='bg-white relative'>
       <Header />
