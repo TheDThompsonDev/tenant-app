@@ -248,6 +248,17 @@ const LABELS = {
     },
   },
 
+  changePassword: {
+    formLabels: {
+      currPassword: 'Current Password',
+      newPassword: 'New Password',
+    },
+    formBtns: {
+      cancelBtn: 'Cancel',
+      submitBtn: 'Submit',
+    }
+  },
+
   passcode: {
     searchParams: "Loading...",
     title: "New Key Details",
