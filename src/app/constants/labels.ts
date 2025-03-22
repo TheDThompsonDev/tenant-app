@@ -1,4 +1,5 @@
 const LABELS = {
+  loading: "Loading...",
   navigation: {
     messages: {
       href: "/messaging",
@@ -288,6 +289,8 @@ const LABELS = {
   },
 
   packageList: {
+    errorLoading: "Could not load packages. Please try again later.",
+    noPackages: "No packages found.",
     title: "Package Locker",
     description: "View and manage your package deliveries",
     readyForPickup: "Ready for pickup",
@@ -342,9 +345,13 @@ const LABELS = {
   generateLease: {
     title: "Generate Lease",
     noErrorTitle: "No error",
-    firstNameTitle: 'First Name',
-    lastNameTitle: 'Last Name',
-    phoneTitle: 'Phone',
+    firstNameTitle: 'Tenant First Name',
+    lastNameTitle: 'Tenant Last Name',
+    phoneTitle: 'Tenant Phone',
+    tenantEmail: 'Tenant Email',
+    landlordFirstName: 'Landlord First Name',
+    landlordLastName: 'Landlord Last Name',
+    landlordEmail: 'Landlord Email',
     securityDepositTitle: 'Security Deposit',
     apartmentTitle: 'Apartment Number',
     leaseStartTitle: 'Lease Start Date',
@@ -361,6 +368,10 @@ const LABELS = {
       phoneRequired: 'A phone number is required',
       phoneFormat: 'Invalid phone number',
       phoneNoError: 'No "error" allowed in phone',
+      landlordFirstNameRequired: "A first name is required",
+      landlordFirstNameNoError: 'No "error" allowed in first name',
+      landlordLastNameRequired: "A last name is required",
+      landlordLastNameLength: "Last name must be at least 3 characters",
       securityDepositRequired: 'Security deposit is required',
       securityDepositNoError: 'No "error" allowed in Security Deposit',
       leaseStartRequired: "Lease start date required",
@@ -369,8 +380,10 @@ const LABELS = {
       leaseEndFormat: 'Invalid end date',
       monthlyRentRequired: 'Monthly rent required',
       monthlyRentFormat: 'Invalid monthly Rent',
-      emailRequired: "An email is required",
-      emailFormat: "Email must contain '@'",
+      tenantEmailRequired: "An email is required",
+      tenantemailFormat: "Email must contain '@'",
+      landlordEmailRequired: "An email is required",
+      landlordEmailFormat: "Email must contain '@'",
       emailNoError: 'No "error" allowed in email',
       apartmentNumRequired: "An apartment number is required",
       apartmentNumLength: "Apartment number must be longer than 2 characters",
@@ -378,7 +391,20 @@ const LABELS = {
       passwordRequired: " a password is required",
       passwordNoError: 'No "error" allowed in password',
     },
-  }
-};
-
+  },
+  confirmation: {
+    title: "Lease Agreement Sent!",
+    description: "Your lease agreement has been successfully generated and sent to the tenant for digital signature.",
+    loading: "Loading document status...",
+    missingInfo: "Document information is not available. The tenant has been notified via email.",
+    createAnother: "Create Another Lease",
+    labels: {
+      documentId: "Document ID",
+      status: "Status",
+      sentTo: "Sent To",
+      dateSent: "Date Sent",
+      pending: "Pending Signature",
+    },
+  },
+}
 export default LABELS;

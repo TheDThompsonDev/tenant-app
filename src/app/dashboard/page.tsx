@@ -3,13 +3,12 @@
 import Header from "@/app/components/Header";
 import Image from "next/image";
 import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { Pencil, LucideIcon } from "lucide-react";
 import LABELS from "../constants/labels";
 import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
 import { useEffect, useState } from "react";
-import { text } from "stream/consumers";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -38,7 +37,7 @@ const Dashboard = () => {
 
   const renderIcon = (iconName: string) => {
     if (!iconName || !ICON_MAP[iconName]) return null;
-    const IconComponent = ICON_MAP[iconName];
+    const IconComponent = ICON_MAP[iconName] as LucideIcon;
     return <IconComponent size={36} color='white' />;
   };
 
@@ -67,7 +66,7 @@ const Dashboard = () => {
     const userName = user ? user.name : "Loading...";
     const userEmail = user ? user.email : "Loading...";
     const textColor = user.name === 'admin' ? 'text-white lg:text-secondary-blue' : 'text-white'
-const paddingBottom = user.name === 'admin' ? '' : 'p-10'
+    const paddingBottom = user.name === 'admin' ? '' : 'p-10'
     return (
       <div className={`${textColor} mt-14 ${paddingBottom} flex flex-col items-center lg:items-start relative lg:mt-0 lg:px-4 text-white`}>
         <Image
@@ -222,19 +221,22 @@ const paddingBottom = user.name === 'admin' ? '' : 'p-10'
     )
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-
   return (
     <>
-        {user?.name === "admin" ? <AdminDashboard user={user} /> : <TenantDashboard user={user} />}
+        {loading ? (
+          <div className="flex items-center justify-center h-screen">
+            <p>Loading...</p>
+          </div>
+        ) : user ? (
+          user.name === "admin" ? <AdminDashboard user={user} /> : <TenantDashboard user={user} />
+        ) : (
+          <div className="flex items-center justify-center h-screen">
+            <p>User not found</p>
+          </div>
+        )}
     </>
   );
+
 };
 
 export default Dashboard;
