@@ -1,10 +1,7 @@
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   switch (method) {
@@ -13,42 +10,39 @@ export default async function handler(
         const lease = await prisma.lease.findMany();
         res.status(200).json(lease);
       } catch (error) {
-        console.error("Error finding lease:", error);
-        res.status(500).json({ error: "failed to fetch lease" });
+        console.error("Error fetching leases:", error);
+        res.status(500).json({ error: "Failed to fetch leases" });
       }
       break;
 
-      //case "POST":
+    case "POST":
       try {
-        const { fullName, email, phoneNumber, subject, message } = req.body;
+        const { tenantName, leaseStartDate, leaseEndDate, propertyAddress, rentAmount } = req.body;
 
-        const requiredFields = ["fullName", "phoneNumber", "email"];
-        const missingFields = requiredFields.filter(
-          (field) => !req.body[field]
-        );
+        // Validate required fields
+        const requiredFields = ["tenantName", "leaseStartDate", "leaseEndDate", "propertyAddress", "rentAmount"];
+        const missingFields = requiredFields.filter((field) => !req.body[field]);
 
         if (missingFields.length > 0) {
-          return res
-            .status(400)
-            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
+          return res.status(400).json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
-        const contactUs = await prisma.contactUs.create({
+        // Create new lease record
+        const newLease = await prisma.lease.create({
           data: {
-            fullName,
-            email,
-            phoneNumber,
-            subject,
-            message,
+            tenantName,
+            leaseStartDate: new Date(leaseStartDate),
+            leaseEndDate: new Date(leaseEndDate),
+            propertyAddress,
+            rentAmount: parseFloat(rentAmount),
             createdAt: new Date(),
           },
         });
-        res.status(201).json(contactUs);
+
+        res.status(201).json(newLease);
       } catch (error) {
-        console.error("Error creating contact info:", error);
-        res.status(500).json({
-          error: "failed to create contact info",
-        });
+        console.error("Error creating lease:", error);
+        res.status(500).json({ error: "Failed to create lease" });
       }
       break;
 
