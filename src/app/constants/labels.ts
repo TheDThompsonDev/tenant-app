@@ -98,7 +98,7 @@ const LABELS = {
       color: "e.g. Silver",
       licensePlate: "e.g. 123-456",
       lastName: "e.g. Smith",
-      apartmentNumber: "e.g. 101"
+      apartmentNumber: "e.g. 101",
     },
     copyCodeButton: "Copy Code",
     copiedMessage: "Copied!",
@@ -106,7 +106,7 @@ const LABELS = {
     vehicleDetails: "Vehicle Details",
     parkingPassCode: "Parking Pass Code",
     hoursAccess: "24h Access",
-    shareButton: "Share"
+    shareButton: "Share",
   },
 
   messaging: {
@@ -191,7 +191,7 @@ const LABELS = {
       icon: "packagesIcon",
     },
     reportProblem: {
-      href: "/",
+      href: "/api/noise",
       text: "Report a Noise Complaint",
       icon: "problemIcon",
     },
@@ -262,7 +262,7 @@ const LABELS = {
     shareButton: "Share",
     secureAccessMessage: "Secure access code",
     hoursAccess: "24h Access",
-    emailSubject: "Guest Key Code"
+    emailSubject: "Guest Key Code",
   },
 
   doorlock: {
@@ -274,7 +274,7 @@ const LABELS = {
   PackageLocker: {
     numberTitle: "Locker: ",
     accessCodeTitle: "Digital Access Code: ",
-    digitLabel: "Access Code Digit"
+    digitLabel: "Access Code Digit",
   },
 
   PackageDetails: {
@@ -297,9 +297,10 @@ const LABELS = {
     pickedUp: "Picked up",
     yourPackages: "Your Packages",
     helpTitle: "Need Help?",
-    helpDescription: "If you have any questions about your packages or need assistance, please contact the property management.",
+    helpDescription:
+      "If you have any questions about your packages or need assistance, please contact the property management.",
     contactButton: "Contact Leasing",
-    actionBtn: "View"
+    actionBtn: "View",
   },
   package: {
     dateTitle: "Date delivered: ",
@@ -345,23 +346,23 @@ const LABELS = {
   generateLease: {
     title: "Generate Lease",
     noErrorTitle: "No error",
-    firstNameTitle: 'Tenant First Name',
-    lastNameTitle: 'Tenant Last Name',
-    phoneTitle: 'Tenant Phone',
-    tenantEmail: 'Tenant Email',
-    emailTitle: 'Tenant Email',
-    landlordFirstName: 'Landlord First Name',
-    landlordFirstNameTitle: 'Landlord First Name',
-    landlordLastName: 'Landlord Last Name',
-    landlordLastNameTitle: 'Landlord Last Name',
-    landlordEmail: 'Landlord Email',
-    landlordEmailTitle: 'Landlord Email',
-    securityDepositTitle: 'Security Deposit',
-    apartmentTitle: 'Apartment Number',
-    leaseStartTitle: 'Lease Start Date',
-    leaseEndTitle: 'Lease End Date',
-    monthlyRentTitle: 'Monthly Rent',
-    submitTitle: 'Generate New Lease',
+    firstNameTitle: "Tenant First Name",
+    lastNameTitle: "Tenant Last Name",
+    phoneTitle: "Tenant Phone",
+    tenantEmail: "Tenant Email",
+    emailTitle: "Tenant Email",
+    landlordFirstName: "Landlord First Name",
+    landlordFirstNameTitle: "Landlord First Name",
+    landlordLastName: "Landlord Last Name",
+    landlordLastNameTitle: "Landlord Last Name",
+    landlordEmail: "Landlord Email",
+    landlordEmailTitle: "Landlord Email",
+    securityDepositTitle: "Security Deposit",
+    apartmentTitle: "Apartment Number",
+    leaseStartTitle: "Lease Start Date",
+    leaseEndTitle: "Lease End Date",
+    monthlyRentTitle: "Monthly Rent",
+    submitTitle: "Generate New Lease",
     validateMessages: {
       firstNameRequired: "A first name is required",
       firstNameLength: "First name must be at least 3 characters",
@@ -369,24 +370,24 @@ const LABELS = {
       lastNameRequired: "A last name is required",
       lastNameLength: "Last name must be at least 3 characters",
       lastNameNoError: 'No "error" allowed in last name',
-      phoneRequired: 'A phone number is required',
-      phoneFormat: 'Invalid phone number',
+      phoneRequired: "A phone number is required",
+      phoneFormat: "Invalid phone number",
       phoneNoError: 'No "error" allowed in phone',
       landlordFirstNameRequired: "A first name is required",
       landlordFirstNameNoError: 'No "error" allowed in first name',
       landlordLastNameRequired: "A last name is required",
       landlordLastNameLength: "Last name must be at least 3 characters",
-      securityDepositRequired: 'Security deposit is required',
+      securityDepositRequired: "Security deposit is required",
       securityDepositNoError: 'No "error" allowed in Security Deposit',
-      securityDepositInvalid: 'Security deposit must be a number',
+      securityDepositInvalid: "Security deposit must be a number",
       leaseStartRequired: "Lease start date required",
-      leaseStartFormat: 'Invalid start date',
-      leaseEndDateRequired: 'Lease end date required',
-      leaseEndFormat: 'Invalid end date',
-      leaseEndDateInvalid: 'Invalid lease end date',
-      monthlyRentRequired: 'Monthly rent required',
-      monthlyRentFormat: 'Invalid monthly Rent',
-      monthlyRentInvalid: 'Monthly rent must be a number',
+      leaseStartFormat: "Invalid start date",
+      leaseEndDateRequired: "Lease end date required",
+      leaseEndFormat: "Invalid end date",
+      leaseEndDateInvalid: "Invalid lease end date",
+      monthlyRentRequired: "Monthly rent required",
+      monthlyRentFormat: "Invalid monthly Rent",
+      monthlyRentInvalid: "Monthly rent must be a number",
       tenantEmailRequired: "An email is required",
       tenantemailFormat: "Email must contain '@'",
       tenantEmailInvalid: "Invalid email format",
@@ -403,9 +404,11 @@ const LABELS = {
   },
   confirmation: {
     title: "Lease Agreement Sent!",
-    description: "Your lease agreement has been successfully generated and sent to the tenant for digital signature.",
+    description:
+      "Your lease agreement has been successfully generated and sent to the tenant for digital signature.",
     loading: "Loading document status...",
-    missingInfo: "Document information is not available. The tenant has been notified via email.",
+    missingInfo:
+      "Document information is not available. The tenant has been notified via email.",
     createAnother: "Create Another Lease",
     labels: {
       documentId: "Document ID",
@@ -415,5 +418,5 @@ const LABELS = {
       pending: "Pending Signature",
     },
   },
-}
+};
 export default LABELS;

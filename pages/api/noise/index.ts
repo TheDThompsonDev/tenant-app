@@ -8,38 +8,47 @@ export default async function handler(
   const { method } = req;
 
   switch (method) {
-    case "GET":
-      try {
-        const notification = await prisma.notification.findMany();
-        const noiseComplains = notification.filter(
-          (notification) => notification.notificationType === "NOISE_COMPLAINT"
-        );
-        res.status(200).json(noiseComplains);
-      } catch (error) {
-        console.error("Error Noise Complaint:", error);
-        res.status(500).json({ error: "failed to fecth Notification" });
-      }
-      break;
-
     case "POST":
       try {
         const { user } = req.body;
 
-        const appwriteUser = await prisma.user.findUnique({
+        const findUser = await prisma.user.findFirst({
           where: {
-            appwriteId: user,
+            OR: [{ id: user }, { appwriteId: user }],
           },
         });
 
-        if (!appwriteUser) {
+        if (!findUser) {
           return res.status(404).json({ error: "User not found" });
+        }
+
+        const requiredFields = ["user", "subject", "message"];
+        const missingFields = requiredFields.filter(
+          (field) => !req.body[field]
+        );
+
+        if (missingFields.length > 0) {
+          return res
+            .status(400)
+            .json({ error: `Missing fields: ${missingFields.join(", ")}` });
+        }
+
+        const adminUser = await prisma.user.findFirst({
+          where: {
+            userRole: "ADMIN",
+          },
+        });
+
+        if (!adminUser) {
+          return res.status(404).json({ error: "Admin user not found" });
         }
 
         const notification = await prisma.notification.create({
           data: {
-            userId: appwriteUser.id,
-            subject: "Noise Complaint",
-            message: "Noise Complaint",
+            senderId: findUser.id,
+            subject: "Noise complaint",
+            message: "Noise complaint",
+            receiverId: adminUser?.id,
             notificationType: "NOISE_COMPLAINT",
             createdAt: new Date(),
           },
@@ -47,12 +56,14 @@ export default async function handler(
         res.status(201).json(notification);
       } catch (error) {
         console.error("Error creating notification:", error);
-        res.status(500).json({ error: "Failed to create notification" });
+        res.status(500).json({
+          error: "failed to create notification",
+        });
       }
       break;
 
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
+      res.setHeader("Allow", ["POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
