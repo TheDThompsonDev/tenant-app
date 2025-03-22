@@ -14,7 +14,13 @@ const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
   );
 };
 
-const ChangePasswordForm = () => {
+interface ChangePasswordFormProps {
+  displayEditProfile: () => void;
+}
+
+const ChangePasswordForm = ({
+  displayEditProfile,
+}: ChangePasswordFormProps) => {
   const form = useForm({
     defaultValues: {
       currPassword: '',
@@ -24,6 +30,10 @@ const ChangePasswordForm = () => {
       console.log('Form submitted:', value);
     },
   });
+
+  const handleCancelClick = () => {
+    displayEditProfile();
+  };
 
   const labelClasses = 'text-white text-xl';
   const inputClasses =
@@ -107,9 +117,18 @@ const ChangePasswordForm = () => {
           )}
         </form.Field>
 
-        <button type='submit' className={btnClasses}>
-          {LABELS.changePassword.formBtns.submitBtn}
-        </button>
+        <div className='flex flex-row gap-4 lg:gap-12 pt-8'>
+          <button
+            type='button'
+            className={btnClasses}
+            onClick={handleCancelClick}
+          >
+            {LABELS.editProfile.formBtns.cancelBtn}
+          </button>
+          <button type='submit' className={btnClasses}>
+            {LABELS.changePassword.formBtns.submitBtn}
+          </button>
+        </div>
       </form>
     </div>
   );
