@@ -28,6 +28,10 @@ export default async function handler(
             orderBy: {
               createdAt: "desc",
             },
+            include: {
+              sender: true,
+              receiver: true,
+            },
           });
           res.status(200).json(userNotifications);
         } else {
