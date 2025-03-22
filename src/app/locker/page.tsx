@@ -5,8 +5,7 @@ import LABELS from "../constants/labels";
 import Header from "../components/Header";
 import PackageCard from "../components/PackageCard";
 import { useEffect, useState } from "react";
-import { Package } from "lucide-react";
-import { packages } from "@/app/api/packages/route";
+import { Package as PackageIcon } from "lucide-react";
 import Footer from "../components/Footer";
 
 type Package = {
@@ -76,15 +75,6 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="bg-white min-h-screen ">
-        <h2 className="text-black text-3xl text-center font-bold p-4">
-          {LABELS.packageList.title}
-        </h2>
-
-        <div className=" flex items-center flex-col justify-center m-4">
-          {packages.length > 0 ? (
-            packages.map((item) => (
-      
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-sm mb-8 overflow-hidden">
           <div className="bg-gradient-to-r from-secondary-blue to-primary-green p-6 md:p-8">
@@ -109,31 +99,30 @@ export default function Home() {
         
         <div className="mb-6">
           <div className="flex items-center mb-4">
-            <Package className="text-primary-green mr-2" size={24} />
+            <PackageIcon className="text-primary-green mr-2" size={24} />
             <h2 className="text-xl font-semibold text-gray-800">{LABELS.packageList.yourPackages}</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packages.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => router.push(`/locker/${item.id}`)}
-                className="cursor-pointer transform transition-transform hover:scale-[1.02] focus:outline-none"
-              >
-                <PackageCard
-                  id={item.id}
-                  date={item.date}
-                  time={item.time}
-                  status={item.status}
-                  pickupDate={item.pickupDate}
-                />
-              </div>
-            ))
-          ) : (
-            <p>{LABELS.packageList.noPackages || "No packages found"}</p>
-          )}
-
-            ))}
+            {packages.length > 0 ? (
+              packages.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => router.push(`/locker/${item.id}`)}
+                  className="cursor-pointer transform transition-transform hover:scale-[1.02] focus:outline-none"
+                >
+                  <PackageCard
+                    id={item.id}
+                    date={item.date}
+                    time={item.time}
+                    status={item.status}
+                    pickupDate={item.pickupDate}
+                  />
+                </div>
+              ))
+            ) : (
+              <p>{LABELS.packageList.noPackages || "No packages found"}</p>
+            )}
           </div>
         </div>
         
