@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import LABELS from '@/app/constants/labels';
+import { useRouter } from 'next/navigation';
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -38,13 +39,14 @@ export default function EditProfileForm({
     },
   });
 
+  const router = useRouter();
+
   const handleChangePasswordClick = () => {
     displayChangePassword();
   };
 
-  // TODO: add logic for cancel
   const handleCancelClick = () => {
-    console.log('Edit profile cancelled');
+    router.back();
   };
 
   const labelClasses = 'text-white text-xl';
