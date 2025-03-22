@@ -7,16 +7,7 @@ import Header from "@/app/components/Header";
 import LockerDetails from "@/app/components/LockerDetails";
 import { useEffect, useState } from "react";
 import Footer from "@/app/components/Footer";
-
-type Package = {
-  id: string;
-  date: string;
-  time: string;
-  locker: string;
-  lockerCode: string;
-  status: string;
-  pickupDate: string;
-};
+import { Package } from "@/types/package";
 
 export default function PackageDetailsPage() {
   const params = useParams();

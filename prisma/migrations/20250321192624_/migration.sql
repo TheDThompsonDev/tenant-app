@@ -8,7 +8,7 @@ CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'TERMINATED');
 CREATE TYPE "AmenityAvailabilityStatus" AS ENUM ('AVAILABLE', 'UNAVAILABLE');
 
 -- CreateEnum
-CREATE TYPE "NotificationType" AS ENUM ('COMPLAINT', 'REPAIR', 'NOISE_COMPLAINT', 'GENERAL');
+CREATE TYPE "NotificationType" AS ENUM ('COMPLAINT', 'REPAIR', 'NOISE_COMPLAINT', 'GENERAL', 'PACKAGE', 'PARKING_PASS', 'LEASE', 'MANAGEMENT');
 
 -- CreateEnum
 CREATE TYPE "NotificationStatus" AS ENUM ('READ', 'UNREAD');
@@ -37,14 +37,14 @@ CREATE TABLE "Address" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "appwriteId" TEXT NOT NULL,
+    "appwriteId" TEXT,
     "firstName" VARCHAR(40) NOT NULL,
     "lastName" VARCHAR(40) NOT NULL,
     "email" TEXT NOT NULL,
-    "phoneNumber" VARCHAR(40) NOT NULL,
+    "phoneNumber" VARCHAR(40),
     "apartmentNumber" TEXT NOT NULL,
     "image" TEXT,
-    "leaseId" TEXT NOT NULL,
+    "leaseId" TEXT,
     "userRole" "Role" NOT NULL DEFAULT 'TENANT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -125,7 +125,8 @@ CREATE TABLE "ParkingPass" (
 -- CreateTable
 CREATE TABLE "Notification" (
     "notification_id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "senderId" TEXT NOT NULL,
+    "receiverId" TEXT NOT NULL,
     "notificationType" "NotificationType" NOT NULL DEFAULT 'NOISE_COMPLAINT',
     "subject" TEXT,
     "message" TEXT,
@@ -192,7 +193,7 @@ CREATE UNIQUE INDEX "ParkingPass_parkingPassNumber_key" ON "ParkingPass"("parkin
 CREATE UNIQUE INDEX "SmartDoorKey_accessCode_key" ON "SmartDoorKey"("accessCode");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_leaseId_fkey" FOREIGN KEY ("leaseId") REFERENCES "Lease"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_leaseId_fkey" FOREIGN KEY ("leaseId") REFERENCES "Lease"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Property" ADD CONSTRAINT "Property_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -207,7 +208,10 @@ ALTER TABLE "Lease" ADD CONSTRAINT "Lease_propertyId_fkey" FOREIGN KEY ("propert
 ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SmartDoorKey" ADD CONSTRAINT "SmartDoorKey_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

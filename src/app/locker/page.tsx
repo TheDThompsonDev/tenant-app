@@ -7,16 +7,7 @@ import PackageCard from "../components/PackageCard";
 import { useEffect, useState } from "react";
 import { Package as PackageIcon } from "lucide-react";
 import Footer from "../components/Footer";
-
-type Package = {
-  id: string;
-  date: string;
-  time: string;
-  locker: string;
-  lockerCode: string;
-  status: string;
-  pickupDate: string;
-};
+import { Package } from "@/types/package";
 
 export default function Home() {
   const router = useRouter();

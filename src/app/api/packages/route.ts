@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const packages = [
+const packages = [
   {
     id: '1',
     date: '2025-03-15',

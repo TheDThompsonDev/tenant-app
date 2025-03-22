@@ -23,7 +23,7 @@ export default async function handler(
         if (user) {
           const userNotifications = await prisma.notification.findMany({
             where: {
-              userId: user.id,
+              OR: [{ senderId: user.id }, { receiverId: user.id }],
             },
             orderBy: {
               createdAt: "desc",
@@ -64,11 +64,22 @@ export default async function handler(
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
+        const adminUser = await prisma.user.findFirst({
+          where: {
+            userRole: "ADMIN",
+          },
+        });
+
+        if (!adminUser) {
+          return res.status(404).json({ error: "Admin user not found" });
+        }
+
         const notification = await prisma.notification.create({
           data: {
-            userId: findUser.id,
+            senderId: findUser.id,
             subject,
             message,
+            receiverId: adminUser?.id,
             notificationType,
             createdAt: new Date(),
           },

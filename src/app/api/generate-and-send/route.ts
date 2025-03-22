@@ -26,7 +26,10 @@ interface DocumensoResponse {
   documentId: number
   uploadUrl?: string
   recipients: DocumensoRecipient[]
-  [key: string]: any
+  status?: string
+  createdAt?: string
+  updatedAt?: string
+  metadata?: Record<string, unknown>
 }
 
 export async function POST(request: NextRequest) {
