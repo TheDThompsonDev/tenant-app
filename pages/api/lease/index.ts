@@ -18,14 +18,14 @@ export default async function handler(
       }
       break;
 
-  //case "POST":
-    try {
+      //case "POST":
+      try {
         const { fullName, email, phoneNumber, subject, message } = req.body;
 
-      const requiredFields = ["fullName", "phoneNumber", "email"];
-       const missingFields = requiredFields.filter(
-      (field) => !req.body[field]
-      );
+        const requiredFields = ["fullName", "phoneNumber", "email"];
+        const missingFields = requiredFields.filter(
+          (field) => !req.body[field]
+        );
 
         if (missingFields.length > 0) {
           return res
