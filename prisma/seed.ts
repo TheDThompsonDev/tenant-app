@@ -186,7 +186,8 @@ async function main() {
   // Create notification
   const notification1 = await prisma.notification.create({
     data: {
-      userId: user2.id,
+      senderId: user2.id,
+      receiverId: user3.id,
       notificationType: "NOISE_COMPLAINT",
       subject: "Noise Complaint Received",
       message: "noise complaint received for unit 101",

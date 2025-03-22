@@ -80,20 +80,24 @@ export default function MessagesPage() {
         });
 
         if (!res.ok) {
-          throw new Error(`Failed to fetch messages: ${res.status} ${res.statusText}`);
+          throw new Error(
+            `Failed to fetch messages: ${res.status} ${res.statusText}`
+          );
         }
 
         const data = await res.json();
         console.log("Fetched notifications:", data);
 
-        const transformedMessages = data.map((notification: NotificationData) => ({
-          id: notification.id,
-          subject: notification.subject || LABELS.messaging.noSubject,
-          body: notification.message || "",
-          createdAt: notification.createdAt,
-          from: "admin",
-          type: notification.notificationType?.toLowerCase() || "general",
-        }));
+        const transformedMessages = data.map(
+          (notification: NotificationData) => ({
+            id: notification.id,
+            subject: notification.subject || LABELS.messaging.noSubject,
+            body: notification.message || "",
+            createdAt: notification.createdAt,
+            from: "admin",
+            type: notification.notificationType?.toLowerCase() || "general",
+          })
+        );
 
         setMessages(transformedMessages);
         setError(null);
@@ -123,9 +127,11 @@ export default function MessagesPage() {
               </h1>
               <button
                 onClick={() => setShowCompose(!showCompose)}
-                className={`flex items-center px-5 py-3 rounded-lg font-medium transition-all duration-300 ${showCompose 
-                  ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
-                  : 'bg-primary-green text-white hover:shadow-md'}`}
+                className={`flex items-center px-5 py-3 rounded-lg font-medium transition-all duration-300 ${
+                  showCompose
+                    ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                    : "bg-primary-green text-white hover:shadow-md"
+                }`}
               >
                 {showCompose ? (
                   <>
@@ -154,14 +160,19 @@ export default function MessagesPage() {
               {isLoading ? (
                 <div className="flex flex-col justify-center items-center py-20">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-secondary-blue"></div>
-                  <p className="mt-4 text-gray-500">{LABELS.messaging.loading}</p>
+                  <p className="mt-4 text-gray-500">
+                    {LABELS.messaging.loading}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-8">
                   {showCompose && (
                     <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm mb-8 transition-all duration-300 ease-in-out">
                       <h2 className="text-xl font-semibold mb-4 text-primary-black flex items-center">
-                        <PenSquare size={20} className="mr-2 text-primary-green" />
+                        <PenSquare
+                          size={20}
+                          className="mr-2 text-primary-green"
+                        />
                         {LABELS.messaging.compose}
                       </h2>
                       <ComposeMessage
@@ -179,9 +190,13 @@ export default function MessagesPage() {
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                           <MessageSquare className="text-gray-400" size={28} />
                         </div>
-                        <h3 className="text-lg font-medium text-gray-700 mb-2">{LABELS.messaging.noMessages}</h3>
-                        <p className="text-gray-500 text-center max-w-md mb-6">{LABELS.messaging.noMessagesDescription}</p>
-                        <button 
+                        <h3 className="text-lg font-medium text-gray-700 mb-2">
+                          {LABELS.messaging.noMessages}
+                        </h3>
+                        <p className="text-gray-500 text-center max-w-md mb-6">
+                          {LABELS.messaging.noMessagesDescription}
+                        </p>
+                        <button
                           onClick={() => setShowCompose(true)}
                           className="bg-primary-green text-white px-5 py-2 rounded-lg flex items-center hover:shadow-md transition-all duration-200"
                         >

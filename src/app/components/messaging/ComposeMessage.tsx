@@ -24,11 +24,10 @@ type ComposeMessageFormValues = {
 
 type ComposeMessageProps = {
   onMessageSent: (msg: Message) => void;
+  userId?: string;
 };
 
-export default function ComposeMessage({
-  onMessageSent,
-}: ComposeMessageProps) {
+export default function ComposeMessage({ onMessageSent }: ComposeMessageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +50,7 @@ export default function ComposeMessage({
           const newMsg = {
             subject: values.subject,
             message: values.body,
-            notificationType: "GENERAL", 
+            notificationType: "GENERAL",
             user: userResponse.data.$id,
             from: "tenant" as const,
             type: "general" as const,
@@ -93,7 +92,7 @@ export default function ComposeMessage({
           <p className="text-sm">{error}</p>
         </div>
       )}
-      
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -103,7 +102,10 @@ export default function ComposeMessage({
       >
         <div className="space-y-4">
           <div className="relative">
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="subject"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               {LABELS.messaging.subjectLabel}
             </label>
             <input
@@ -120,7 +122,10 @@ export default function ComposeMessage({
           </div>
 
           <div className="relative">
-            <label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="body"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               {LABELS.messaging.messageLabel}
             </label>
             <textarea
