@@ -35,9 +35,13 @@ const mockLeases: LeaseDocument[] = [
   },
 ];
 
-export default function LeaseView() {
+interface LeaseViewProps {
+  isAdmin?: boolean;
+}
+
+export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
   const [leases] = useState<LeaseDocument[]>(mockLeases);
-  const [selectedLease, setSelectedLease] = useState<LeaseDocument | null>(null);
+  const [selectedLease, setSelectedLease] = useState<LeaseDocument | null>(isAdmin ? null : mockLeases[0]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -80,6 +84,56 @@ export default function LeaseView() {
     });
   };
 
+  // For non-admin users, show a simplified view with just their active lease
+  if (!isAdmin) {
+    const activeLease = mockLeases.find(lease => lease.status === 'active') || mockLeases[0];
+    
+    return (
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-primary-green to-secondary-blue p-6 text-white">
+          <h2 className="text-2xl font-bold flex items-center">
+            <FileText className="mr-3" size={24} />
+            Your Lease Agreement
+          </h2>
+          <p className="mt-2 opacity-90">View and download your current lease</p>
+        </div>
+
+        <div className="p-8">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">{activeLease.title}</h3>
+              <p className="text-sm text-gray-500 mt-1">Issued on {formatDate(activeLease.date)}</p>
+            </div>
+            {getStatusBadge(activeLease.status)}
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center">
+            <div className="w-full max-w-md aspect-[3/4] bg-white rounded-lg shadow-md flex flex-col items-center justify-center p-6 border border-gray-300 mb-6">
+              <FileText size={64} className="text-gray-400 mb-4" />
+              <h4 className="text-lg font-medium text-gray-700 mb-2">Lease Document</h4>
+              <p className="text-gray-500 text-center mb-6">Your official lease agreement for the property</p>
+            </div>
+
+            {activeLease.status === 'pending' ? (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 text-sm text-yellow-700 w-full max-w-md text-center">
+                <Clock size={18} className="inline-block mr-2" />
+                This lease is pending signature. You&apos;ll be notified when it&apos;s ready.
+              </div>
+            ) : (
+              <button 
+                disabled={!activeLease.downloadUrl}
+                className="flex items-center gap-2 bg-secondary-blue text-white px-6 py-3 rounded-md hover:bg-secondary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <Download size={20} />
+                Download Lease Agreement
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Admin view with full functionality
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
       <div className="bg-gradient-to-r from-primary-green to-secondary-blue p-6 text-white">
