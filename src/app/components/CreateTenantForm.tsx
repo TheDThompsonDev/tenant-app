@@ -2,7 +2,6 @@ import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { registerUser } from "@/lib/appwrite";
-import { useRouter } from "next/navigation";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -21,15 +20,13 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export default function CreateTenantForm() {
-  const router = useRouter();
-
   const form = useForm({
     defaultValues: {
-      firstName: `${LABELS.createTenant.placeholders.firstName}`,
-      lastName: `${LABELS.createTenant.placeholders.lastName}`,
-      email: `${LABELS.createTenant.placeholders.email}`,
-      apartmentNumber: `${LABELS.createTenant.placeholders.apartmentNumber}`,
-      password: `${LABELS.createTenant.placeholders.password}`,
+      firstName: "",
+      lastName: "",
+      email: "",
+      apartmentNumber: "",
+      password: "",
     },
 
     onSubmit: async ({ value }) => {
@@ -41,17 +38,6 @@ export default function CreateTenantForm() {
         `${value.firstName} ${value.lastName}`
       );
       console.log("User created successfully:", newUser);
-
-      router.push(
-        `/success?firstName=${encodeURIComponent(
-          value.firstName
-        )}&lastName=${encodeURIComponent(
-          value.lastName
-        )}&email=${encodeURIComponent(
-          value.email
-        )}&apartmentNumber=${encodeURIComponent(value.apartmentNumber)}`
-      );
-
     },
   });
 
@@ -85,9 +71,7 @@ export default function CreateTenantForm() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
-          form.reset();
-        }}
-      >
+        }}>
         <div className="w-full">
           <form.Field
             name="firstName"
@@ -106,29 +90,28 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.firstNameNoError}`
                 );
               },
-            }}
-            children={(field) => {
-              return (
-                <div className="w-full">
-                  <label htmlFor={field.name} />
-                  <input
-                    className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onFocus={(e) => {
-                      if (!field.state.meta.isTouched) {
-                        field.handleChange("");
-                      }
-                    }}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  <FieldInfo field={field} />
-                </div>
-              );
-            }}
-          />
+            }}>
+            {(field) => (
+              <div className="w-full">
+                <label htmlFor={field.name} />
+                <input
+                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
+                  id={field.name}
+                  name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.firstName}
+                  value={field.state.value}
+                  onFocus={(e) => {
+                    if (!field.state.meta.isTouched) {
+                      field.handleChange("");
+                    }
+                  }}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </div>
+            )}
+          </form.Field>
         </div>
         <div className="w-full py-2">
           <form.Field
@@ -148,14 +131,15 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.lastNameNoError}`
                 );
               },
-            }}
-            children={(field) => (
+            }}>
+            {(field) => (
               <>
                 <label htmlFor={field.name} />
                 <input
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.lastName}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -168,7 +152,7 @@ export default function CreateTenantForm() {
                 <FieldInfo field={field} />
               </>
             )}
-          />
+          </form.Field>
         </div>
 
         <div className="w-full">
@@ -189,14 +173,15 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.emailNoError}`
                 );
               },
-            }}
-            children={(field) => (
+            }}>
+            {(field) => (
               <>
                 <label htmlFor={field.name} />
                 <input
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.email}
                   value={field.state.value}
                   onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
@@ -209,7 +194,7 @@ export default function CreateTenantForm() {
                 <FieldInfo field={field} />
               </>
             )}
-          />
+          </form.Field>
         </div>
         <div className="w-full py-2">
           <form.Field
@@ -229,49 +214,7 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.apartmentNumberNoError}`
                 );
               },
-            }}
-            children={(field) => (
-              <>
-                <label htmlFor={field.name} />
-                <input
-                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onFocus={(e) => {
-                    if (!field.state.meta.isTouched) {
-                      field.handleChange("");
-                    }
-                  }}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                <FieldInfo field={field} />
-              </>
-            )}
-          />
-        </div>
-
-        <div className="w-full py-2">
-          <form.Field
-            name="password"
-            validators={{
-              onChange: ({ value }) =>
-                !value
-                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
-                  : value.length < 2
-                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
-                  : undefined,
-              onChangeAsyncDebounceMs: 500,
-              onChangeAsync: async ({ value }) => {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                return (
-                  value.includes("error") &&
-                  `${LABELS.createTenant.validateMessages.passwordNoError}`
-                );
-              },
-            }}
-          >
+            }}>
             {(field) => (
               <>
                 <label htmlFor={field.name} />
@@ -279,8 +222,9 @@ export default function CreateTenantForm() {
                   className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
                   id={field.name}
                   name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.apartmentNumber}
                   value={field.state.value}
-                  onFocus={() => {
+                  onFocus={(e) => {
                     if (!field.state.meta.isTouched) {
                       field.handleChange("");
                     }
@@ -294,20 +238,62 @@ export default function CreateTenantForm() {
           </form.Field>
         </div>
 
+        <div className="w-full py-2">
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) =>
+                !value
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : value.length < 6
+                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  : undefined,
+              onChangeAsyncDebounceMs: 500,
+              onChangeAsync: async ({ value }) => {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                return (
+                  value.includes("error") &&
+                  `${LABELS.createTenant.validateMessages.passwordNoError}`
+                );
+              },
+            }}>
+            {(field) => (
+              <div className="w-full">
+                <label htmlFor={field.name} />
+                <input
+                  type="password"
+                  className="w-full p-3 bg-gray-200 rounded-md text-gray-500 focus:outline-nonee"
+                  id={field.name}
+                  name={field.name}
+                  placeholder={LABELS.createTenant.placeholders.password}
+                  value={field.state.value}
+                  onFocus={(e) => {
+                    if (!field.state.meta.isTouched) {
+                      field.handleChange("");
+                    }
+                  }}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </div>
+            )}
+          </form.Field>
+        </div>
+
         <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+          selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
             <button
               type="submit"
               className="hover:translate-0.5 hover:cursor-pointer bg-secondary-blue text-white p-2 rounded-md disabled:opacity-40 w-full my-2"
-              disabled={!canSubmit}
-            >
+              disabled={!canSubmit}>
               {isSubmitting
                 ? `${LABELS.createTenant.sumbit.loading}`
                 : `${LABELS.createTenant.sumbit.title}`}
             </button>
           )}
-        />
+        </form.Subscribe>
       </form>
     </div>
   );
