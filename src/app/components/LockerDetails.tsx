@@ -18,7 +18,7 @@ export default function PackageDetails({
       <span className="text-xl font-bold ">
         {LABELS.PackageLocker.numberTitle} {lockerNumber}
       </span>
-      {/* TODO: generate digital access code instead of hard coded*/}
+      {/* TODO: generate digital access code instead of hard coded*/}      
       <span className="text-xl font-bold ">
         {LABELS.PackageLocker.accessCodeTitle}
       </span>

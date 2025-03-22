@@ -10,16 +10,29 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const { userId } = req.body;
-        const notification = await prisma.notification.findMany({
+        const { userId } = req.query;
+        const user = await prisma.user.findFirst({
           where: {
-            userId: userId,
-          },
-          orderBy: {
-            createdAt: "desc",
+            OR: [
+              { id: Array.isArray(userId) ? userId[0] : userId },
+              { appwriteId: Array.isArray(userId) ? userId[0] : userId },
+            ],
           },
         });
-        res.status(200).json(notification);
+
+        if (user) {
+          const userNotifications = await prisma.notification.findMany({
+            where: {
+              userId: user.id,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          });
+          res.status(200).json(userNotifications);
+        } else {
+          res.status(404).json({ error: "User not found" });
+        }
       } catch (error) {
         console.error("Error finding Notification:", error);
         res.status(500).json({ error: "failed to fecth Notification" });
@@ -28,11 +41,11 @@ export default async function handler(
 
     case "POST":
       try {
-        const { userId, subject, message, notificationType } = req.body;
+        const { user, subject, message, notificationType } = req.body;
 
         const findUser = await prisma.user.findFirst({
           where: {
-            OR: [{ id: userId }, { appwriteId: userId }],
+            OR: [{ id: user }, { appwriteId: user }],
           },
         });
 

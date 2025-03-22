@@ -2,7 +2,7 @@ const LABELS = {
   loading: "Loading...",
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -12,7 +12,7 @@ const LABELS = {
       icon: "lockIcon",
     },
     packages: {
-      href: "/",
+      href: "/locker",
       text: "My Packages",
       icon: "packageIcon",
     },
@@ -84,6 +84,29 @@ const LABELS = {
     parkingPassId: "Parking Pass ID",
     created: "Pass created for",
     expires: "Pass expires: ",
+    successMessage: "Your pass has been successfully created",
+    formDescription: "Enter your vehicle details to generate a parking pass",
+    passHeaderTitle: "Parking Pass ID",
+    validityMessage: "Valid for 24 hours",
+    qrPlaceholder: "QR Code Placeholder",
+    qrScanMessage: "Scan for verification",
+    savePassButton: "Save Pass",
+    validityFooter: "Pass will be valid for 24 hours from creation",
+    placeholders: {
+      make: "e.g. Nissan",
+      model: "e.g. Altima",
+      color: "e.g. Silver",
+      licensePlate: "e.g. 123-456",
+      lastName: "e.g. Smith",
+      apartmentNumber: "e.g. 101"
+    },
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    secureAccessMessage: "Secure access code",
+    vehicleDetails: "Vehicle Details",
+    parkingPassCode: "Parking Pass Code",
+    hoursAccess: "24h Access",
+    shareButton: "Share"
   },
 
   messaging: {
@@ -93,6 +116,26 @@ const LABELS = {
     NewMessage: "New Message",
     errorLoading: "Could not load messages. Please try again later.",
     ariaLabel: "Compose new message",
+    noMessages: "No messages yet",
+    noMessagesDescription: "When you receive messages, they will appear here.",
+    composeButton: "Compose a message",
+    backToMessages: "Back to Messages",
+    noSearchResults: "No messages match your search",
+    searchPlaceholder: "Search messages...",
+    fromLabel: "From: ",
+    subjectLabel: "Subject",
+    messageLabel: "Message",
+    subjectPlaceholder: "Enter message subject",
+    messagePlaceholder: "Type your message here...",
+    allFieldsRequired: "All fields are required",
+    sendButton: "Send Message",
+    sending: "Sending...",
+    errorSending: "Failed to send message. Please try again.",
+    errorUserInfo: "Failed to get user information",
+    errorUserInformation: "User information not available",
+    noMessagesFound: "No messages found",
+    noSubject: "No Subject",
+    cancel: "Cancel",
   },
 
   contactUs: {
@@ -138,7 +181,7 @@ const LABELS = {
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -160,7 +203,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -199,6 +242,7 @@ const LABELS = {
       passwordCheck: "Password required to update email.",
     },
     formBtns: {
+      changePasswordBtn: "Change Password",
       cancelBtn: "Cancel",
       saveBtn: "Save changes",
     },
@@ -213,6 +257,12 @@ const LABELS = {
     unit: "Unit #",
     button: "Make another key",
     emailBody: "Hello, here is your guest key code: {code}",
+    copyCodeButton: "Copy Code",
+    copiedMessage: "Copied!",
+    shareButton: "Share",
+    secureAccessMessage: "Secure access code",
+    hoursAccess: "24h Access",
+    emailSubject: "Guest Key Code"
   },
 
   doorlock: {
@@ -224,6 +274,7 @@ const LABELS = {
   PackageLocker: {
     numberTitle: "Locker: ",
     accessCodeTitle: "Digital Access Code: ",
+    digitLabel: "Access Code Digit"
   },
 
   PackageDetails: {
@@ -238,10 +289,17 @@ const LABELS = {
   },
 
   packageList: {
-    title: "My Packages",
-    actionBtn: "View",
     errorLoading: "Could not load packages. Please try again later.",
-    noPackages: "No packages found."
+    noPackages: "No packages found.",
+    title: "Package Locker",
+    description: "View and manage your package deliveries",
+    readyForPickup: "Ready for pickup",
+    pickedUp: "Picked up",
+    yourPackages: "Your Packages",
+    helpTitle: "Need Help?",
+    helpDescription: "If you have any questions about your packages or need assistance, please contact the property management.",
+    contactButton: "Contact Leasing",
+    actionBtn: "View"
   },
   package: {
     dateTitle: "Date delivered: ",

@@ -33,6 +33,7 @@ export default function PackageDetailsPage() {
 
     const id = params.id as string;
 
+
     async function fetchPackage() {
       try {
         const response = await fetch('/api/packages');
@@ -62,6 +63,7 @@ export default function PackageDetailsPage() {
     return <p className="text-center">{LABELS.loading}</p>;
   }
 
+
   if (error || !packageData) {
     return (
       <p className="text-center text-red-500">{LABELS.package.notfoundError}</p>
@@ -80,8 +82,7 @@ export default function PackageDetailsPage() {
           <div className="flex flex-col text-black m-auto p-4">
             <Link
               href="/locker"
-              className="text-sm text-gray-500 pb-4 inline-block"
-            >
+              className="text-sm text-gray-500 pb-4 inline-block">
               &larr; {LABELS.package.back}
             </Link>
             <h3 className="text-2xl font-bold">
@@ -114,9 +115,11 @@ export default function PackageDetailsPage() {
 
           <div className="flex flex-col justify-center items-center lg:m-auto w-full lg:w-1/2 p-4">
             <p className="text-black">{LABELS.PackageDetails.notify}</p>
-            <button className="bg-primary-green text-white p-4 rounded-md">
-              {LABELS.PackageDetails.messageBtn}
-            </button>
+            <Link href="/messaging">
+              <button className="bg-primary-green text-white p-4 rounded-md">
+                {LABELS.PackageDetails.messageBtn}
+              </button>
+            </Link>
           </div>
         </div>
       </div>
