@@ -5,27 +5,61 @@ import Link from "next/link";
 import LABELS from "@/app/constants/labels";
 import Header from "@/app/components/Header";
 import LockerDetails from "@/app/components/LockerDetails";
-
-import { packages } from "@/app/api/packages/route";
+import { useEffect, useState } from "react";
 import Footer from "@/app/components/Footer";
+import { Package } from "@/types/package";
 
 export default function PackageDetailsPage() {
   const params = useParams();
+  const [packageData, setPackageData] = useState<Package | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!params || !params.id) {
+  useEffect(() => {
+    if (!params || !params.id) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    const id = params.id as string;
+
+
+    async function fetchPackage() {
+      try {
+        const response = await fetch('/api/packages');
+        if (!response.ok) {
+          throw new Error('Failed to fetch packages');
+        }
+        const packages = await response.json();
+        const foundPackage = packages.find((item: Package) => item.id === id);
+        
+        if (foundPackage) {
+          setPackageData(foundPackage);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error('Error fetching package:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPackage();
+  }, [params]);
+
+  if (loading) {
+    return <p className="text-center">{LABELS.loading}</p>;
+  }
+
+
+  if (error || !packageData) {
     return (
       <p className="text-center text-red-500">{LABELS.package.notfoundError}</p>
     );
   }
-
-  const id = params.id as string;
-
-  const packageData = packages.find((item) => item.id === id);
-
-  if (!packageData)
-    return (
-      <p className="text-center text-red-500">{LABELS.package.notfoundError}</p>
-    );
 
   return (
     <>
