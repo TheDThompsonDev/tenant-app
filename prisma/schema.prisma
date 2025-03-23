@@ -155,8 +155,8 @@ model ParkingPass {
 
 model Notification {
   id               String               @id @default(uuid()) @map("notification_id")
-  senderId         String
-  sender           User                 @relation("Sender", fields: [senderId], references: [id])
+  senderId         String?
+  sender           User?                @relation("Sender", fields: [senderId], references: [id])
   receiverId       String
   receiver         User                 @relation("Receiver", fields: [receiverId], references: [id])
   notificationType NotificationType     @default(NOISE_COMPLAINT)

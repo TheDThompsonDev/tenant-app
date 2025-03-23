@@ -17,8 +17,6 @@ export default async function handler(
         res.status(500).json({ error: "failed to fetch users" });
       }
       break;
-
-    case "POST":
       try {
         const {
           appwriteId,
@@ -67,7 +65,7 @@ export default async function handler(
       break;
 
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
+      res.setHeader("Allow", ["GET"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
