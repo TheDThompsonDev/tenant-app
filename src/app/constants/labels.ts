@@ -181,7 +181,7 @@ const LABELS = {
       icon: "guestParkingIcon",
     },
     viewMessages: {
-      href: "/messaging",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -203,7 +203,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/messaging",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
