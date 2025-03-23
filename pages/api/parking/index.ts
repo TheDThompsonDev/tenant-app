@@ -78,6 +78,18 @@ export default async function handler(
           },
         });
         res.status(201).json(parkingPass);
+
+        const notification = await prisma.notification.create({
+          data: {
+            senderId: findUser.id,
+            subject: "Parking Pass Created",
+            message: `Your guest parking pass has been created. Parking Pass Number: ${parkingPass.parkingPassNumber}`,
+            receiverId: findUser.id,
+            notificationType: "PARKING_PASS",
+            createdAt: new Date(),
+          },
+        });
+        res.status(201).json(notification);
       } catch (error) {
         console.error("Error creating parking pass:", error);
         res.status(500).json({

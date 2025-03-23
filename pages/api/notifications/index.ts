@@ -19,6 +19,9 @@ export default async function handler(
             ],
           },
         });
+        if (!user) {
+          return res.status(404).json({ error: "User not found" });
+        }
 
         if (user) {
           const userNotifications = await prisma.notification.findMany({
@@ -27,6 +30,10 @@ export default async function handler(
             },
             orderBy: {
               createdAt: "desc",
+            },
+            include: {
+              sender: true,
+              receiver: true,
             },
           });
           res.status(200).json(userNotifications);

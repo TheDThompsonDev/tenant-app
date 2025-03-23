@@ -1,8 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import LABELS from '@/app/constants/labels';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser, updateUserProfile } from '@/lib/appwrite';
+import { Models } from 'appwrite';
+
+type UserType = Models.User<Models.Preferences>;
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -22,19 +27,23 @@ interface EditProfileFormProps {
 export default function EditProfileForm({
   displayChangePassword,
 }: EditProfileFormProps) {
+  const [user, setUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
   const [isEmailChanged, setIsEmailChanged] = useState(false);
-  // TODO: the default values should come from the logged in users data
-  const userName = 'Animal';
-  const userEmail = 'wildanimal@email.com';
+
+  const router = useRouter();
 
   const form = useForm({
     defaultValues: {
-      name: userName,
-      email: userEmail,
+      name: user?.name ?? '',
+      email: user?.email ?? '',
       passwordCheck: '',
     },
     onSubmit: async ({ value }) => {
-      console.log('Form submitted:', value);
+      const { name, email, passwordCheck } = value;
+      await updateUserProfile(name, email, passwordCheck);
+      router.push('/dashboard');
     },
   });
 
@@ -42,9 +51,8 @@ export default function EditProfileForm({
     displayChangePassword();
   };
 
-  // TODO: add logic for cancel
   const handleCancelClick = () => {
-    console.log('Edit profile cancelled');
+    router.back();
   };
 
   const labelClasses = 'text-white text-xl';
@@ -52,6 +60,34 @@ export default function EditProfileForm({
     'w-full p-3 bg-[#0F3645] text-white rounded-md focus:outline-none';
   const btnClasses =
     'w-full bg-primary-green text-white text-sm lg:text-lg p-3 rounded-md';
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        setIsLoading(true);
+        const { data: user } = await getCurrentUser();
+        setUser(user ?? null);
+        form.reset({
+          name: user?.name ?? '',
+          email: user?.email ?? '',
+          passwordCheck: '',
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getUser();
+  }, [form]);
+
+  if (isLoading) {
+    return <div className='flex flex-row justify-center'>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <div className='w-full relative bottom-40 px-6 lg:static'>
@@ -104,7 +140,7 @@ export default function EditProfileForm({
             onChangeAsyncDebounceMs: 100,
             onChangeAsync: async ({ value }) => {
               await new Promise((resolve) => setTimeout(resolve, 500));
-              if (value !== userEmail) {
+              if (value !== user?.email) {
                 setIsEmailChanged(true);
               } else {
                 setIsEmailChanged(false);

@@ -14,6 +14,9 @@ export default async function handler(
         const parkingPass = await prisma.parkingPass.findUnique({
           where: { id: id as string },
         });
+        if (!parkingPass) {
+          return res.status(404).json({ error: "Parking Pass not found" });
+        }
         res.status(200).json(parkingPass);
       } catch (error) {
         console.error("Error finding Parking Pass:", error);
