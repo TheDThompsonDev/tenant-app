@@ -44,6 +44,27 @@ export default async function handler(
           },
         });
         res.status(201).json(contactUs);
+
+        const adminUser = await prisma.user.findFirst({
+          where: {
+            userRole: "ADMIN",
+          },
+        });
+
+        if (adminUser?.id) {
+          const notification = await prisma.notification.create({
+            data: {
+              subject: "Contact Us",
+              message: `New contact us message from ${fullName}`,
+              receiverId: adminUser.id,
+              notificationType: "GENERAL",
+              createdAt: new Date(),
+            },
+          });
+          res.status(201).json(notification);
+        } else {
+          console.warn("No admin user found to receive the notification.");
+        }
       } catch (error) {
         console.error("Error creating contact info:", error);
         res.status(500).json({
