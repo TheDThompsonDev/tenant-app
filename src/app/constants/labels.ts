@@ -354,6 +354,10 @@ const LABELS = {
       loading: "...",
     },
   },
+  success: {
+    title:"Success! New Tenant Account Created",
+    back: "Back",
+  },
   generateLease: {
     title: "Generate Lease",
     noErrorTitle: "No error",
