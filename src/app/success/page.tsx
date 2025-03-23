@@ -41,11 +41,16 @@ export default function SuccessPage() {
         </h2>
         <div className="mt-6 bg-secondary-blue text-white rounded-xl p-6 shadow-lg h-56 w-72 sm:w-80 md:w-96 lg:w-[30rem]">
           <p className="mb-10 mt-5 ml-5">
-            <span className="font-semibold underline">User Name:</span> <br />
+            <span className="font-semibold underline">
+              {LABELS.success.username}
+            </span>{" "}
+            <br />
             {username}
           </p>
           <p className="ml-5">
-            <span className="font-semibold underline">Temporary Password:</span>{" "}
+            <span className="font-semibold underline">
+              {LABELS.success.temporaryPassword}
+            </span>{" "}
             <br />
             {password}
           </p>
