@@ -1,4 +1,4 @@
-import { prisma } from "../../../utils/prisma";
+import { prisma } from "../../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -10,15 +10,13 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
+        const lease = await prisma.lease.findMany();
+        res.status(200).json(lease);
       } catch (error) {
-        console.error("Error finding user:", error);
-        res.status(500).json({ error: "failed to fetch users" });
+        console.error("Error finding leases:", error);
+        res.status(500).json({ error: "failed to fetch leases" });
       }
       break;
-
-    case "POST":
       try {
         const {
           appwriteId,
@@ -67,7 +65,7 @@ export default async function handler(
       break;
 
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
+      res.setHeader("Allow", ["GET"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
