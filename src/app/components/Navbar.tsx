@@ -1,26 +1,11 @@
 import LABELS from '@/app/constants/labels';
 import Link from 'next/link';
 import NotificationBadge from '@/app/components/NotificationBadge';
-import { X, LogOut, Menu, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
+import { X, LogOut, Menu, ChevronRight, Cog } from 'lucide-react';
 import ICON_MAP from '@/app/constants/icons';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/appwrite';
-
-const ProfileImage = ({ size = 40, className = '' }) => {
-  const profileImage = '/Animal.jpg'; // TODO: Replace with the actual profile image source
-
-  return (
-    <Image
-      src={profileImage}
-      width={size}
-      height={size}
-      alt='Profile Picture'
-      className={`rounded-full object-cover ${className}`}
-    />
-  );
-};
 
 interface NavbarProps {
   isMobile?: boolean;
@@ -73,9 +58,14 @@ export default function Navbar({
         <button className='absolute top-6 right-8' onClick={closeMenu}>
           <X size={36} />
         </button>
-        <div className='mt-16 flex flex-col items-center border-b border-black py-4'>
-          <ProfileImage size={100} />
-          <p className='mt-2 font-medium text-lg'>Hi, Animal!</p>
+        <div className='mt-16 flex flex-row py-4'>
+          <button 
+          className='flex flex-row gap-4 p-4 w-full items-center bg-secondary-blue text-white bg-gradient-to-r from-secondary-blue to-primary-green shadow-md' 
+          onClick={() => router.push("/dashboard")}>
+          <Cog size={50} />
+          <p>{LABELS.mobileNav.cogTitle}</p>
+          </button>
+
         </div>
         <div className='flex flex-col gap-6 pt-6 flex-grow'>
           {navigationData.map(([label, { href, text, icon }]) => (
