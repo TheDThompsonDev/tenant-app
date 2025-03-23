@@ -357,6 +357,8 @@ const LABELS = {
   success: {
     title:"Success! New Tenant Account Created",
     back: "Back",
+    username: "UserName:",
+    temporaryPassword: "Temporary Password:"
   },
   generateLease: {
     title: "Generate Lease",
