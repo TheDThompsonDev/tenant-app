@@ -426,5 +426,8 @@ const LABELS = {
       pending: "Pending Signature",
     },
   },
+  mobileNav: {
+    cogTitle: 'Dashboard'
+  }
 }
 export default LABELS;
