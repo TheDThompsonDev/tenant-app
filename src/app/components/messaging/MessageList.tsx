@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { ArrowLeft, Clock, User, Package, Home, FileText, MessageSquare, Search } from "lucide-react";
+import { ArrowLeft, Clock, User, Package, Home, FileText, MessageSquare, Search, VolumeX } from "lucide-react";
 import LABELS from "@/app/constants/labels";
 
 type Message = {
@@ -9,7 +9,7 @@ type Message = {
   body: string;
   createdAt: string;
   from: "tenant" | "admin";
-  type?: "package" | "management" | "lease" | "general";
+  type?: "package" | "management" | "lease" | "general" | "noise";
 };
 
 type MessageListProps = {
@@ -132,6 +132,7 @@ function MessageIcon({ type }: { type: string }) {
     management: <Home size={18} className="text-white" />,
     lease: <FileText size={18} className="text-white" />,
     general: <MessageSquare size={18} className="text-white" />,
+    noise: <VolumeX size={18} className="text-white" />,
   };
 
   const colors = {
@@ -139,6 +140,7 @@ function MessageIcon({ type }: { type: string }) {
     management: "bg-secondary-blue",
     lease: "bg-blue-800",
     general: "bg-primary",
+    noise: "bg-red-500",
   };
 
   const bgColor = colors[type as keyof typeof colors] || colors.general;

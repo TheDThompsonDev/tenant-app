@@ -2,6 +2,7 @@ import LABELS from "../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { registerUser } from "@/lib/appwrite";
+import { useRouter } from "next/navigation";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -20,8 +21,15 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export default function CreateTenantForm() {
+  const router = useRouter();
+
   const form = useForm({
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      apartmentNumber: "",
+      password: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -30,14 +38,23 @@ export default function CreateTenantForm() {
     },
 
     onSubmit: async ({ value }) => {
-      const userId = await saveOnDB(value);
-      const newUser = registerUser(
-        value.email,
-        userId,
-        value.password,
-        `${value.firstName} ${value.lastName}`
-      );
-      console.log("User created successfully:", newUser);
+      try {
+        const userId = await saveOnDB(value);
+        const newUser = registerUser(
+          value.email,
+          userId,
+          value.password,
+          `${value.firstName} ${value.lastName}`
+        );
+        console.log("User created successfully:", newUser);
+        router.push(
+          `/success?lastName=${encodeURIComponent(
+            value.lastName
+          )}&apartmentNumber=${encodeURIComponent(value.apartmentNumber)}`
+        );
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
     },
   });
 
@@ -46,6 +63,7 @@ export default function CreateTenantForm() {
     lastName: string;
     email: string;
     apartmentNumber: string;
+    password: string;
   }) => {
     const response = await fetch("/api/users", {
       method: "POST",
@@ -56,6 +74,8 @@ export default function CreateTenantForm() {
     });
     const data = await response.json();
     console.log("User created successfully:", data);
+
+    sessionStorage.setItem("password", value.password);
     return data;
   };
 
@@ -71,8 +91,7 @@ export default function CreateTenantForm() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
-        }}
-      >
+        }}>
         <div className="w-full">
           <form.Field
             name="firstName"
@@ -261,8 +280,7 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.passwordNoError}`
                 );
               },
-            }}
-          >
+            }}>
             {(field) => (
               <div className="w-full">
                 <label htmlFor={field.name} />
@@ -294,8 +312,7 @@ export default function CreateTenantForm() {
             <button
               type="submit"
               className="hover:translate-0.5 hover:cursor-pointer bg-secondary-blue text-white p-2 rounded-md disabled:opacity-40 w-full my-2"
-              disabled={!canSubmit}
-            >
+              disabled={!canSubmit}>
               {isSubmitting
                 ? `${LABELS.createTenant.sumbit.loading}`
                 : `${LABELS.createTenant.sumbit.title}`}

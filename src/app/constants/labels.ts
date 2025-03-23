@@ -2,7 +2,7 @@ const LABELS = {
   loading: "Loading...",
   navigation: {
     messages: {
-      href: "/messaging",
+      href: "/Messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -203,22 +203,22 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/messaging",
+      href: "/Messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
     guestParking: {
-      href: "/",
+      href: "/parking",
       text: "Guest Parking",
       icon: "guestParkingIcon",
     },
     lease: {
-      href: "/",
+      href: "/lease",
       text: "Generate Lease",
       icon: "leaseIcon",
     },
     newTenant: {
-      href: "/",
+      href: "/createTenant",
       text: "Create Tenant Account",
       icon: "userPlus",
     },
@@ -246,6 +246,17 @@ const LABELS = {
       cancelBtn: "Cancel",
       saveBtn: "Save changes",
     },
+  },
+
+  changePassword: {
+    formLabels: {
+      currPassword: 'Current Password',
+      newPassword: 'New Password',
+    },
+    formBtns: {
+      cancelBtn: 'Cancel',
+      submitBtn: 'Submit',
+    }
   },
 
   passcode: {
@@ -342,6 +353,10 @@ const LABELS = {
       title: "Create Account",
       loading: "...",
     },
+  },
+  success: {
+    title:"Success! New Tenant Account Created",
+    back: "Back",
   },
   generateLease: {
     title: "Generate Lease",
