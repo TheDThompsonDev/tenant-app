@@ -26,14 +26,16 @@ export default async function handler(
         const { id } = req.query;
         const {
           appwriteId,
-          firstName,
-          lastName,
+          name,
           email,
           phoneNumber,
           apartmentNumber,
           leaseId,
           userRole,
         } = req.body;
+
+        const firstName = name?.split(" ")[0];
+        const lastName = name?.split(" ")[1];
 
         if (!id) {
           return res.status(400).json({ error: "User ID is required" });

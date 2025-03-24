@@ -3,7 +3,7 @@
 import Header from "@/app/components/Header";
 import Image from "next/image";
 import Link from "next/link";
-import { Pencil, LucideIcon } from "lucide-react";
+import { Pencil, LucideIcon, UserRound } from "lucide-react";
 import LABELS from "../constants/labels";
 import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
@@ -64,8 +64,6 @@ const Dashboard = () => {
 
   const Profile = ({ user }: { user: UserType }) => {
     if (!user) return <div>Loading...</div>;
-    const profileImage =
-      user.name.toLowerCase() === "admin" ? "/admin.png" : "/Animal.jpg"; // TODO: Replace with the actual profile image source
     const userName = user ? user.name : "Loading...";
     const userEmail = user ? user.email : "Loading...";
     const textColor =
@@ -73,17 +71,17 @@ const Dashboard = () => {
         ? "text-white lg:text-secondary-blue"
         : "text-white";
     const paddingBottom = user.name === "admin" ? "" : "p-10";
+    const iconColor = user.name === "admin" ? " bg-alternate-light-gray text-secondary-blue" : "bg-primary-green";
     return (
       <div
-        className={`${textColor} mt-14 ${paddingBottom} flex flex-col items-center lg:items-start relative lg:mt-0 lg:px-4 text-white`}
+        className={`${textColor} mt-14 ${paddingBottom} flex flex-col items-center lg:items-start relative lg:mt-0 lg:px-4`}
       >
-        <Image
-          src={profileImage}
-          width={24}
-          height={24}
-          alt="Profile Picture"
-          className="w-24 h-24 rounded-full object-cover ring-4 ring-white lg:relative"
-        />
+        <UserRound
+         width={24}
+         height={24}
+         className={`w-24 h-24 rounded-full object-cover border-4 border-white lg:relative ${iconColor}`}
+         />
+
         <h3 className="mt-5 text-3xl">{userName}</h3>
         <p>{userEmail}</p>
         <EditProfileBtn user={user} />

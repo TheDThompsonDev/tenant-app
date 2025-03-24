@@ -2,7 +2,7 @@ const LABELS = {
   loading: "Loading...",
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -203,7 +203,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
@@ -250,13 +250,13 @@ const LABELS = {
 
   changePassword: {
     formLabels: {
-      currPassword: 'Current Password',
-      newPassword: 'New Password',
+      currPassword: "Current Password",
+      newPassword: "New Password",
     },
     formBtns: {
-      cancelBtn: 'Cancel',
-      submitBtn: 'Submit',
-    }
+      cancelBtn: "Cancel",
+      submitBtn: "Submit",
+    },
   },
 
   passcode: {
@@ -334,13 +334,15 @@ const LABELS = {
       lastNameLength: "Last name must be at least 3 characters",
       lastNameNoError: 'No "error" allowed in last name',
       emailRequired: "An email is required",
-      emailFormat: "Email must contain '@'",
+      emailFormat: "Invalid email format",
       emailNoError: 'No "error" allowed in email',
       apartmentNumRequired: "An apartment number is required",
       apartmentNumLength: "Apartment number must be longer than 2 characters",
       apartmentNumberNoError: 'No "error" allowed in apartment number',
       passwordRequired: " a password is required",
       passwordNoError: 'No "error" allowed in password',
+      passwordFormat: "Password must contain characters",
+      passwordTooShort: "Password must be at least 6 characters",
     },
     placeholders: {
       firstName: "First Name",
@@ -355,8 +357,10 @@ const LABELS = {
     },
   },
   success: {
-    title:"Success! New Tenant Account Created",
+    title: "Success! New Tenant Account Created",
     back: "Back",
+    username: "UserName:",
+    temporaryPassword: "Temporary Password:"
   },
   generateLease: {
     title: "Generate Lease",
@@ -433,5 +437,8 @@ const LABELS = {
       pending: "Pending Signature",
     },
   },
+  mobileNav: {
+    cogTitle: 'Dashboard'
+  }
 };
 export default LABELS;
