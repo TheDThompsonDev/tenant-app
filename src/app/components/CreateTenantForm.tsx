@@ -263,7 +263,7 @@ export default function CreateTenantForm() {
               onChange: ({ value }) =>
                 !value
                   ? `${LABELS.createTenant.validateMessages.passwordRequired}`
-                  : value.length < 6
+                  : value.length < 8
                   ? `${LABELS.createTenant.validateMessages.passwordTooShort}`
                   : !regex.test(value)
                   ? `${LABELS.createTenant.validateMessages.passwordFormat}`
