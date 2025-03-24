@@ -2,7 +2,7 @@ const LABELS = {
   loading: "Loading...",
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -203,7 +203,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
