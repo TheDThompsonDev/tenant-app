@@ -17,6 +17,8 @@ export default async function handler(
         res.status(500).json({ error: "failed to fetch leases" });
       }
       break;
+
+    case "POST":
       try {
         const {
           appwriteId,

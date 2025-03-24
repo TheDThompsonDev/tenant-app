@@ -136,7 +136,7 @@ async function main() {
       phoneNumber: "987-654-3210",
       apartmentNumber: "202",
       leaseId: lease1.id,
-      userRole: "TENANT",
+      userRole: "ADMIN",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -154,6 +154,30 @@ async function main() {
       userRole: "TENANT",
       createdAt: new Date(),
       updatedAt: new Date(),
+    },
+  });
+
+  const user4 = await prisma.user.create({
+    data: {
+      appwriteId: "1eb751ba-527c-4771-81eb-ef3872488298",
+      firstName: "Danny",
+      lastName: "Thompson",
+      email: "danny@test1.com",
+      apartmentNumber: "205",
+      userRole: "TENANT",
+      createdAt: new Date(),
+    },
+  });
+
+  const user4 = await prisma.user.create({
+    data: {
+      appwriteId: "67d4d9ba0019ae07cb3c",
+      firstName: "admin",
+      lastName: "admin",
+      email: "admin@test.com",
+      apartmentNumber: "00",
+      userRole: "ADMIN",
+      createdAt: new Date(),
     },
   });
 

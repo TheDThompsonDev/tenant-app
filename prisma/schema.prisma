@@ -121,15 +121,16 @@ model Amenity {
 
 model Lease {
   id              String      @id @default(uuid())
-  propertyId      String
-  property        Property    @relation(fields: [propertyId], references: [id])
+  propertyId      String?
+  property        Property?    @relation(fields: [propertyId], references: [id])
   firstName       String
   lastName        String
+  email           String?
   apartmentNumber String
-  pets            Boolean     @default(false)
-  dateOfBirth     DateTime
-  governmentId    String
-  socialSecurity  String
+  pets            Boolean?     @default(false)
+  dateOfBirth     DateTime?
+  governmentId    String?
+  socialSecurity  String?
   leaseStart      DateTime
   leaseEnd        DateTime
   monthlyRent     Decimal
