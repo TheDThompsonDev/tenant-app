@@ -54,8 +54,8 @@ export default async function handler(
         if (adminUser?.id) {
           const notification = await prisma.notification.create({
             data: {
-              subject: `New contact us message from ${fullName}`,
-              message: `${phoneNumber}, ${email}`,
+              subject: `New contact message from ${fullName}`,
+              message: `Phone Number: ${phoneNumber}, Email: ${email}`,
               receiverId: adminUser.id,
               notificationType: "GENERAL",
               createdAt: new Date(),

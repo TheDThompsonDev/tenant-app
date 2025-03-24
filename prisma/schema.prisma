@@ -19,7 +19,7 @@ enum Role {
 enum LeaseStatus {
   ACTIVE
   EXPIRED
-  TERMINATED
+  PENDING
 }
 
 enum AmenityAvailabilityStatus {
@@ -128,7 +128,6 @@ model Lease {
   email           String?
   apartmentNumber String?
   pets            Boolean?    @default(false)
-  dateOfBirth     DateTime?
   governmentId    String?
   socialSecurity  String?
   leaseStart      DateTime?

@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'TENANT', 'PROSPECTIVE_TENANT', 'PROPERTY_MANAGER', 'LEASING_AGENT');
 
 -- CreateEnum
-CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'TERMINATED');
+CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'PENDING');
 
 -- CreateEnum
 CREATE TYPE "AmenityAvailabilityStatus" AS ENUM ('AVAILABLE', 'UNAVAILABLE');
@@ -94,7 +94,6 @@ CREATE TABLE "Lease" (
     "email" TEXT,
     "apartmentNumber" TEXT,
     "pets" BOOLEAN DEFAULT false,
-    "dateOfBirth" TIMESTAMP(3),
     "governmentId" TEXT,
     "socialSecurity" TEXT,
     "leaseStart" TIMESTAMP(3),
