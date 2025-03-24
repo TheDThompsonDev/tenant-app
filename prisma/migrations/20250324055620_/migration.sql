@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'TENANT', 'PROSPECTIVE_TENANT', 'PROPERTY_MANAGER', 'LEASING_AGENT');
 
 -- CreateEnum
-CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'TERMINATED');
+CREATE TYPE "LeaseStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'PENDING');
 
 -- CreateEnum
 CREATE TYPE "AmenityAvailabilityStatus" AS ENUM ('AVAILABLE', 'UNAVAILABLE');
@@ -88,18 +88,18 @@ CREATE TABLE "Amenity" (
 -- CreateTable
 CREATE TABLE "Lease" (
     "id" TEXT NOT NULL,
-    "propertyId" TEXT NOT NULL,
-    "firstName" TEXT NOT NULL,
-    "lastName" TEXT NOT NULL,
-    "apartmentNumber" TEXT NOT NULL,
-    "pets" BOOLEAN NOT NULL DEFAULT false,
-    "dateOfBirth" TIMESTAMP(3) NOT NULL,
-    "governmentId" TEXT NOT NULL,
-    "socialSecurity" TEXT NOT NULL,
-    "leaseStart" TIMESTAMP(3) NOT NULL,
-    "leaseEnd" TIMESTAMP(3) NOT NULL,
-    "monthlyRent" DECIMAL(65,30) NOT NULL,
-    "securityDeposit" DECIMAL(65,30) NOT NULL,
+    "propertyId" TEXT,
+    "firstName" TEXT,
+    "lastName" TEXT,
+    "email" TEXT,
+    "apartmentNumber" TEXT,
+    "pets" BOOLEAN DEFAULT false,
+    "governmentId" TEXT,
+    "socialSecurity" TEXT,
+    "leaseStart" TIMESTAMP(3),
+    "leaseEnd" TIMESTAMP(3),
+    "monthlyRent" DECIMAL(65,30),
+    "securityDeposit" DECIMAL(65,30),
     "leaseStatus" "LeaseStatus" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE "ParkingPass" (
 -- CreateTable
 CREATE TABLE "Notification" (
     "notification_id" TEXT NOT NULL,
-    "senderId" TEXT NOT NULL,
+    "senderId" TEXT,
     "receiverId" TEXT NOT NULL,
     "notificationType" "NotificationType" NOT NULL DEFAULT 'NOISE_COMPLAINT',
     "subject" TEXT,
@@ -202,13 +202,13 @@ ALTER TABLE "Property" ADD CONSTRAINT "Property_addressId_fkey" FOREIGN KEY ("ad
 ALTER TABLE "Amenity" ADD CONSTRAINT "Amenity_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lease" ADD CONSTRAINT "Lease_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Lease" ADD CONSTRAINT "Lease_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ParkingPass" ADD CONSTRAINT "ParkingPass_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
