@@ -1,49 +1,44 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { VoiceChatButton } from "../components/voicechat/voiceChatButton"
-import { VoiceChatModal } from "../components/voicechat/voiceChatModal" 
+import { useState } from 'react';
+import { VoiceChatButton } from '../components/voicechat/voiceChatButton';
+import { VoiceChatModal } from '../components/voicechat/voiceChatModal';
+import { useVoiceChat } from '@/app/hooks/useVoiceChat';
 
 export default function VoiceChatDemoPage() {
-  const [open, setOpen] = useState(false)
-  const [isListening, setIsListening] = useState(false)
-  const [transcript, setTranscript] = useState("")
-  const [response, setResponse] = useState("")
+  const [open, setOpen] = useState(false);
+  const { status, isSpeaking, messages, startConversation, endConversation } =
+    useVoiceChat({});
 
-  const handleStartTalking = () => {
-    setIsListening(true)
-    setTranscript("Hi, I have a question about my lease.")
-    setTimeout(() => {
-      setResponse("Sure! I'd be happy to help you with that.")
-      setIsListening(false)
-    }, 1500)
-  }
+  const getAgentStatus = () => {
+    if (status !== 'connected') return 'Inactive';
+    if (isSpeaking) return 'Speaking';
+    return 'Listening';
+  };
 
-  // Fix: Run conversationalAI on open
-  useEffect(() => {
-    if (open && !isListening && transcript === "") {
-      handleStartTalking()
-    }
-  }, [open, isListening, transcript])
+  const handleStartConversation = async () => {
+    setOpen(true);
+    await startConversation({
+      agentId: 'w9HcNnfGpTdqixgjY6vo',
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-10 relative">
-      <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-4">
+    <div className='min-h-screen bg-white p-10 relative'>
+      <h1 className='text-2xl font-bold text-center text-gray-800 mb-4'>
         Voice Chat UI
       </h1>
-    
-      <VoiceChatButton onClick={() => setOpen(true)} />
+
+      <VoiceChatButton onClick={handleStartConversation} />
       <VoiceChatModal
         open={open}
         onClose={() => {
-          setOpen(false)
-          setTranscript("")
-          setResponse("")
+          setOpen(false);
+          endConversation();
         }}
-        isListening={isListening}
-        transcript={transcript}
-        response={response}
+        status={getAgentStatus()}
+        messages={messages}
       />
     </div>
-  )
+  );
 }
