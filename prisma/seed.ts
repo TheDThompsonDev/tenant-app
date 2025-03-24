@@ -127,36 +127,6 @@ async function main() {
     },
   });
 
-  const user2 = await prisma.user.create({
-    data: {
-      appwriteId: "67d48e45000e9af4d586",
-      firstName: "Tatiana",
-      lastName: "Bertazoli",
-      email: "tatianabertazoli@gmail.com",
-      phoneNumber: "987-654-3210",
-      apartmentNumber: "202",
-      leaseId: lease1.id,
-      userRole: "ADMIN",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
-
-  const user3 = await prisma.user.create({
-    data: {
-      appwriteId: "67d6f6f500318ee7f536",
-      firstName: "Test",
-      lastName: "Test",
-      email: "test@test.com",
-      phoneNumber: "987-654-3210",
-      apartmentNumber: "202",
-      leaseId: lease1.id,
-      userRole: "TENANT",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  });
-
   const user4 = await prisma.user.create({
     data: {
       appwriteId: "1eb751ba-527c-4771-81eb-ef3872488298",
@@ -169,7 +139,7 @@ async function main() {
     },
   });
 
-  const user4 = await prisma.user.create({
+  const user5 = await prisma.user.create({
     data: {
       appwriteId: "67d4d9ba0019ae07cb3c",
       firstName: "admin",
@@ -181,10 +151,22 @@ async function main() {
     },
   });
 
+  const user6 = await prisma.user.create({
+    data: {
+      appwriteId: "15d59072-7977-4306-be6f-6313e2ffd573",
+      firstName: "staci",
+      lastName: "south",
+      email: "goldbear@gmail.com",
+      apartmentNumber: "00",
+      userRole: "TENANT",
+      createdAt: new Date(),
+    },
+  });
+
   // create parking pass
   const parkingPass1 = await prisma.parkingPass.create({
     data: {
-      userId: user2.id,
+      userId: user4.id,
       make: "Toyota",
       model: "Camry",
       color: "Blue",
@@ -198,7 +180,7 @@ async function main() {
   //create smart lock
   const smartLock1 = await prisma.smartDoorKey.create({
     data: {
-      userId: user2.id,
+      userId: user4.id,
       accessCode: "SL101KEY",
       lockStatus: true,
       createdAt: new Date(),
@@ -210,8 +192,8 @@ async function main() {
   // Create notification
   const notification1 = await prisma.notification.create({
     data: {
-      senderId: user2.id,
-      receiverId: user3.id,
+      senderId: user4.id,
+      receiverId: user5.id,
       notificationType: "NOISE_COMPLAINT",
       subject: "Noise Complaint Received",
       message: "noise complaint received for unit 101",
@@ -225,7 +207,7 @@ async function main() {
   // create package locker acess
   const packageLocker1 = await prisma.packageLocker.create({
     data: {
-      userId: user2.id,
+      userId: user4.id,
       lockerNumber: "101",
       packageLockerStatus: "READY_FOR_PICKUP",
       accessCode: "PL101KEY",

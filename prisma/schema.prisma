@@ -69,7 +69,7 @@ model Address {
 
 model User {
   id              String          @id @default(uuid())
-  appwriteId      String?          @unique
+  appwriteId      String?         @unique
   firstName       String          @db.VarChar(40)
   lastName        String          @db.VarChar(40)
   email           String          @unique
@@ -84,8 +84,8 @@ model User {
   parkingPass     ParkingPass[]
   smartDoorKey    SmartDoorKey[]
   packageLocker   PackageLocker[]
-  sender          Notification[]   @relation("Sender")
-  receiver        Notification[]   @relation("Receiver")
+  sender          Notification[]  @relation("Sender")
+  receiver        Notification[]  @relation("Receiver")
 }
 
 model Property {
@@ -122,19 +122,19 @@ model Amenity {
 model Lease {
   id              String      @id @default(uuid())
   propertyId      String?
-  property        Property?    @relation(fields: [propertyId], references: [id])
-  firstName       String
-  lastName        String
+  property        Property?   @relation(fields: [propertyId], references: [id])
+  firstName       String?
+  lastName        String?
   email           String?
-  apartmentNumber String
-  pets            Boolean?     @default(false)
+  apartmentNumber String?
+  pets            Boolean?    @default(false)
   dateOfBirth     DateTime?
   governmentId    String?
   socialSecurity  String?
-  leaseStart      DateTime
-  leaseEnd        DateTime
-  monthlyRent     Decimal
-  securityDeposit Decimal
+  leaseStart      DateTime?
+  leaseEnd        DateTime?
+  monthlyRent     Decimal?
+  securityDeposit Decimal?
   leaseStatus     LeaseStatus
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
