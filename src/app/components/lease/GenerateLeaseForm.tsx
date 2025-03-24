@@ -1,11 +1,19 @@
-"use client"
+"use client";
 
 import LABELS from "../../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { CalendarIcon, User, Home, Mail, DollarSign, Clock, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  CalendarIcon,
+  User,
+  Home,
+  Mail,
+  DollarSign,
+  Clock,
+  FileText,
+} from "lucide-react";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
@@ -29,10 +37,19 @@ interface FormFieldProps {
   type?: string;
 }
 
-function FormField({ field, label, placeholder, icon, type = "text" }: FormFieldProps) {
+function FormField({
+  field,
+  label,
+  placeholder,
+  icon,
+  type = "text",
+}: FormFieldProps) {
   return (
     <div className="w-full mb-4">
-      <label htmlFor={field.name} className="block text-sm font-medium text-gray-700 mb-1">
+      <label
+        htmlFor={field.name}
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
         {label}
       </label>
       <div className="relative">
@@ -60,10 +77,34 @@ function FormField({ field, label, placeholder, icon, type = "text" }: FormField
   );
 }
 
+const fetchLease = async () => {
+  const response = await fetch("/api/property");
+  const data = await response.json();
+  console.log("Property data:", data[1]);
+  return data[1];
+};
+
 export default function GenerateLeaseForm() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState("")
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
+  interface PropertyData {
+    propertyManagerName: string;
+    email: string;
+  }
+
+  const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchLease();
+      if (!data) {
+        throw new Error("Failed to fetch property data");
+      }
+      setPropertyData(data);
+    };
+    fetchData();
+  }, []);
 
   const form = useForm({
     defaultValues: {
@@ -75,25 +116,25 @@ export default function GenerateLeaseForm() {
       leaseStartDate: "",
       leaseEndDate: "",
       monthlyRent: "",
-      landlordFirstName: "",
-      landlordLastName: "",
-      landlordEmail: "",
+      landlordFirstName: propertyData?.propertyManagerName?.split(" ")[0] || "",
+      landlordLastName: propertyData?.propertyManagerName?.split(" ")[1] || "",
+      landlordEmail: propertyData?.email || "",
     },
     onSubmit: async ({ value }) => {
-      setIsSubmitting(true)
-      setSubmitMessage("Generating lease and sending for signature...")
+      setIsSubmitting(true);
+      setSubmitMessage("Generating lease and sending for signature...");
 
       const leaseData = {
         tenantName: `${value.firstName} ${value.lastName}`,
         tenantEmail: value.tenantEmail,
-        landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
-        landlordEmail: value.landlordEmail,
+        // landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
+        // landlordEmail: value.landlordEmail,
         propertyAddress: `Apartment ${value.apartmentNumber}`,
         leaseStartDate: value.leaseStartDate,
         leaseEndDate: value.leaseEndDate,
         monthlyRent: value.monthlyRent,
         securityDeposit: value.securityDeposit,
-      }
+      };
 
       try {
         const response = await fetch("/api/generate-and-send", {
@@ -102,28 +143,34 @@ export default function GenerateLeaseForm() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(leaseData),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
         if (!data.success) {
-          throw new Error(data.error || "Failed to generate lease")
+          throw new Error(data.error || "Failed to generate lease");
         }
 
-        setSubmitMessage("Lease successfully generated and sent!")
+        setSubmitMessage("Lease successfully generated and sent!");
         setTimeout(() => {
           router.push(
-            `/confirmation?id=${data.documentId}&email=${encodeURIComponent(leaseData.tenantEmail)}&name=${encodeURIComponent(leaseData.tenantName)}`
-          )
-        }, 300)
+            `/confirmation?id=${data.documentId}&email=${encodeURIComponent(
+              leaseData.tenantEmail
+            )}&name=${encodeURIComponent(leaseData.tenantName)}`
+          );
+        }, 300);
       } catch (error) {
-        console.error("Error:", error)
-        setSubmitMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`)
+        console.error("Error:", error);
+        setSubmitMessage(
+          `Error: ${
+            error instanceof Error ? error.message : "Unknown error occurred"
+          }`
+        );
       } finally {
         setIsSubmitting(false);
       }
     },
-  })
+  });
 
   return (
     <div className="w-full">
@@ -133,15 +180,18 @@ export default function GenerateLeaseForm() {
             <FileText size={24} />
             {LABELS.generateLease.title}
           </h2>
-          <p className="text-center mt-2 opacity-90">Fill out the form below to generate a new lease agreement</p>
+          <p className="text-center mt-2 opacity-90">
+            Fill out the form below to generate a new lease agreement
+          </p>
         </div>
 
         {submitMessage && (
           <div
-            className={`p-4 mx-6 mt-4 rounded-md shadow-md ${submitMessage.includes("Error")
+            className={`p-4 mx-6 mt-4 rounded-md shadow-md ${
+              submitMessage.includes("Error")
                 ? "bg-red-100 text-red-700 border border-red-200"
                 : "bg-green-100 text-green-700 border border-green-200"
-              }`}
+            }`}
           >
             {submitMessage}
           </div>
@@ -168,8 +218,8 @@ export default function GenerateLeaseForm() {
                     !value
                       ? `${LABELS.generateLease.validateMessages.firstNameRequired}`
                       : value.length < 3
-                        ? `${LABELS.generateLease.validateMessages.firstNameLength}`
-                        : undefined,
+                      ? `${LABELS.generateLease.validateMessages.firstNameLength}`
+                      : undefined,
                   onChangeAsyncDebounceMs: 500,
                   onChangeAsync: async ({ value }) => {
                     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -197,8 +247,8 @@ export default function GenerateLeaseForm() {
                     !value
                       ? `${LABELS.generateLease.validateMessages.lastNameRequired}`
                       : value.length < 3
-                        ? `${LABELS.generateLease.validateMessages.lastNameLength}`
-                        : undefined,
+                      ? `${LABELS.generateLease.validateMessages.lastNameLength}`
+                      : undefined,
                   onChangeAsyncDebounceMs: 500,
                   onChangeAsync: async ({ value }) => {
                     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -226,8 +276,8 @@ export default function GenerateLeaseForm() {
                     !value
                       ? `${LABELS.generateLease.validateMessages.tenantEmailRequired}`
                       : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                        ? `${LABELS.generateLease.validateMessages.tenantEmailInvalid}`
-                        : undefined,
+                      ? `${LABELS.generateLease.validateMessages.tenantEmailInvalid}`
+                      : undefined,
                 }}
               >
                 {(field) => (
@@ -240,7 +290,6 @@ export default function GenerateLeaseForm() {
                   />
                 )}
               </form.Field>
-
             </div>
           </div>
 
@@ -255,16 +304,28 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.apartmentNumRequired || "Apartment number is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .apartmentNumRequired ||
+                          "Apartment number is required"
+                        }`
                       : value.length < 2
-                        ? `${LABELS.generateLease.validateMessages.apartmentNumLength || "Apartment number must be at least 2 characters"}`
-                        : undefined,
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .apartmentNumLength ||
+                          "Apartment number must be at least 2 characters"
+                        }`
+                      : undefined,
                   onChangeAsyncDebounceMs: 500,
                   onChangeAsync: async ({ value }) => {
                     await new Promise((resolve) => setTimeout(resolve, 1000));
                     return (
                       value.includes("error") &&
-                      `${LABELS.generateLease.validateMessages.apartmentNumberNoError || "Apartment number cannot contain 'error'"}`
+                      `${
+                        LABELS.generateLease.validateMessages
+                          .apartmentNumberNoError ||
+                        "Apartment number cannot contain 'error'"
+                      }`
                     );
                   },
                 }}
@@ -272,7 +333,9 @@ export default function GenerateLeaseForm() {
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.apartmentTitle || "Apartment Number"}
+                    label={
+                      LABELS.generateLease.apartmentTitle || "Apartment Number"
+                    }
                     placeholder="Apartment number"
                     icon={<Home size={16} />}
                   />
@@ -284,16 +347,25 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.monthlyRentRequired || "Monthly rent is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .monthlyRentRequired || "Monthly rent is required"
+                        }`
                       : isNaN(Number(value))
-                        ? `${LABELS.generateLease.validateMessages.monthlyRentFormat || "Monthly rent must be a number"}`
-                        : undefined,
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .monthlyRentFormat ||
+                          "Monthly rent must be a number"
+                        }`
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.monthlyRentTitle || "Monthly Rent"}
+                    label={
+                      LABELS.generateLease.monthlyRentTitle || "Monthly Rent"
+                    }
                     placeholder="Monthly rent amount"
                     icon={<DollarSign size={16} />}
                     type="number"
@@ -306,16 +378,27 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.securityDepositRequired || "Security deposit is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .securityDepositRequired ||
+                          "Security deposit is required"
+                        }`
                       : isNaN(Number(value))
-                        ? `${LABELS.generateLease.validateMessages.securityDepositNoError || "Security deposit must be a number"}`
-                        : undefined,
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .securityDepositNoError ||
+                          "Security deposit must be a number"
+                        }`
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.securityDepositTitle || "Security Deposit"}
+                    label={
+                      LABELS.generateLease.securityDepositTitle ||
+                      "Security Deposit"
+                    }
                     placeholder="Security deposit amount"
                     icon={<DollarSign size={16} />}
                     type="number"
@@ -336,14 +419,20 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.leaseStartRequired || "Lease start date is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .leaseStartRequired ||
+                          "Lease start date is required"
+                        }`
                       : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.leaseStartTitle || "Lease Start Date"}
+                    label={
+                      LABELS.generateLease.leaseStartTitle || "Lease Start Date"
+                    }
                     placeholder="Lease start date"
                     icon={<CalendarIcon size={16} />}
                     type="date"
@@ -356,16 +445,27 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.leaseEndDateRequired || "Lease end date is required"}`
-                      : new Date(value) <= new Date(form.getFieldValue("leaseStartDate"))
-                        ? `${LABELS.generateLease.validateMessages.leaseEndDateInvalid || "Lease end date must be after start date"}`
-                        : undefined,
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .leaseEndDateRequired ||
+                          "Lease end date is required"
+                        }`
+                      : new Date(value) <=
+                        new Date(form.getFieldValue("leaseStartDate"))
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .leaseEndDateInvalid ||
+                          "Lease end date must be after start date"
+                        }`
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.leaseEndTitle || "Lease End Date"}
+                    label={
+                      LABELS.generateLease.leaseEndTitle || "Lease End Date"
+                    }
                     placeholder="Lease end date"
                     icon={<CalendarIcon size={16} />}
                     type="date"
@@ -386,14 +486,21 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.landlordFirstNameRequired || "Landlord first name is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .landlordFirstNameRequired ||
+                          "Landlord first name is required"
+                        }`
                       : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.landlordFirstNameTitle || "Landlord First Name"}
+                    label={
+                      LABELS.generateLease.landlordFirstNameTitle ||
+                      "Landlord First Name"
+                    }
                     placeholder="Landlord's first name"
                     icon={<User size={16} />}
                   />
@@ -405,14 +512,21 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.landlordLastNameRequired || "Landlord last name is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .landlordLastNameRequired ||
+                          "Landlord last name is required"
+                        }`
                       : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.landlordLastNameTitle || "Landlord Last Name"}
+                    label={
+                      LABELS.generateLease.landlordLastNameTitle ||
+                      "Landlord Last Name"
+                    }
                     placeholder="Landlord's last name"
                     icon={<User size={16} />}
                   />
@@ -424,16 +538,26 @@ export default function GenerateLeaseForm() {
                 validators={{
                   onChange: ({ value }) =>
                     !value
-                      ? `${LABELS.generateLease.validateMessages.landlordEmailRequired || "Landlord email is required"}`
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .landlordEmailRequired ||
+                          "Landlord email is required"
+                        }`
                       : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                        ? `${LABELS.generateLease.validateMessages.landlordEmailInvalid || "Landlord email is invalid"}`
-                        : undefined,
+                      ? `${
+                          LABELS.generateLease.validateMessages
+                            .landlordEmailInvalid || "Landlord email is invalid"
+                        }`
+                      : undefined,
                 }}
               >
                 {(field) => (
                   <FormField
                     field={field}
-                    label={LABELS.generateLease.landlordEmailTitle || "Landlord Email"}
+                    label={
+                      LABELS.generateLease.landlordEmailTitle ||
+                      "Landlord Email"
+                    }
                     placeholder="Landlord's email address"
                     icon={<Mail size={16} />}
                     type="email"
