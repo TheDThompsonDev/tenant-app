@@ -3,7 +3,7 @@
 import LABELS from "../../constants/labels";
 import { useForm } from "@tanstack/react-form";
 import { AnyFieldApi } from "@tanstack/react-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalendarIcon,
@@ -77,10 +77,36 @@ function FormField({
   );
 }
 
+const fetchLease = async () => {
+  const response = await fetch("/api/property");
+  const data = await response.json();
+  console.log("Property data:", data[1]);
+  return data[1];
+};
+
 export default function GenerateLeaseForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+
+  interface PropertyData {
+    propertyManagerName: string;
+    email: string;
+  }
+
+  const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchLease();
+      if (!data) {
+        throw new Error("Failed to fetch property data");
+      }
+      setPropertyData(data);
+    };
+    fetchData();
+  }, []);
+
 
   const form = useForm({
     defaultValues: {
@@ -92,9 +118,9 @@ export default function GenerateLeaseForm() {
       leaseStartDate: "",
       leaseEndDate: "",
       monthlyRent: "",
-      landlordFirstName: "",
-      landlordLastName: "",
-      landlordEmail: "",
+      landlordFirstName: propertyData?.propertyManagerName?.split(" ")[0] || "",
+      landlordLastName: propertyData?.propertyManagerName?.split(" ")[1] || "",
+      landlordEmail: propertyData?.email || "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
@@ -103,8 +129,8 @@ export default function GenerateLeaseForm() {
       const leaseData = {
         tenantName: `${value.firstName} ${value.lastName}`,
         tenantEmail: value.tenantEmail,
-        landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
-        landlordEmail: value.landlordEmail,
+        // landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
+        // landlordEmail: value.landlordEmail,
         propertyAddress: `Apartment ${value.apartmentNumber}`,
         leaseStartDate: value.leaseStartDate,
         leaseEndDate: value.leaseEndDate,
@@ -137,6 +163,7 @@ export default function GenerateLeaseForm() {
         console.log("Lease data saved to DB:", data);
       };
 
+
       try {
         const response = await fetch("/api/generate-and-send", {
           method: "POST",
@@ -150,6 +177,7 @@ export default function GenerateLeaseForm() {
 
         if (!data.success) {
           throw new Error(data.error || "Failed to generate lease");
+
         }
 
         if (data.success) {
@@ -164,6 +192,7 @@ export default function GenerateLeaseForm() {
             monthlyRent: value.monthlyRent,
             landlordEmail: value.landlordEmail,
           });
+
         }
 
         setSubmitMessage("Lease successfully generated and sent!");
