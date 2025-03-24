@@ -2,7 +2,7 @@ const LABELS = {
   loading: "Loading...",
   navigation: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "Messages",
       icon: "messageIcon",
     },
@@ -20,6 +20,29 @@ const LABELS = {
       href: "/parking",
       text: "Guest Parking Pass",
       icon: "parkingIcon",
+    },
+  },
+
+  navigationAdmin: {
+    messages: {
+      href: "/messaging",
+      text: "Messages",
+      icon: "messageIcon",
+    },
+    unlock_door: {
+      href: "/parking",
+      text: "Guest Parking Pass",
+      icon: "parkingIcon",
+    },
+    packages: {
+      href: "/lease",
+      text: "Generate Lease",
+      icon: "leaseIcon",
+    },
+    parking: {
+      href: "/createTenant",
+      text: "Create Tenant Account",
+      icon: "userPlus",
     },
   },
 
@@ -203,7 +226,7 @@ const LABELS = {
   },
   adminDashboardBtns: {
     messages: {
-      href: "/Messaging",
+      href: "/messaging",
       text: "View Messages",
       icon: "mailIcon",
     },
