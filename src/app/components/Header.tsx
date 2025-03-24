@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import CompanyLogo from "@/app/components/CompanyLogo";
 import Navbar from "@/app/components/Navbar";
 import LogoutBtn from "@/app/components/LogoutBtn";
-import Image from "next/image";
 import { getCurrentUser } from "@/lib/appwrite";
+import { Cog } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,8 +37,6 @@ export default function Header() {
   const handleParkingClick = () => {
     console.log("Parking btn clicked");
   };
-
-  const profileImage = "/Animal.jpg"; // TODO: Replace with the actual profile image source
 
   return (
     <header className="relative bg-white text-black py-4 px-6">
@@ -80,12 +78,9 @@ export default function Header() {
             <Navbar isMobile={false} />
             <div className="flex flex-row gap-4 items-center justify-center">
               <button>
-                <Image
-                  src={profileImage}
+                <Cog
                   width={40}
                   height={40}
-                  alt="Profile Picture"
-                  className="w-10 h-10 rounded-full object-cover"
                   onClick={() => router.push("/dashboard")}
                 />
               </button>

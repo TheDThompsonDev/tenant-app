@@ -40,7 +40,9 @@ export default function SuccessPage() {
             {email}
           </p>
           <p className="ml-5">
-            <span className="font-semibold underline">Temporary Password:</span>{" "}
+            <span className="font-semibold underline">
+              {LABELS.success.temporaryPassword}
+            </span>{" "}
             <br />
             {password}
           </p>
