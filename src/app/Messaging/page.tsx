@@ -78,7 +78,13 @@ export default function MessagesPage() {
           return;
         }
 
-        const res = await fetch(`/api/notifications?userId=${user.$id}`, {
+        const url =
+          user.name === 'admin'
+            ? '/api/admin/notifications'
+            : `/api/notifications?userId=${user.$id}`;
+
+
+        const res = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
