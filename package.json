@@ -13,6 +13,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@11labs/react": "^0.0.8",
     "@prisma/client": "^6.5.0",
     "@tanstack/react-form": "^1.0.5",
     "appwrite": "^17.0.1",
