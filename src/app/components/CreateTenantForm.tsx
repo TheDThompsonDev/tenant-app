@@ -23,13 +23,10 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 export default function CreateTenantForm() {
   const router = useRouter();
 
+  const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
   const form = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      apartmentNumber: "",
-      password: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -47,11 +44,7 @@ export default function CreateTenantForm() {
           `${value.firstName} ${value.lastName}`
         );
         console.log("User created successfully:", newUser);
-        router.push(
-          `/success?lastName=${encodeURIComponent(
-            value.lastName
-          )}&apartmentNumber=${encodeURIComponent(value.apartmentNumber)}`
-        );
+        router.push(`/success?email=${encodeURIComponent(value.email)}`);
       } catch (error) {
         console.error("Error creating user:", error);
       }
@@ -91,7 +84,8 @@ export default function CreateTenantForm() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
-        }}>
+        }}
+      >
         <div className="w-full">
           <form.Field
             name="firstName"
@@ -184,7 +178,7 @@ export default function CreateTenantForm() {
               onChange: ({ value }) =>
                 !value
                   ? `${LABELS.createTenant.validateMessages.emailRequired}`
-                  : !value.includes("@")
+                  : !value.includes("@") || !value.includes(".com")
                   ? `${LABELS.createTenant.validateMessages.emailFormat}`
                   : undefined,
               onChangeAsyncDebounceMs: 500,
@@ -270,7 +264,9 @@ export default function CreateTenantForm() {
                 !value
                   ? `${LABELS.createTenant.validateMessages.passwordRequired}`
                   : value.length < 6
-                  ? `${LABELS.createTenant.validateMessages.passwordRequired}`
+                  ? `${LABELS.createTenant.validateMessages.passwordTooShort}`
+                  : !regex.test(value)
+                  ? `${LABELS.createTenant.validateMessages.passwordFormat}`
                   : undefined,
               onChangeAsyncDebounceMs: 500,
               onChangeAsync: async ({ value }) => {
@@ -280,7 +276,8 @@ export default function CreateTenantForm() {
                   `${LABELS.createTenant.validateMessages.passwordNoError}`
                 );
               },
-            }}>
+            }}
+          >
             {(field) => (
               <div className="w-full">
                 <label htmlFor={field.name} />
@@ -312,7 +309,8 @@ export default function CreateTenantForm() {
             <button
               type="submit"
               className="hover:translate-0.5 hover:cursor-pointer bg-secondary-blue text-white p-2 rounded-md disabled:opacity-40 w-full my-2"
-              disabled={!canSubmit}>
+              disabled={!canSubmit}
+            >
               {isSubmitting
                 ? `${LABELS.createTenant.sumbit.loading}`
                 : `${LABELS.createTenant.sumbit.title}`}
