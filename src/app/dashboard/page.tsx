@@ -15,6 +15,7 @@ type UserType = Models.User<Models.Preferences>;
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [property, setProperty] = useState<any>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -25,6 +26,12 @@ const Dashboard = () => {
         } else {
           console.error("Failed to get user:", response.error);
         }
+        const getProperty = await fetch("/api/property", {
+          method: "GET",
+        });
+        const property = await getProperty.json();
+        console.log("Property:", property);
+        setProperty(property);
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
@@ -71,16 +78,19 @@ const Dashboard = () => {
         ? "text-white lg:text-secondary-blue"
         : "text-white";
     const paddingBottom = user.name === "admin" ? "" : "p-10";
-    const iconColor = user.name === "admin" ? " bg-alternate-light-gray text-secondary-blue" : "bg-primary-green";
+    const iconColor =
+      user.name === "admin"
+        ? " bg-alternate-light-gray text-secondary-blue"
+        : "bg-primary-green";
     return (
       <div
         className={`${textColor} mt-14 ${paddingBottom} flex flex-col items-center lg:items-start relative lg:mt-0 lg:px-4`}
       >
         <UserRound
-         width={24}
-         height={24}
-         className={`w-24 h-24 rounded-full object-cover border-4 border-white lg:relative ${iconColor}`}
-         />
+          width={24}
+          height={24}
+          className={`w-24 h-24 rounded-full object-cover border-4 border-white lg:relative ${iconColor}`}
+        />
 
         <h3 className="mt-5 text-3xl">{userName}</h3>
         <p>{userEmail}</p>
@@ -96,18 +106,18 @@ const Dashboard = () => {
         : "text-alternate-light-gray";
     return (
       <div className={`${textColor} p-6 font-thin text-sm`}>
-        <h2 className="text-2xl">{LABELS.dashboardComponents.propertyName}</h2>
+        <h2 className="text-2xl">{property[1].propertyName}</h2>
         <p>
           {LABELS.dashboardComponents.addressLabel}
-          {LABELS.dashboardComponents.propertyAddress}
+          {property[1].address.address},{property[1].address.city},{" "}
+          {property[1].address.state} {property[1].address.zipCode}{" "}
+          {property[1].address.country}
         </p>
         <p>
-          {LABELS.dashboardComponents.websiteLabel}{" "}
-          {LABELS.dashboardComponents.propertyWebsite}
+          {LABELS.dashboardComponents.websiteLabel} {property[1].websiteURL}
         </p>
         <p>
-          {LABELS.dashboardComponents.phoneLabel}{" "}
-          {LABELS.dashboardComponents.propertyPhone}
+          {LABELS.dashboardComponents.phoneLabel} {property[1].phoneNumber}
         </p>
       </div>
     );
