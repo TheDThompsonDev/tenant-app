@@ -1,65 +1,83 @@
 "use client";
 
-import { useState } from 'react';
-import { FileText, Download, Upload, Check, Clock } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { FileText, Download, Upload, Check, Clock } from "lucide-react";
 
 type LeaseDocument = {
   id: string;
   title: string;
   date: string;
-  status: 'active' | 'expired' | 'pending';
+  leaseStatus: "active" | "expired" | "pending";
   downloadUrl?: string;
 };
 
 // Mock data for demonstration
-const mockLeases: LeaseDocument[] = [
-  {
-    id: 'lease-2025-001',
-    title: 'Residential Lease Agreement',
-    date: '2025-01-15',
-    status: 'active',
-    downloadUrl: '#',
-  },
-  {
-    id: 'lease-2024-002',
-    title: 'Previous Lease Agreement',
-    date: '2024-01-15',
-    status: 'expired',
-    downloadUrl: '#',
-  },
-  {
-    id: 'lease-2025-003',
-    title: 'Lease Renewal',
-    date: '2025-03-10',
-    status: 'pending',
-  },
-];
+// const mockLeases: LeaseDocument[] = [
+//   {
+//     id: "lease-2025-001",
+//     title: "Residential Lease Agreement",
+//     date: "2025-01-15",
+//     status: "active",
+//     downloadUrl: "#",
+//   },
+//   {
+//     id: "lease-2024-002",
+//     title: "Previous Lease Agreement",
+//     date: "2024-01-15",
+//     status: "expired",
+//     downloadUrl: "#",
+//   },
+//   {
+//     id: "lease-2025-003",
+//     title: "Lease Renewal",
+//     date: "2025-03-10",
+//     status: "pending",
+//   },
+// ];
 
 interface LeaseViewProps {
   isAdmin?: boolean;
 }
 
+const fetchLease = async () => {
+  const response = await fetch("/api/admin/lease");
+  const data = await response.json();
+  return data;
+};
+
 export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
-  const [leases] = useState<LeaseDocument[]>(mockLeases);
-  const [selectedLease, setSelectedLease] = useState<LeaseDocument | null>(isAdmin ? null : mockLeases[0]);
+  const [leases, setLeases] = useState<LeaseDocument[]>([]);
+  const [selectedLease, setSelectedLease] = useState<LeaseDocument | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchLease();
+      const transformedData = transformLeaseData(data);
+      setLeases(transformedData);
+    };
+
+    fetchData();
+  }, [isAdmin]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return (
           <span className="flex items-center text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-medium">
             <Check size={14} className="mr-1" />
             Active
           </span>
         );
-      case 'expired':
+      case "expired":
         return (
           <span className="flex items-center text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium">
             <Clock size={14} className="mr-1" />
             Expired
           </span>
         );
-      case 'pending':
+      case "pending":
         return (
           <span className="flex items-center text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs font-medium">
             <Clock size={14} className="mr-1" />
@@ -75,19 +93,38 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
     setSelectedLease(lease);
   };
 
+  const transformLeaseData = (
+    data: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      apartmentNumber: string;
+      createdAt: string;
+      leaseStatus: "active" | "expired" | "pending";
+    }[]
+  ): LeaseDocument[] => {
+    return data.map((item) => ({
+      id: item.id,
+      title: `${item.firstName} ${item.lastName} ${item.apartmentNumber}`,
+      date: item.createdAt,
+      leaseStatus: item.leaseStatus,
+    }));
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   // For non-admin users, show a simplified view with just their active lease
   if (!isAdmin) {
-    const activeLease = mockLeases.find(lease => lease.status === 'active') || mockLeases[0];
-    
+    const activeLease =
+      leases.find((lease) => lease.leaseStatus === "active") || leases[0];
+
     return (
       <div className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="bg-gradient-to-r from-primary-green to-secondary-blue p-6 text-white">
@@ -95,34 +132,46 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
             <FileText className="mr-3" size={24} />
             Your Lease Agreement
           </h2>
-          <p className="mt-2 opacity-90">View and download your current lease</p>
+          <p className="mt-2 opacity-90">
+            View and download your current lease
+          </p>
         </div>
 
         <div className="p-8">
           <div className="flex flex-col md:flex-row items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-semibold text-gray-800">{activeLease.title}</h3>
-              <p className="text-sm text-gray-500 mt-1">Issued on {formatDate(activeLease.date)}</p>
+              <h3 className="text-xl font-semibold text-gray-800">
+                {activeLease.title}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Issued on {formatDate(activeLease.date)}
+              </p>
             </div>
-            {getStatusBadge(activeLease.status)}
+            {getStatusBadge(activeLease.leaseStatus)}
           </div>
 
           <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center">
             <div className="w-full max-w-md aspect-[3/4] bg-white rounded-lg shadow-md flex flex-col items-center justify-center p-6 border border-gray-300 mb-6">
               <FileText size={64} className="text-gray-400 mb-4" />
-              <h4 className="text-lg font-medium text-gray-700 mb-2">Lease Document</h4>
-              <p className="text-gray-500 text-center mb-6">Your official lease agreement for the property</p>
+              <h4 className="text-lg font-medium text-gray-700 mb-2">
+                Lease Document
+              </h4>
+              <p className="text-gray-500 text-center mb-6">
+                Your official lease agreement for the property
+              </p>
             </div>
 
-            {activeLease.status === 'pending' ? (
+            {activeLease.leaseStatus === "pending" ? (
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 text-sm text-yellow-700 w-full max-w-md text-center">
                 <Clock size={18} className="inline-block mr-2" />
-                This lease is pending signature. You&apos;ll be notified when it&apos;s ready.
+                This lease is pending signature. You&apos;ll be notified when
+                it&apos;s ready.
               </div>
             ) : (
-              <button 
+              <button
                 disabled={!activeLease.downloadUrl}
-                className="flex items-center gap-2 bg-secondary-blue text-white px-6 py-3 rounded-md hover:bg-secondary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                className="flex items-center gap-2 bg-secondary-blue text-white px-6 py-3 rounded-md hover:bg-secondary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <Download size={20} />
                 Download Lease Agreement
               </button>
@@ -147,23 +196,30 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1 border-r border-gray-200 pr-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Your Leases</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Your Leases
+            </h3>
             <div className="space-y-3">
               {leases.map((lease) => (
                 <div
                   key={lease.id}
                   onClick={() => handleLeaseSelect(lease)}
-                  className={`p-3 rounded-lg cursor-pointer transition-all ${selectedLease?.id === lease.id
-                    ? 'bg-primary-green/10 border-l-4 border-primary-green'
-                    : 'hover:bg-gray-50 border-l-4 border-transparent'
-                    }`}
+                  className={`p-3 rounded-lg cursor-pointer transition-all ${
+                    selectedLease?.id === lease.id
+                      ? "bg-primary-green/10 border-l-4 border-primary-green"
+                      : "hover:bg-gray-50 border-l-4 border-transparent"
+                  }`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-medium text-gray-800">{lease.title}</h4>
-                      <p className="text-sm text-gray-500 mt-1">{formatDate(lease.date)}</p>
+                      <h4 className="font-medium text-gray-800">
+                        {lease.title}
+                      </h4>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {formatDate(lease.date)}
+                      </p>
                     </div>
-                    {getStatusBadge(lease.status)}
+                    {getStatusBadge(lease.leaseStatus)}
                   </div>
                 </div>
               ))}
@@ -182,24 +238,31 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
               <div className="h-full flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-800">{selectedLease.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">Issued on {formatDate(selectedLease.date)}</p>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      {selectedLease.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Issued on {formatDate(selectedLease.date)}
+                    </p>
                   </div>
-                  {getStatusBadge(selectedLease.status)}
+                  {getStatusBadge(selectedLease.leaseStatus)}
                 </div>
 
                 <div className="flex-grow bg-gray-100 rounded-lg p-8 flex items-center justify-center">
                   <div className="w-full max-w-md aspect-[3/4] bg-white rounded-lg shadow-md flex flex-col items-center justify-center p-6 border border-gray-300">
                     <FileText size={64} className="text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-center mb-6">Preview not available</p>
-                    {selectedLease.status === 'pending' ? (
+                    <p className="text-gray-500 text-center mb-6">
+                      Preview not available
+                    </p>
+                    {selectedLease.leaseStatus === "pending" ? (
                       <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-700 w-full text-center">
                         This lease is pending signature
                       </div>
                     ) : (
-                      <button 
+                      <button
                         disabled={!selectedLease.downloadUrl}
-                        className="flex items-center gap-2 bg-secondary-blue text-white px-4 py-2 rounded-md hover:bg-secondary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        className="flex items-center gap-2 bg-secondary-blue text-white px-4 py-2 rounded-md hover:bg-secondary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
                         <Download size={18} />
                         Download PDF
                       </button>
@@ -211,8 +274,12 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
               <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg p-8">
                 <div className="text-center">
                   <FileText size={48} className="text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-700 mb-2">No lease selected</h3>
-                  <p className="text-gray-500 max-w-md">Select a lease from the list to view its details</p>
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">
+                    No lease selected
+                  </h3>
+                  <p className="text-gray-500 max-w-md">
+                    Select a lease from the list to view its details
+                  </p>
                 </div>
               </div>
             )}

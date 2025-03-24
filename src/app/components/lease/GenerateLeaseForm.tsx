@@ -88,6 +88,7 @@ export default function GenerateLeaseForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+
   interface PropertyData {
     propertyManagerName: string;
     email: string;
@@ -105,6 +106,7 @@ export default function GenerateLeaseForm() {
     };
     fetchData();
   }, []);
+
 
   const form = useForm({
     defaultValues: {
@@ -136,6 +138,32 @@ export default function GenerateLeaseForm() {
         securityDeposit: value.securityDeposit,
       };
 
+      const saveOnDB = async (leaseData: {
+        firstName: string;
+        lastName: string;
+        tenantEmail: string;
+        securityDeposit: string;
+        apartmentNumber: string;
+        leaseStartDate: string;
+        leaseEndDate: string;
+        monthlyRent: string;
+        landlordEmail: string;
+      }) => {
+        const response = await fetch("/api/admin/lease", {
+          method: "POST",
+          body: JSON.stringify(leaseData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error || "Failed to save lease data");
+        }
+        console.log("Lease data saved to DB:", data);
+      };
+
+
       try {
         const response = await fetch("/api/generate-and-send", {
           method: "POST",
@@ -149,6 +177,22 @@ export default function GenerateLeaseForm() {
 
         if (!data.success) {
           throw new Error(data.error || "Failed to generate lease");
+
+        }
+
+        if (data.success) {
+          saveOnDB({
+            firstName: value.firstName,
+            lastName: value.lastName,
+            tenantEmail: value.tenantEmail,
+            securityDeposit: value.securityDeposit,
+            apartmentNumber: value.apartmentNumber,
+            leaseStartDate: value.leaseStartDate,
+            leaseEndDate: value.leaseEndDate,
+            monthlyRent: value.monthlyRent,
+            landlordEmail: value.landlordEmail,
+          });
+
         }
 
         setSubmitMessage("Lease successfully generated and sent!");
