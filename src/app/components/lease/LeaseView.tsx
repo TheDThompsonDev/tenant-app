@@ -40,7 +40,7 @@ interface LeaseViewProps {
 }
 
 const fetchLease = async () => {
-  const response = await fetch("/api/lease");
+  const response = await fetch("/api/admin/lease");
   const data = await response.json();
   return data;
 };

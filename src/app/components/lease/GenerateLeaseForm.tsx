@@ -123,7 +123,7 @@ export default function GenerateLeaseForm() {
         monthlyRent: string;
         landlordEmail: string;
       }) => {
-        const response = await fetch("/api/lease", {
+        const response = await fetch("/api/admin/lease", {
           method: "POST",
           body: JSON.stringify(leaseData),
           headers: {

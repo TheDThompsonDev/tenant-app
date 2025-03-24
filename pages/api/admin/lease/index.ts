@@ -13,20 +13,23 @@ export default async function handler(
         const lease = await prisma.lease.findMany();
         res.status(200).json(lease);
       } catch (error) {
-        console.error("Error finding leases:", error);
-        res.status(500).json({ error: "failed to fetch leases" });
+        console.error("Error finding lease:", error);
+        res.status(500).json({ error: "failed to fetch lease" });
       }
       break;
 
     case "POST":
       try {
         const {
-          appwriteId,
           firstName,
           lastName,
-          email,
+          tenantEmail,
+          securityDeposit,
           apartmentNumber,
-          phoneNumber,
+          leaseStartDate,
+          leaseEndDate,
+          monthlyRent,
+          landlordEmail,
         } = req.body;
 
         const requiredFields = [
@@ -34,6 +37,7 @@ export default async function handler(
           "lastName",
           "email",
           "apartmentNumber",
+          "landlordEmail",
         ];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
@@ -45,29 +49,42 @@ export default async function handler(
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
-        const user = await prisma.user.create({
-          data: {
-            appwriteId,
-            firstName,
-            lastName,
-            email,
-            apartmentNumber,
-            phoneNumber,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+        const property = await prisma.property.findFirst({
+          where: {
+            email: landlordEmail,
           },
         });
-        res.status(201).json(user.id);
+
+        if (!property) {
+          return res.status(404).json({ error: "Property not found" });
+        }
+
+        const lease = await prisma.lease.create({
+          data: {
+            firstName,
+            lastName,
+            email: tenantEmail,
+            securityDeposit,
+            apartmentNumber,
+            leaseStart: new Date(leaseStartDate),
+            leaseEnd: new Date(leaseEndDate),
+            monthlyRent,
+            leaseStatus: "PENDING",
+            propertyId: property.id,
+            createdAt: new Date(),
+          },
+        });
+        res.status(201).json(lease);
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating lease:", error);
         res.status(500).json({
-          error: "failed to create user",
+          error: "failed to create lease",
         });
       }
       break;
 
     default:
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
