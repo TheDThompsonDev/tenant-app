@@ -66,9 +66,13 @@ const LABELS = {
   },
 
   buttons: {
-    FooterSignUp: {
-      label: "Sign Up",
-      href: "/signup",
+    FooterLogin: {
+      label: "Login",
+      href: "/login",
+    },
+    FooterLogout: {
+      label: "Logout",
+      href: "/logout",
     },
   },
 
@@ -441,4 +445,6 @@ const LABELS = {
     cogTitle: 'Dashboard'
   }
 };
+
+
 export default LABELS;
