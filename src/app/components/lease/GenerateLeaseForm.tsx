@@ -107,7 +107,6 @@ export default function GenerateLeaseForm() {
     fetchData();
   }, []);
 
-
   const form = useForm({
     defaultValues: {
       firstName: "",
@@ -129,8 +128,8 @@ export default function GenerateLeaseForm() {
       const leaseData = {
         tenantName: `${value.firstName} ${value.lastName}`,
         tenantEmail: value.tenantEmail,
-        // landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
-        // landlordEmail: value.landlordEmail,
+        landlordName: `${value.landlordFirstName} ${value.landlordLastName}`,
+        landlordEmail: value.landlordEmail,
         propertyAddress: `Apartment ${value.apartmentNumber}`,
         leaseStartDate: value.leaseStartDate,
         leaseEndDate: value.leaseEndDate,
@@ -163,7 +162,6 @@ export default function GenerateLeaseForm() {
         console.log("Lease data saved to DB:", data);
       };
 
-
       try {
         const response = await fetch("/api/generate-and-send", {
           method: "POST",
@@ -177,7 +175,6 @@ export default function GenerateLeaseForm() {
 
         if (!data.success) {
           throw new Error(data.error || "Failed to generate lease");
-
         }
 
         if (data.success) {
@@ -192,7 +189,6 @@ export default function GenerateLeaseForm() {
             monthlyRent: value.monthlyRent,
             landlordEmail: value.landlordEmail,
           });
-
         }
 
         setSubmitMessage("Lease successfully generated and sent!");

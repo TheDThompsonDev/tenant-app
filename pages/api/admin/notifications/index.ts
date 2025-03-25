@@ -10,7 +10,12 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const notification = await prisma.notification.findMany();
+        const notification = await prisma.notification.findMany({
+          include: {
+            sender: true,
+            receiver: true,
+          },
+        });
         res.status(200).json(notification);
       } catch (error) {
         console.error("Error finding Notification:", error);
@@ -45,9 +50,10 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            userId: findUser.id,
+            senderId: "admin",
             subject,
             message,
+            receiverId: findUser.id,
             notificationType,
             createdAt: new Date(),
           },

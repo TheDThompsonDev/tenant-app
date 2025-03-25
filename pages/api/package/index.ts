@@ -1,3 +1,4 @@
+import { PackageLockerStatus } from "@prisma/client";
 import { prisma } from "../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -40,7 +41,9 @@ export default async function handler(
           data: {
             userId: user,
             lockerNumber,
-            packageLockerStatus: "READY_FOR_PICKUP",
+            packageLockerStatus: PackageLockerStatus
+              ? "READY_FOR_PICKUP"
+              : "READY_FOR_PICKUP",
             accessCode,
             lastAcessed: new Date(),
           },
