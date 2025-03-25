@@ -1,46 +1,115 @@
 "use client";
 
 import Header from "@/app/components/Header";
-import Image from "next/image";
 import Link from "next/link";
 import { Pencil, LucideIcon, UserRound } from "lucide-react";
 import LABELS from "../constants/labels";
 import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 type UserType = Models.User<Models.Preferences>;
+
+interface PropertyData {
+  propertyName: string;
+  address: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  websiteURL: string;
+  phoneNumber: string;
+}
+
+const userCache: {
+  data: UserType | null;
+  timestamp: number;
+} = {
+  data: null,
+  timestamp: 0,
+};
+
+const propertyCache: {
+  data: PropertyData[] | null;
+  timestamp: number;
+} = {
+  data: null,
+  timestamp: 0,
+};
+
+const CACHE_EXPIRATION = 30000;
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [property, setProperty] = useState<any>(null);
+  const [property, setProperty] = useState<PropertyData[] | null>(null);
+
+  const isCacheValid = useCallback(() => {
+    if (!userCache.data || !propertyCache.data) return false;
+    const now = Date.now();
+    return now - userCache.timestamp < CACHE_EXPIRATION && now - propertyCache.timestamp < CACHE_EXPIRATION;
+  }, []);
+
+  const fetchUserData = useCallback(async () => {
+    try {
+      if (isCacheValid()) {
+        console.log("Using cached user data");
+        setUser(userCache.data as UserType);
+        return;
+      }
+
+      console.log("Fetching user data from API");
+      const userResponse = await getCurrentUser();
+      
+      if (userResponse.success && userResponse.data) {
+        setUser(userResponse.data as UserType);
+        userCache.data = userResponse.data as UserType;
+        userCache.timestamp = Date.now();
+      } else {
+        console.error("Failed to get user:", userResponse.error);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }, [isCacheValid]);
+
+  const fetchPropertyData = useCallback(async () => {
+    try {
+      if (isCacheValid()) {
+        console.log("Using cached property data");
+        setProperty(propertyCache.data as PropertyData[]);
+        return;
+      }
+
+      console.log("Fetching property data from API");
+      const propertyResponse = await fetch("/api/property", { method: "GET" });
+      
+      const propertyData = await propertyResponse.json();
+      console.log("Property:", propertyData);
+      setProperty(propertyData);
+      propertyCache.data = propertyData;
+      propertyCache.timestamp = Date.now();
+    } catch (error) {
+      console.error("Error fetching property data:", error);
+    }
+  }, [isCacheValid]);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await getCurrentUser();
-        if (response.success && response.data) {
-          setUser(response.data as UserType);
-        } else {
-          console.error("Failed to get user:", response.error);
-        }
-        const getProperty = await fetch("/api/property", {
-          method: "GET",
-        });
-        const property = await getProperty.json();
-        console.log("Property:", property);
-        setProperty(property);
+        await Promise.all([fetchUserData(), fetchPropertyData()]);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [fetchUserData, fetchPropertyData]);
 
   const renderIcon = (iconName: string) => {
     if (!iconName || !ICON_MAP[iconName]) return null;
@@ -106,18 +175,18 @@ const Dashboard = () => {
         : "text-alternate-light-gray";
     return (
       <div className={`${textColor} p-6 font-thin text-sm`}>
-        <h2 className="text-2xl">{property[1].propertyName}</h2>
+        <h2 className="text-2xl">{property?.[0].propertyName}</h2>
         <p>
           {LABELS.dashboardComponents.addressLabel}
-          {property[1].address.address},{property[1].address.city},{" "}
-          {property[1].address.state} {property[1].address.zipCode}{" "}
-          {property[1].address.country}
+          {property?.[0].address.address},{property?.[0].address.city},{" "}
+          {property?.[0].address.state} {property?.[0].address.zipCode}{" "}
+          {property?.[0].address.country}
         </p>
         <p>
-          {LABELS.dashboardComponents.websiteLabel} {property[1].websiteURL}
+          {LABELS.dashboardComponents.websiteLabel} {property?.[0].websiteURL}
         </p>
         <p>
-          {LABELS.dashboardComponents.phoneLabel} {property[1].phoneNumber}
+          {LABELS.dashboardComponents.phoneLabel} {property?.[0].phoneNumber}
         </p>
       </div>
     );
@@ -287,6 +356,16 @@ const Dashboard = () => {
     );
   };
 
+  const renderDashboard = () => {
+    if (!user) return null;
+    
+    if (user.name === "admin") {
+      return <AdminDashboard user={user} />;
+    } else {
+      return <TenantDashboard user={user} />;
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -294,14 +373,10 @@ const Dashboard = () => {
           <p>Loading...</p>
         </div>
       ) : user ? (
-        user.name === "admin" ? (
-          <AdminDashboard user={user} />
-        ) : (
-          <TenantDashboard user={user} />
-        )
+        renderDashboard()
       ) : (
         <div className="flex items-center justify-center h-screen">
-          <p>User not found</p>
+          <p className="text-lg text-gray-600">Please log in to view your dashboard</p>
         </div>
       )}
     </>

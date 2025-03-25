@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
   Clock,
@@ -24,20 +23,101 @@ type Message = {
   priority?: string;
 };
 
+type NotificationData = {
+  id: string;
+  subject: string | null;
+  message: string | null;
+  createdAt: string;
+  notificationType?: string;
+  senderId?: string;
+  receiverId?: string;
+  status?: string;
+  priority?: string;
+  apartmentNumber?: string;
+  sender?: {
+    apartmentNumber?: string;
+  };
+  receiver?: {
+    apartmentNumber?: string;
+  };
+};
+
 type MessageListProps = {
   messages: Message[];
   isAdmin?: boolean;
+  data?: NotificationData[];
 };
 
-export default function MessageList({ messages, isAdmin }: MessageListProps) {
+function MessageIcon({ type }: { type: string }) {
+  const iconMap: Record<string, JSX.Element> = {
+    package: <Package size={18} className="text-white" />,
+    management: <Home size={18} className="text-white" />,
+    lease: <FileText size={18} className="text-white" />,
+    general: <MessageSquare size={18} className="text-white" />,
+    noise_complaint: <VolumeX size={18} className="text-white" />,
+  };
+
+  const bgColorMap: Record<string, string> = {
+    package: "bg-blue-500",
+    management: "bg-green-500",
+    lease: "bg-purple-500",
+    general: "bg-gray-500",
+    noise_complaint: "bg-red-500",
+  };
+
+  return (
+    <div
+      className={`w-10 h-10 rounded-full flex items-center justify-center ${bgColorMap[type] || "bg-gray-500"}`}
+    >
+      {iconMap[type] || iconMap.general}
+    </div>
+  );
+}
+
+function formatTime(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInDays === 1) {
+      return 'Yesterday';
+    } else if (diffInDays < 7) {
+      return date.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  } catch {
+    return 'Invalid date';
+  }
+}
+
+function MessageList({ messages, isAdmin, data }: MessageListProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredMessages = messages.filter(
-    (msg) =>
-      msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      msg.body.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const isSentByCurrentUser = useCallback((messageId: string) => {
+    if (!data || !messageId) return false;
+    
+    const notification = data.find(note => note.id === messageId);
+    if (!notification) return false;
+
+    if (isAdmin) {
+      return notification.senderId === 'admin';
+    } else {
+      return notification.senderId !== 'admin';
+    }
+  }, [data, isAdmin]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter(
+      (msg) =>
+        msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        msg.body.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [messages, searchTerm]);
 
   if (!messages.length) {
     return (
@@ -141,8 +221,13 @@ export default function MessageList({ messages, isAdmin }: MessageListProps) {
                     {formatTime(msg.createdAt)}
                   </span>
                   <span className="capitalize text-xs text-primary-green">
-                    {isAdmin ? LABELS.messaging.fromLabel : "to: "}
-                    {msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : "Admin"}
+                    {isAdmin
+                      ? (isSentByCurrentUser(msg.id) 
+                          ? `To: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}` 
+                          : `From: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}`)
+                      : (isSentByCurrentUser(msg.id)
+                          ? 'To: Admin'
+                          : 'From: Admin')}
                   </span>
                 </div>
               </div>
@@ -154,46 +239,4 @@ export default function MessageList({ messages, isAdmin }: MessageListProps) {
   );
 }
 
-function MessageIcon({ type }: { type: string }) {
-  const iconMap = {
-    package: <Package size={18} className="text-white" />,
-    management: <Home size={18} className="text-white" />,
-    lease: <FileText size={18} className="text-white" />,
-    general: <MessageSquare size={18} className="text-white" />,
-    noise_complaint: <VolumeX size={18} className="text-white" />,
-  };
-
-  const colors = {
-    package: "bg-primary-green",
-    management: "bg-secondary-blue",
-    lease: "bg-blue-800",
-    general: "bg-primary",
-    noise_complaint: "bg-red-500",
-  };
-
-  const bgColor = colors[type as keyof typeof colors] || colors.general;
-  const icon = iconMap[type as keyof typeof iconMap] || iconMap.general;
-
-  return (
-    <div
-      className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-200 hover:scale-110`}
-    >
-      {icon}
-    </div>
-  );
-}
-
-function formatTime(dateString: string) {
-  const date = new Date(dateString);
-  return (
-    date.toLocaleDateString([], {
-      month: "short",
-      day: "numeric",
-    }) +
-    " at " +
-    date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  );
-}
+export default React.memo(MessageList);
