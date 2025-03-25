@@ -15,11 +15,14 @@ export default async function handler(
             sender: true,
             receiver: true,
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         });
         res.status(200).json(notification);
       } catch (error) {
         console.error("Error finding Notification:", error);
-        res.status(500).json({ error: "failed to fecth Notification" });
+        res.status(500).json({ error: "failed to fetch Notification" });
       }
       break;
 
@@ -50,7 +53,7 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            senderId: "admin",
+            senderId: findUser.id,
             subject,
             message,
             receiverId: findUser.id,

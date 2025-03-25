@@ -44,6 +44,21 @@ export default async function handler(
             .status(400)
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
+        
+        const existingUser = await prisma.user.findUnique({
+          where: { email }
+        });
+        
+        if (existingUser) {
+          if (appwriteId && !existingUser.appwriteId) {
+            const updatedUser = await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { appwriteId }
+            });
+            return res.status(200).json(updatedUser.id);
+          }
+          return res.status(200).json(existingUser.id);
+        }
 
         const user = await prisma.user.create({
           data: {

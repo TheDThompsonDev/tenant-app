@@ -23,6 +23,29 @@ const LABELS = {
     },
   },
 
+  navigationAdmin: {
+    messages: {
+      href: "/messaging",
+      text: "Messages",
+      icon: "messageIcon",
+    },
+    unlock_door: {
+      href: "/parking",
+      text: "Guest Parking Pass",
+      icon: "parkingIcon",
+    },
+    packages: {
+      href: "/lease",
+      text: "Generate Lease",
+      icon: "leaseIcon",
+    },
+    parking: {
+      href: "/createTenant",
+      text: "Create Tenant Account",
+      icon: "userPlus",
+    },
+  },
+
   featureHighlight: {
     title: "Modern Problems Require Moderns Solutions",
     featureCards: [
@@ -346,7 +369,7 @@ const LABELS = {
       passwordRequired: " a password is required",
       passwordNoError: 'No "error" allowed in password',
       passwordFormat: "Password must contain characters",
-      passwordTooShort: "Password must be at least 6 characters",
+      passwordTooShort: "Password must be at least 8 characters",
     },
     placeholders: {
       firstName: "First Name",
@@ -364,7 +387,7 @@ const LABELS = {
     title: "Success! New Tenant Account Created",
     back: "Back",
     username: "UserName:",
-    temporaryPassword: "Temporary Password:"
+    temporaryPassword: "Temporary Password:",
   },
   generateLease: {
     title: "Generate Lease",
@@ -442,9 +465,8 @@ const LABELS = {
     },
   },
   mobileNav: {
-    cogTitle: 'Dashboard'
-  }
+    cogTitle: "Dashboard",
+  },
 };
-
 
 export default LABELS;

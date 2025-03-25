@@ -25,6 +25,8 @@ type Message = {
   type?: "package" | "management" | "lease" | "general" | "noise_complaint";
   user?: string;
   apartmentNumber?: string;
+  status?: string;
+  priority?: string;
 };
 
 type ComposeMessageFormValues = {

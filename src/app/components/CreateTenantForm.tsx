@@ -37,13 +37,13 @@ export default function CreateTenantForm() {
     onSubmit: async ({ value }) => {
       try {
         const userId = await saveOnDB(value);
-        const newUser = registerUser(
+        const result = await registerUser(
           value.email,
           userId,
           value.password,
           `${value.firstName} ${value.lastName}`
         );
-        console.log("User created successfully:", newUser);
+        console.log("User created successfully:", result);
         router.push(`/success?email=${encodeURIComponent(value.email)}`);
       } catch (error) {
         console.error("Error creating user:", error);
@@ -263,7 +263,7 @@ export default function CreateTenantForm() {
               onChange: ({ value }) =>
                 !value
                   ? `${LABELS.createTenant.validateMessages.passwordRequired}`
-                  : value.length < 6
+                  : value.length < 8
                   ? `${LABELS.createTenant.validateMessages.passwordTooShort}`
                   : !regex.test(value)
                   ? `${LABELS.createTenant.validateMessages.passwordFormat}`

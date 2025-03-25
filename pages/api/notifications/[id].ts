@@ -13,6 +13,10 @@ export default async function handler(
         const { id } = req.query;
         const notification = await prisma.notification.findUnique({
           where: { id: id as string },
+          include: {
+            sender: true,
+            receiver: true,
+          }
         });
 
         if (!notification) {
