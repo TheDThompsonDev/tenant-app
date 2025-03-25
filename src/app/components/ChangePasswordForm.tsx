@@ -2,6 +2,8 @@
 import { useForm } from '@tanstack/react-form';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import LABELS from '@/app/constants/labels';
+import { updateUserPassword } from '@/lib/appwrite';
+import { useRouter } from 'next/navigation';
 
 const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
   return (
@@ -21,13 +23,15 @@ interface ChangePasswordFormProps {
 const ChangePasswordForm = ({
   displayEditProfile,
 }: ChangePasswordFormProps) => {
+  const router = useRouter();
   const form = useForm({
     defaultValues: {
       currPassword: '',
       newPassword: '',
     },
     onSubmit: async ({ value }) => {
-      console.log('Form submitted:', value);
+      await updateUserPassword(value.currPassword, value.newPassword);
+      router.push('/dashboard');
     },
   });
 

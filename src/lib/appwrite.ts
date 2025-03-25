@@ -31,20 +31,20 @@ function isCacheValid(): boolean {
 export async function getCurrentUser() {
   try {
     if (isCacheValid()) {
-      console.log("Using cached user data");
+      console.log('Using cached user data');
       return { success: true, data: userCache.user };
     }
 
-    console.log("Fetching user data from Appwrite");
+    console.log('Fetching user data from Appwrite');
     const user = await account.get();
-    
+
     // Update cache
     userCache.user = user;
     userCache.timestamp = Date.now();
-    
+
     return { success: true, data: user };
   } catch (error) {
-    console.log("Error getting current user:", error);
+    console.log('Error getting current user:', error);
     return { success: false, error };
   }
 }
@@ -64,30 +64,30 @@ export async function cachedDatabaseList(
   queries: string[] = [],
   cacheDuration: number = CACHE_DURATION
 ) {
-
-  const cacheKey = `${databaseId}_${collectionId}_${queries.join(",")}`;  
+  const cacheKey = `${databaseId}_${collectionId}_${queries.join(',')}`;
   try {
     if (
       queryCache[cacheKey] &&
-      Date.now() - queryCache[cacheKey].timestamp < queryCache[cacheKey].expiresIn
+      Date.now() - queryCache[cacheKey].timestamp <
+        queryCache[cacheKey].expiresIn
     ) {
       console.log(`Using cached data for ${cacheKey}`);
       return { success: true, data: queryCache[cacheKey].data };
     }
-    
+
     console.log(`Fetching fresh data for ${cacheKey}`);
     const result = await databases.listDocuments(
       databaseId,
       collectionId,
       queries
     );
-    
+
     queryCache[cacheKey] = {
       data: result,
       timestamp: Date.now(),
       expiresIn: cacheDuration,
     };
-    
+
     return { success: true, data: result };
   } catch (error) {
     console.log(`Error in cachedDatabaseList for ${cacheKey}:`, error);
@@ -95,13 +95,13 @@ export async function cachedDatabaseList(
   }
 }
 
-export function clearCache(type: "user" | "query", key?: string) {
-  if (type === "user") {
+export function clearCache(type: 'user' | 'query', key?: string) {
+  if (type === 'user') {
     userCache.user = null;
     userCache.timestamp = 0;
-  } else if (type === "query" && key) {
+  } else if (type === 'query' && key) {
     delete queryCache[key];
-  } else if (type === "query") {
+  } else if (type === 'query') {
     Object.keys(queryCache).forEach((k) => delete queryCache[k]);
   }
 }
@@ -151,6 +151,24 @@ export const updateUserProfile = async (
     }
     const updatedUser = await account.get();
     return { success: true, data: updatedUser };
+  } catch (error) {
+    return { success: false, error };
+  }
+};
+
+export const updateUserPassword = async (
+  oldPassword: string,
+  newPassword: string
+) => {
+  // ? Should we log the user out after successful password change?
+  try {
+    if (oldPassword && newPassword && oldPassword !== newPassword) {
+      const updatedUser = await account.updatePassword(
+        newPassword,
+        oldPassword
+      );
+      return { success: true, data: updatedUser };
+    }
   } catch (error) {
     return { success: false, error };
   }
