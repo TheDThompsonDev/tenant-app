@@ -4,8 +4,25 @@ import Image from "next/image"
 import Link from "next/link"
 import LoginForm from "../components/Loginform"
 import LABELS from "@/app/constants/labels"
+import { getCurrentUser } from "@/lib/appwrite"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
 
 export default function LoginPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkIfLoggedIn = async () => {
+      const response = await getCurrentUser()
+      if (response.success) {
+        router.push("/dashboard")
+      }
+    }
+
+    checkIfLoggedIn()
+  }, [router])
+
   return (
     <div className="min-h-screen bg-white flex flex-col lg:flex-row">
       <div className="hidden lg:block lg:w-1/2 h-screen relative">
