@@ -9,12 +9,12 @@ export default async function handler(
 
   switch (method) {
     case "GET":
-      const { user } = req.query;
+      const { userId } = req.query;
 
       try {
-        const findUser = await prisma.user.findUnique({
+        const findUser = await prisma.user.findFirst({
           where: {
-            id: user as string,
+            OR: [{ id: userId as string }, { appwriteId: userId as string }],
           },
         });
         if (!findUser) {
@@ -29,59 +29,31 @@ export default async function handler(
         res.status(200).json(getPackage);
       } catch (error) {
         console.error("Error finding package:", error);
-        res.status(500).json({ error: "failed to fecth packages" });
+        res.status(500).json({ error: "failed to fetch packages" });
       }
       break;
 
-    //   try {
-    //     const {
-    //       appwriteId,
-    //       firstName,
-    //       lastName,
-    //       email,
-    //       apartmentNumber,
-    //       phoneNumber,
-    //     } = req.body;
-
-    //     const requiredFields = [
-    //       "firstName",
-    //       "lastName",
-    //       "email",
-    //       "apartmentNumber",
-    //     ];
-    //     const missingFields = requiredFields.filter(
-    //       (field) => !req.body[field]
-    //     );
-
-    //     if (missingFields.length > 0) {
-    //       return res
-    //         .status(400)
-    //         .json({ error: `Missing fields: ${missingFields.join(", ")}` });
-    //     }
-
-    //     const user = await prisma.user.create({
-    //       data: {
-    //         appwriteId,
-    //         firstName,
-    //         lastName,
-    //         email,
-    //         apartmentNumber,
-    //         phoneNumber,
-    //         createdAt: new Date(),
-    //         updatedAt: new Date(),
-    //       },
-    //     });
-    //     res.status(201).json(user.id);
-    //   } catch (error) {
-    //     console.error("Error creating user:", error);
-    //     res.status(500).json({
-    //       error: "failed to create user",
-    //     });
-    //   }
-    //   break;
+    case "POST":
+      const { user, lockerNumber, accessCode } = req.body;
+      try {
+        const createPackage = await prisma.packageLocker.create({
+          data: {
+            userId: user,
+            lockerNumber,
+            packageLockerStatus: "READY_FOR_PICKUP",
+            accessCode,
+            lastAcessed: new Date(),
+          },
+        });
+        res.status(201).json(createPackage);
+      } catch (error) {
+        console.error("Error creating package:", error);
+        res.status(500).json({ error: "failed to create package" });
+      }
+      break;
 
     default:
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
