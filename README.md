@@ -68,6 +68,7 @@
     </td>
   </tr>
 </table>
+
 # 🏢 Tenant App Documentation
 
 ## 📑 Table of Contents
@@ -82,6 +83,8 @@
 8. [🧩 Component Structure](#component-structure)
 9. [🔄 Data Flow](#data-flow)
 10. [🚀 Deployment](#deployment)
+11. [💻 Jira/Git Workflow](#Jira)
+12. [🟢 Color Branding](#Color)
 
 ---
 
