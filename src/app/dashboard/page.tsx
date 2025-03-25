@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/app/components/Header";
+import ParkingLimitContainer from "../components/ParkingLimitContainer";
 import Link from "next/link";
 import { Pencil, LucideIcon, UserRound } from "lucide-react";
 import LABELS from "../constants/labels";
@@ -50,7 +51,10 @@ const Dashboard = () => {
   const isCacheValid = useCallback(() => {
     if (!userCache.data || !propertyCache.data) return false;
     const now = Date.now();
-    return now - userCache.timestamp < CACHE_EXPIRATION && now - propertyCache.timestamp < CACHE_EXPIRATION;
+    return (
+      now - userCache.timestamp < CACHE_EXPIRATION &&
+      now - propertyCache.timestamp < CACHE_EXPIRATION
+    );
   }, []);
 
   const fetchUserData = useCallback(async () => {
@@ -63,7 +67,7 @@ const Dashboard = () => {
 
       console.log("Fetching user data from API");
       const userResponse = await getCurrentUser();
-      
+
       if (userResponse.success && userResponse.data) {
         setUser(userResponse.data as UserType);
         userCache.data = userResponse.data as UserType;
@@ -86,7 +90,7 @@ const Dashboard = () => {
 
       console.log("Fetching property data from API");
       const propertyResponse = await fetch("/api/property", { method: "GET" });
-      
+
       const propertyData = await propertyResponse.json();
       console.log("Property:", propertyData);
       setProperty(propertyData);
@@ -311,6 +315,7 @@ const Dashboard = () => {
                 <DashboardBtns user={user} />
               </div>
             </div>
+            <ParkingLimitContainer />
           </div>
         </div>
       </div>
@@ -358,7 +363,7 @@ const Dashboard = () => {
 
   const renderDashboard = () => {
     if (!user) return null;
-    
+
     if (user.name === "admin") {
       return <AdminDashboard user={user} />;
     } else {
@@ -376,7 +381,9 @@ const Dashboard = () => {
         renderDashboard()
       ) : (
         <div className="flex items-center justify-center h-screen">
-          <p className="text-lg text-gray-600">Please log in to view your dashboard</p>
+          <p className="text-lg text-gray-600">
+            Please log in to view your dashboard
+          </p>
         </div>
       )}
     </>
