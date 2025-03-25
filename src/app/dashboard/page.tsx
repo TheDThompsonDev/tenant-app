@@ -8,10 +8,11 @@ import LABELS from "../constants/labels";
 import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { VoiceChatButton } from "../components/voicechat/voiceChatButton"
 import { VoiceChatModal } from "../components/voicechat/voiceChatModal"
 import { useVoiceChat } from "../hooks/useVoiceChat";
+
 
 
 type UserType = Models.User<Models.Preferences>;
