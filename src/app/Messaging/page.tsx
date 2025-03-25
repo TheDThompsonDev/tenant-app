@@ -14,10 +14,11 @@ type Message = {
   subject: string;
   body: string;
   createdAt: string;
-  from: "tenant" | "admin";
-  type?: "package" | "management" | "lease" | "general" | "noise";
+  type?: "package" | "management" | "lease" | "general" | "noise_complaint";
   user?: string;
   apartmentNumber?: string;
+  status?: string;
+  priority?: string;
 };
 
 type UserType = Models.User<Models.Preferences>;
@@ -83,7 +84,6 @@ export default function MessagesPage() {
             ? '/api/admin/notifications'
             : `/api/notifications?userId=${user.$id}`;
 
-
         const res = await fetch(url, {
           method: "GET",
           headers: {
@@ -100,36 +100,50 @@ export default function MessagesPage() {
 
         const data = await res.json();
         console.log("Fetched notifications:", data);
-
-        const transformedMessages = data.map(
-          (notification: NotificationData) => {
-            const subject = notification.subject || LABELS.messaging.noSubject;
-            const body = notification.message || "";
-            const combinedText = (subject + " " + body).toLowerCase();
-
-            let type = notification.notificationType?.toLowerCase() || "general";
-            
-            if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
-              type = "noise";
-            } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
-              type = "package";
-            } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
-              type = "lease";
-            } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
-              type = "management";
-            }
-            
-            return {
-              id: notification.id,
-              subject: subject,
-              body: body,
-              createdAt: notification.createdAt,
-              from: "admin",
-              type: type,
-              apartmentNumber: notification.apartmentNumber,
-            };
+        const messagesPromises = data.map(async (notification: NotificationData) => {
+          const detailRes = await fetch(`/api/notifications/${notification.id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            cache: "no-store",
+          });
+          
+          if (!detailRes.ok) {
+            console.error(`Failed to fetch notification ${notification.id}:`, detailRes.statusText);
+            return null;
           }
-        );
+          
+          const notificationDetail = await detailRes.json();
+          const subject = notificationDetail.subject || LABELS.messaging.noSubject;
+          const body = notificationDetail.message || "";
+          const combinedText = (subject + " " + body).toLowerCase();
+          const apartmentNumber = notificationDetail.sender?.apartmentNumber || notificationDetail.apartmentNumber || null;
+          
+          let type = notificationDetail.notificationType?.toLowerCase() || "general";
+          
+          if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
+            type = "noise_complaint";
+          } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
+            type = "package";
+          } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
+            type = "lease";
+          } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
+            type = "management";
+          }
+          
+          return {
+            id: notificationDetail.id,
+            subject: subject,
+            body: body,
+            createdAt: notificationDetail.createdAt,
+            type: type as "package" | "management" | "lease" | "general" | "noise_complaint",
+            apartmentNumber: apartmentNumber,
+            status: notificationDetail.status,
+            priority: notificationDetail.priority
+          };
+        });
+        const transformedMessages = (await Promise.all(messagesPromises)).filter(Boolean) as Message[];
 
         setMessages(transformedMessages);
         setError(null);
@@ -238,7 +252,7 @@ export default function MessagesPage() {
                         </button>
                       </div>
                     ) : (
-                      <MessageList messages={messages} />
+                      <MessageList messages={messages} isAdmin={isAdmin} />
                     )}
                   </div>
                 </div>

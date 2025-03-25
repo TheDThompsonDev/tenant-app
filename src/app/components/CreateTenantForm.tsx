@@ -37,13 +37,13 @@ export default function CreateTenantForm() {
     onSubmit: async ({ value }) => {
       try {
         const userId = await saveOnDB(value);
-        const newUser = registerUser(
+        const result = await registerUser(
           value.email,
           userId,
           value.password,
           `${value.firstName} ${value.lastName}`
         );
-        console.log("User created successfully:", newUser);
+        console.log("User created successfully:", result);
         router.push(`/success?email=${encodeURIComponent(value.email)}`);
       } catch (error) {
         console.error("Error creating user:", error);
