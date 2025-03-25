@@ -124,6 +124,15 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
   if (!isAdmin) {
     const activeLease =
       leases.find((lease) => lease.leaseStatus === "active") || leases[0];
+    
+    if (!activeLease) {
+      return (
+        <div className="w-full max-w-3xl mx-auto bg-white rounded-xl shadow p-8 text-center">
+          <h2 className="text-xl font-semibold text-gray-800">No lease found</h2>
+          <p className="text-gray-600 mt-2">You don’t currently have an active lease assigned to your account.</p>
+        </div>
+      )
+    }
 
     return (
       <div className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
