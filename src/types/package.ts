@@ -4,6 +4,6 @@ export type Package = {
   time: string;
   locker: string;
   lockerCode: string;
-  status: string;
+  packageLockerStatus: string;
   pickupDate: string;
 };
