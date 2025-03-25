@@ -35,7 +35,7 @@ export default async function handler(
         const requiredFields = [
           "firstName",
           "lastName",
-          "email",
+          "tenantEmail",
           "apartmentNumber",
           "landlordEmail",
         ];
