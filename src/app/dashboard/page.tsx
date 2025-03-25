@@ -204,6 +204,8 @@ const Dashboard = () => {
 
   const TenantDashboard = ({ user }: { user: UserType }) => {
     const [open, setOpen] = useState(false)
+    const [conversationStarted, setConversationStarted] = useState(false);
+
     const {
       status,
       isSpeaking,
@@ -219,10 +221,10 @@ const Dashboard = () => {
     }
 
     const handleStartConversation = async () => {
-      setOpen(true)
       await startConversation({
         agentId: "w9HcNnfGpTdqixgjY6vo",
       })
+      setConversationStarted(true)
     }
 
     return (
@@ -260,16 +262,22 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="fixed bottom-6 left-6 z-50">
-          <VoiceChatButton onClick={handleStartConversation} />
+          <VoiceChatButton onClick={() => setOpen(true)} />
         </div>
         <VoiceChatModal
           open={open}
-          onClose={() => {
+          onClose={async () => {
             setOpen(false)
-            endConversation()
+            await endConversation()
+            setConversationStarted(false)
           }}
-          status={getAgentStatus()}
           messages={messages}
+          startConversation={handleStartConversation}
+          endConversation={async () => {
+            await endConversation();
+            setConversationStarted(false);
+          }}
+          conversationStarted={conversationStarted}
         />
       </div>
     );

@@ -3,18 +3,21 @@ import { useEffect, useRef } from 'react';
 import { X, Mic } from 'lucide-react';
 import type { Message as MessageType } from '@/app/hooks/useVoiceChat';
 import Message from '@/app/components/voicechat/Message';
-console.log('VoiceChatModal rendered');
 
 export function VoiceChatModal({
   open,
   onClose,
-  status,
   messages,
+  startConversation,
+  endConversation,
+  conversationStarted,
 }: {
   open: boolean;
   onClose: () => void;
-  status: string;
   messages: MessageType[];
+  startConversation: (args: { agentId: string }) => Promise<void>;
+  endConversation: () => Promise<void>
+  conversationStarted: boolean
 }) {
   const transcriptRef = useRef<HTMLDivElement>(null);
 
@@ -56,10 +59,27 @@ export function VoiceChatModal({
           )}
         </div>
 
-        <button className='w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center justify-center gap-2'>
-          <Mic className='w-4 h-4' />
-          {status}
-        </button>
+        {!conversationStarted ? (
+          <button
+            onClick={() =>
+              startConversation({
+                agentId: "w9HcNnfGpTdqixgjY6vo",
+              })
+            }
+            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center justify-center gap-2"
+          >
+            <Mic className="w-4 h-4" />
+            Start Talking
+          </button>
+        ) : (
+          <button
+            onClick={endConversation}
+            className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex items-center justify-center gap-2"
+          >
+            <Mic className="w-4 h-4" />
+            Stop Talking
+          </button>
+        )}
       </div>
     </div>
   );
