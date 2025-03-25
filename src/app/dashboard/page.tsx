@@ -8,7 +8,11 @@ import LABELS from "../constants/labels";
 import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { VoiceChatButton } from "../components/voicechat/voiceChatButton"
+import { VoiceChatModal } from "../components/voicechat/voiceChatModal"
+import { useVoiceChat } from "../hooks/useVoiceChat";
+
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -283,6 +287,30 @@ const Dashboard = () => {
   };
 
   const TenantDashboard = ({ user }: { user: UserType }) => {
+    const [open, setOpen] = useState(false)
+    const [conversationStarted, setConversationStarted] = useState(false);
+
+    const {
+      status,
+      isSpeaking,
+      messages,
+      startConversation,
+      endConversation,
+    } = useVoiceChat({})
+
+    const getAgentStatus = () => {
+      if (status !== "connected") return "Inactive"
+      if (isSpeaking) return "Speaking"
+      return "Listening"
+    }
+
+    const handleStartConversation = async () => {
+      await startConversation({
+        agentId: "w9HcNnfGpTdqixgjY6vo",
+      })
+      setConversationStarted(true)
+    }
+
     return (
       <div className="relative h-screen">
         <div className='absolute inset-0 bg-[url("/street-view.jpeg")] bg-cover bg-center lg:bg-none lg:bg-secondary-blue'>
@@ -318,6 +346,24 @@ const Dashboard = () => {
             <ParkingLimitContainer />
           </div>
         </div>
+        <div className="fixed bottom-6 left-6 z-50">
+          <VoiceChatButton onClick={() => setOpen(true)} />
+        </div>
+        <VoiceChatModal
+          open={open}
+          onClose={async () => {
+            setOpen(false)
+            await endConversation()
+            setConversationStarted(false)
+          }}
+          messages={messages}
+          startConversation={handleStartConversation}
+          endConversation={async () => {
+            await endConversation();
+            setConversationStarted(false);
+          }}
+          conversationStarted={conversationStarted}
+        />
       </div>
     );
   };
