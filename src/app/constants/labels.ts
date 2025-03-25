@@ -467,6 +467,31 @@ const LABELS = {
   mobileNav: {
     cogTitle: "Dashboard",
   },
+  parkingLimit: {
+    title: "Active Parking Passes",
+    description:
+      "You can view all your active parking passes here. Each tenant is allowed a maximum of 2.",
+    noPasses: "No parking passes found",
+  },
+  parkingPassCard: {
+    title: "Parking Pass",
+    statusActive: "Active",
+    statusExpired: "Expired",
+    viewBtn: "View",
+    createBtn: "Create",
+    createdTitle: 'Created on: ',
+    expireMeBtn: 'Expire me',
+    deleteBtn: 'Delete',
+    time: {
+      hour: 'h',
+      minute: 'm',
+      second: 's',
+      },
+    carFormat: {
+      comma: ',',
+      dash: '-',
+    }
+  },
 };
 
 export default LABELS;
