@@ -9,6 +9,9 @@ import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
 import { useEffect, useState } from "react";
+import { VoiceChatButton } from "../components/voicechat/voiceChatButton"
+import { VoiceChatModal } from "../components/voicechat/voiceChatModal"
+import { useVoiceChat } from "../hooks/useVoiceChat";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -200,6 +203,28 @@ const Dashboard = () => {
   };
 
   const TenantDashboard = ({ user }: { user: UserType }) => {
+    const [open, setOpen] = useState(false)
+    const {
+      status,
+      isSpeaking,
+      messages,
+      startConversation,
+      endConversation,
+    } = useVoiceChat({})
+
+    const getAgentStatus = () => {
+      if (status !== "connected") return "Inactive"
+      if (isSpeaking) return "Speaking"
+      return "Listening"
+    }
+
+    const handleStartConversation = async () => {
+      setOpen(true)
+      await startConversation({
+        agentId: "w9HcNnfGpTdqixgjY6vo",
+      })
+    }
+
     return (
       <div className="relative h-screen">
         <div className='absolute inset-0 bg-[url("/street-view.jpeg")] bg-cover bg-center lg:bg-none lg:bg-secondary-blue'>
@@ -234,6 +259,18 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <div className="fixed bottom-6 left-6 z-50">
+          <VoiceChatButton onClick={handleStartConversation} />
+        </div>
+        <VoiceChatModal
+          open={open}
+          onClose={() => {
+            setOpen(false)
+            endConversation()
+          }}
+          status={getAgentStatus()}
+          messages={messages}
+        />
       </div>
     );
   };
