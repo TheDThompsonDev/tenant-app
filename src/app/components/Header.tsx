@@ -5,7 +5,8 @@ import CompanyLogo from "@/app/components/CompanyLogo";
 import Navbar from "@/app/components/Navbar";
 import LogoutBtn from "@/app/components/LogoutBtn";
 import { getCurrentUser } from "@/lib/appwrite";
-import { Cog } from 'lucide-react';
+import { Cog } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -90,11 +91,12 @@ export default function Header() {
           </>
         ) : (
           <div className="flex flex-row gap-4 items-center justify-center">
-            <button
+            <button 
               className="flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue"
               onClick={handleParkingClick}
-            >
+            ><Link href="/parking">
               Guest Parking
+            </Link>
             </button>
             <button
               className="flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-primary-green"
