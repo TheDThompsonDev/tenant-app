@@ -234,11 +234,6 @@ const LABELS = {
       text: "View Messages",
       icon: "mailIcon",
     },
-    guestParking: {
-      href: "/parking",
-      text: "Guest Parking",
-      icon: "guestParkingIcon",
-    },
     lease: {
       href: "/lease",
       text: "Generate Lease",
