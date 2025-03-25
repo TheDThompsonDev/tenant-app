@@ -10,11 +10,19 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const notification = await prisma.notification.findMany();
+        const notification = await prisma.notification.findMany({
+          include: {
+            sender: true,
+            receiver: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
         res.status(200).json(notification);
       } catch (error) {
         console.error("Error finding Notification:", error);
-        res.status(500).json({ error: "failed to fecth Notification" });
+        res.status(500).json({ error: "failed to fetch Notification" });
       }
       break;
 
@@ -32,7 +40,7 @@ export default async function handler(
           return res.status(404).json({ error: "User not found" });
         }
 
-        const requiredFields = ["user", "subject", "message"];
+        const requiredFields = ["userId", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -45,9 +53,10 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            userId: findUser.id,
+            senderId: "admin",
             subject,
             message,
+            receiverId: findUser.id,
             notificationType,
             createdAt: new Date(),
           },

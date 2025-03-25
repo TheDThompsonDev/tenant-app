@@ -1,4 +1,4 @@
-import { prisma } from "../../../utils/prisma";
+import { prisma } from "../../../../utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -10,30 +10,34 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
+        const lease = await prisma.lease.findMany();
+        res.status(200).json(lease);
       } catch (error) {
-        console.error("Error finding user:", error);
-        res.status(500).json({ error: "failed to fetch users" });
+        console.error("Error finding lease:", error);
+        res.status(500).json({ error: "failed to fetch lease" });
       }
       break;
 
     case "POST":
       try {
         const {
-          appwriteId,
           firstName,
           lastName,
-          email,
+          tenantEmail,
+          securityDeposit,
           apartmentNumber,
-          phoneNumber,
+          leaseStartDate,
+          leaseEndDate,
+          monthlyRent,
+          landlordEmail,
         } = req.body;
 
         const requiredFields = [
           "firstName",
           "lastName",
-          "email",
+          "tenantEmail",
           "apartmentNumber",
+          "landlordEmail",
         ];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
@@ -44,39 +48,37 @@ export default async function handler(
             .status(400)
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
-        
-        const existingUser = await prisma.user.findUnique({
-          where: { email }
-        });
-        
-        if (existingUser) {
-          if (appwriteId && !existingUser.appwriteId) {
-            const updatedUser = await prisma.user.update({
-              where: { id: existingUser.id },
-              data: { appwriteId }
-            });
-            return res.status(200).json(updatedUser.id);
-          }
-          return res.status(200).json(existingUser.id);
-        }
 
-        const user = await prisma.user.create({
-          data: {
-            appwriteId,
-            firstName,
-            lastName,
-            email,
-            apartmentNumber,
-            phoneNumber,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+        const property = await prisma.property.findFirst({
+          where: {
+            email: landlordEmail,
           },
         });
-        res.status(201).json(user.id);
+
+        if (!property) {
+          return res.status(404).json({ error: "Property not found" });
+        }
+
+        const lease = await prisma.lease.create({
+          data: {
+            firstName,
+            lastName,
+            email: tenantEmail,
+            securityDeposit,
+            apartmentNumber,
+            leaseStart: new Date(leaseStartDate),
+            leaseEnd: new Date(leaseEndDate),
+            monthlyRent,
+            leaseStatus: "PENDING",
+            propertyId: property.id,
+            createdAt: new Date(),
+          },
+        });
+        res.status(201).json(lease);
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating lease:", error);
         res.status(500).json({
-          error: "failed to create user",
+          error: "failed to create lease",
         });
       }
       break;

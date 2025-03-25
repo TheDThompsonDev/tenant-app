@@ -81,7 +81,6 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            senderId: findUser.id,
             subject: "Parking Pass Created",
             message: `Your guest parking pass has been created. Parking Pass Number: ${parkingPass.parkingPassNumber}`,
             receiverId: findUser.id,

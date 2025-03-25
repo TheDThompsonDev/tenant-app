@@ -1,6 +1,15 @@
-import React from "react";
-import { useState } from "react";
-import { ArrowLeft, Clock, User, Package, Home, FileText, MessageSquare, Search, VolumeX } from "lucide-react";
+import React, { useState, useCallback, useMemo } from "react";
+import {
+  ArrowLeft,
+  Clock,
+  User,
+  Package,
+  Home,
+  FileText,
+  MessageSquare,
+  Search,
+  VolumeX,
+} from "lucide-react";
 import LABELS from "@/app/constants/labels";
 
 type Message = {
@@ -8,29 +17,118 @@ type Message = {
   subject: string;
   body: string;
   createdAt: string;
-  from: "tenant" | "admin";
-  type?: "package" | "management" | "lease" | "general" | "noise";
+  type?: "package" | "management" | "lease" | "general" | "noise_complaint";
+  apartmentNumber?: string;
+  status?: string;
+  priority?: string;
+};
+
+type NotificationData = {
+  id: string;
+  subject: string | null;
+  message: string | null;
+  createdAt: string;
+  notificationType?: string;
+  senderId?: string;
+  receiverId?: string;
+  status?: string;
+  priority?: string;
+  apartmentNumber?: string;
+  sender?: {
+    apartmentNumber?: string;
+  };
+  receiver?: {
+    apartmentNumber?: string;
+  };
 };
 
 type MessageListProps = {
   messages: Message[];
+  isAdmin?: boolean;
+  data?: NotificationData[];
 };
 
-export default function MessageList({ messages }: MessageListProps) {
+function MessageIcon({ type }: { type: string }) {
+  const iconMap: Record<string, JSX.Element> = {
+    package: <Package size={18} className="text-white" />,
+    management: <Home size={18} className="text-white" />,
+    lease: <FileText size={18} className="text-white" />,
+    general: <MessageSquare size={18} className="text-white" />,
+    noise_complaint: <VolumeX size={18} className="text-white" />,
+  };
+
+  const bgColorMap: Record<string, string> = {
+    package: "bg-blue-500",
+    management: "bg-green-500",
+    lease: "bg-purple-500",
+    general: "bg-gray-500",
+    noise_complaint: "bg-red-500",
+  };
+
+  return (
+    <div
+      className={`w-10 h-10 rounded-full flex items-center justify-center ${bgColorMap[type] || "bg-gray-500"}`}
+    >
+      {iconMap[type] || iconMap.general}
+    </div>
+  );
+}
+
+function formatTime(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInDays === 1) {
+      return 'Yesterday';
+    } else if (diffInDays < 7) {
+      return date.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  } catch {
+    return 'Invalid date';
+  }
+}
+
+function MessageList({ messages, isAdmin, data }: MessageListProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredMessages = messages.filter(msg => 
-    msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    msg.body.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const isSentByCurrentUser = useCallback((messageId: string) => {
+    if (!data || !messageId) return false;
+    
+    const notification = data.find(note => note.id === messageId);
+    if (!notification) return false;
+
+    if (isAdmin) {
+      return notification.senderId === 'admin';
+    } else {
+      return notification.senderId !== 'admin';
+    }
+  }, [data, isAdmin]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter(
+      (msg) =>
+        msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        msg.body.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [messages, searchTerm]);
 
   if (!messages.length) {
     return (
       <div className="text-center py-16 bg-gray-50 rounded-lg border border-gray-200 flex flex-col items-center justify-center">
         <MessageSquare className="text-gray-400 mb-4" size={48} />
-        <p className="text-gray-600 font-medium text-lg mb-2">{LABELS.messaging.noMessagesFound}</p>
-        <p className="text-gray-500 text-sm">{LABELS.messaging.noMessagesDescription}</p>
+        <p className="text-gray-600 font-medium text-lg mb-2">
+          {LABELS.messaging.noMessagesFound}
+        </p>
+        <p className="text-gray-500 text-sm">
+          {LABELS.messaging.noMessagesDescription}
+        </p>
       </div>
     );
   }
@@ -40,7 +138,10 @@ export default function MessageList({ messages }: MessageListProps) {
       {!selectedMessage && (
         <div className="mb-4 relative">
           <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               placeholder={LABELS.messaging.searchPlaceholder}
@@ -63,7 +164,7 @@ export default function MessageList({ messages }: MessageListProps) {
               <span>{LABELS.messaging.backToMessages}</span>
             </button>
           </div>
-          
+
           <div className="p-6">
             <div className="flex items-center mb-6">
               <MessageIcon type={selectedMessage.type || "general"} />
@@ -73,13 +174,15 @@ export default function MessageList({ messages }: MessageListProps) {
                 </h3>
                 <div className="flex items-center text-sm text-gray-500 mt-2">
                   <User size={14} className="mr-1" />
-                  <span className="capitalize mr-3">{selectedMessage.from}</span>
+                  <span className="capitalize mr-3">
+                    {selectedMessage.apartmentNumber ? `Apt #${selectedMessage.apartmentNumber}` : "Admin"}
+                  </span>
                   <Clock size={14} className="mr-1" />
                   <span>{formatTime(selectedMessage.createdAt)}</span>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gray-50 p-5 rounded-lg my-4 shadow-inner">
               <p className="text-gray-800 whitespace-pre-line leading-relaxed">
                 {selectedMessage.body}
@@ -92,7 +195,9 @@ export default function MessageList({ messages }: MessageListProps) {
           {filteredMessages.length === 0 ? (
             <div className="p-8 text-center">
               <Search size={24} className="mx-auto text-gray-400 mb-3" />
-              <p className="text-gray-600">{LABELS.messaging.noSearchResults}</p>
+              <p className="text-gray-600">
+                {LABELS.messaging.noSearchResults}
+              </p>
             </div>
           ) : (
             filteredMessages.map((msg) => (
@@ -106,7 +211,9 @@ export default function MessageList({ messages }: MessageListProps) {
                   <MessageIcon type={msg.type || "general"} />
                 </div>
                 <div className="flex-grow overflow-hidden pr-2">
-                  <h3 className="font-medium text-gray-800 mb-1 group-hover:text-primary-green transition-colors">{msg.subject}</h3>
+                  <h3 className="font-medium text-gray-800 mb-1 group-hover:text-primary-green transition-colors">
+                    {msg.subject}
+                  </h3>
                   <p className="text-sm text-gray-600 truncate">{msg.body}</p>
                 </div>
                 <div className="text-xs text-gray-500 ml-2 whitespace-nowrap flex flex-col items-end">
@@ -114,7 +221,13 @@ export default function MessageList({ messages }: MessageListProps) {
                     {formatTime(msg.createdAt)}
                   </span>
                   <span className="capitalize text-xs text-primary-green">
-                    {LABELS.messaging.fromLabel}{msg.from}
+                    {isAdmin
+                      ? (isSentByCurrentUser(msg.id) 
+                          ? `To: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}` 
+                          : `From: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}`)
+                      : (isSentByCurrentUser(msg.id)
+                          ? 'To: Admin'
+                          : 'From: Admin')}
                   </span>
                 </div>
               </div>
@@ -126,42 +239,4 @@ export default function MessageList({ messages }: MessageListProps) {
   );
 }
 
-function MessageIcon({ type }: { type: string }) {
-  const iconMap = {
-    package: <Package size={18} className="text-white" />,
-    management: <Home size={18} className="text-white" />,
-    lease: <FileText size={18} className="text-white" />,
-    general: <MessageSquare size={18} className="text-white" />,
-    noise: <VolumeX size={18} className="text-white" />,
-  };
-
-  const colors = {
-    package: "bg-primary-green",
-    management: "bg-secondary-blue",
-    lease: "bg-blue-800",
-    general: "bg-primary",
-    noise: "bg-red-500",
-  };
-
-  const bgColor = colors[type as keyof typeof colors] || colors.general;
-  const icon = iconMap[type as keyof typeof iconMap] || iconMap.general;
-
-  return (
-    <div
-      className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-200 hover:scale-110`}
-    >
-      {icon}
-    </div>
-  );
-}
-
-function formatTime(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString([], {
-    month: 'short',
-    day: 'numeric',
-  }) + ' at ' + date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+export default React.memo(MessageList);

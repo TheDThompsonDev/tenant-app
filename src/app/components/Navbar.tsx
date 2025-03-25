@@ -1,11 +1,15 @@
+"use client";
 import LABELS from '@/app/constants/labels';
 import Link from 'next/link';
 import NotificationBadge from '@/app/components/NotificationBadge';
 import { X, LogOut, Menu, ChevronRight, Cog } from 'lucide-react';
 import ICON_MAP from '@/app/constants/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/appwrite';
+import { logout, getCurrentUser } from '@/lib/appwrite';
+import { Models } from 'appwrite';
+
+type UserType = Models.User<Models.Preferences>;
 
 interface NavbarProps {
   isMobile?: boolean;
@@ -20,11 +24,39 @@ export default function Navbar({
   toggleMenu,
   closeMenu,
 }: NavbarProps) {
-  const navigationData = Object.entries(LABELS.navigation);
-  const mockNotificationCount = 4; // TODO: replace this with data from server (hook?)
-
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const mockNotificationCount = 4;
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        if (response.success && response.data) {
+          setUser(response.data as UserType);
+        } else {
+          console.error("Failed to get user:", response.error);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+
+  if (loading) {
+    return null; 
+  }
+
+  const navigationData = Object.entries(
+    user?.name === "admin" ? LABELS.navigationAdmin : LABELS.navigation
+  );
 
   const handleLogoutClick = async () => {
     try {
@@ -60,10 +92,10 @@ export default function Navbar({
         </button>
         <div className='mt-16 flex flex-row py-4'>
           <button 
-          className='flex flex-row gap-4 p-4 w-full items-center bg-secondary-blue text-white bg-gradient-to-r from-secondary-blue to-primary-green shadow-md' 
-          onClick={() => router.push("/dashboard")}>
-          <Cog size={50} />
-          <p>{LABELS.mobileNav.cogTitle}</p>
+            className='flex flex-row gap-4 p-4 w-full items-center bg-secondary-blue text-white bg-gradient-to-r from-secondary-blue to-primary-green shadow-md' 
+            onClick={() => router.push("/dashboard")}>
+            <Cog size={50} />
+            <p>{LABELS.mobileNav.cogTitle}</p>
           </button>
 
         </div>

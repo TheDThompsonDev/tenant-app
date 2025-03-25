@@ -23,6 +23,29 @@ const LABELS = {
     },
   },
 
+  navigationAdmin: {
+    messages: {
+      href: "/messaging",
+      text: "Messages",
+      icon: "messageIcon",
+    },
+    unlock_door: {
+      href: "/parking",
+      text: "Guest Parking Pass",
+      icon: "parkingIcon",
+    },
+    packages: {
+      href: "/lease",
+      text: "Generate Lease",
+      icon: "leaseIcon",
+    },
+    parking: {
+      href: "/createTenant",
+      text: "Create Tenant Account",
+      icon: "userPlus",
+    },
+  },
+
   featureHighlight: {
     title: "Modern Problems Require Moderns Solutions",
     featureCards: [
@@ -66,9 +89,13 @@ const LABELS = {
   },
 
   buttons: {
-    FooterSignUp: {
-      label: "Sign Up",
-      href: "/signup",
+    FooterLogin: {
+      label: "Login",
+      href: "/login",
+    },
+    FooterLogout: {
+      label: "Logout",
+      href: "/logout",
     },
   },
 
@@ -207,11 +234,6 @@ const LABELS = {
       text: "View Messages",
       icon: "mailIcon",
     },
-    guestParking: {
-      href: "/parking",
-      text: "Guest Parking",
-      icon: "guestParkingIcon",
-    },
     lease: {
       href: "/lease",
       text: "Generate Lease",
@@ -342,7 +364,7 @@ const LABELS = {
       passwordRequired: " a password is required",
       passwordNoError: 'No "error" allowed in password',
       passwordFormat: "Password must contain characters",
-      passwordTooShort: "Password must be at least 6 characters",
+      passwordTooShort: "Password must be at least 8 characters",
     },
     placeholders: {
       firstName: "First Name",
@@ -360,7 +382,7 @@ const LABELS = {
     title: "Success! New Tenant Account Created",
     back: "Back",
     username: "UserName:",
-    temporaryPassword: "Temporary Password:"
+    temporaryPassword: "Temporary Password:",
   },
   generateLease: {
     title: "Generate Lease",
@@ -438,7 +460,33 @@ const LABELS = {
     },
   },
   mobileNav: {
-    cogTitle: 'Dashboard'
-  }
+    cogTitle: "Dashboard",
+  },
+  parkingLimit: {
+    title: "Active Parking Passes",
+    description:
+      "You can view all your active parking passes here. Each tenant is allowed a maximum of 2.",
+    noPasses: "No parking passes found",
+  },
+  parkingPassCard: {
+    title: "Parking Pass",
+    statusActive: "Active",
+    statusExpired: "Expired",
+    viewBtn: "View",
+    createBtn: "Create",
+    createdTitle: 'Created on: ',
+    expireMeBtn: 'Expire me',
+    deleteBtn: 'Delete',
+    time: {
+      hour: 'h',
+      minute: 'm',
+      second: 's',
+      },
+    carFormat: {
+      comma: ',',
+      dash: '-',
+    }
+  },
 };
+
 export default LABELS;

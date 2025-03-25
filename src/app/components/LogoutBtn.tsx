@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/appwrite';
 
-export default function LogoutBtn() {
+type LogoutButtonProps = {
+  bgColor?: "bg-primary-green" | "bg-secondary-blue"
+}
+
+export default function LogoutBtn({bgColor = 'bg-secondary-blue'} : LogoutButtonProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
@@ -28,7 +32,7 @@ export default function LogoutBtn() {
 
   return (
     <button
-      className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue'
+      className={`flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white ${bgColor}`}
       onClick={handleLogoutClick}
       disabled={isLoggingOut}
     >

@@ -23,26 +23,22 @@ export default async function handler(
           return res.status(404).json({ error: "User not found" });
         }
 
-        if (user) {
-          const userNotifications = await prisma.notification.findMany({
-            where: {
-              OR: [{ senderId: user.id }, { receiverId: user.id }],
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            include: {
-              sender: true,
-              receiver: true,
-            },
-          });
-          res.status(200).json(userNotifications);
-        } else {
-          res.status(404).json({ error: "User not found" });
-        }
+        const userNotifications = await prisma.notification.findMany({
+          where: {
+            OR: [{ senderId: user.id }, { receiverId: user.id }],
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            sender: true,
+            receiver: true,
+          },
+        });
+        res.status(200).json(userNotifications);
       } catch (error) {
         console.error("Error finding Notification:", error);
-        res.status(500).json({ error: "failed to fecth Notification" });
+        res.status(500).json({ error: "failed to fetch Notification" });
       }
       break;
 

@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import MessageList from "../components/messaging/MessageList";
 import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
@@ -14,10 +15,11 @@ type Message = {
   subject: string;
   body: string;
   createdAt: string;
-  from: "tenant" | "admin";
-  type?: "package" | "management" | "lease" | "general" | "noise";
+  type?: "package" | "management" | "lease" | "general" | "noise_complaint";
   user?: string;
   apartmentNumber?: string;
+  status?: string;
+  priority?: string;
 };
 
 type UserType = Models.User<Models.Preferences>;
@@ -33,15 +35,74 @@ type NotificationData = {
   priority: string;
   updatedAt: string;
   apartmentNumber?: string;
+  sender?: {
+    apartmentNumber?: string;
+  };
+  receiver?: {
+    apartmentNumber?: string;
+  };
 };
+
+const notificationCache: {
+  data: NotificationData[] | null;
+  timestamp: number;
+  userId?: string;
+} = {
+  data: null,
+  timestamp: 0,
+  userId: undefined,
+};
+
+const CACHE_EXPIRATION = 30000;
 
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [rawNotificationData, setRawNotificationData] = useState<NotificationData[]>([]);
   const [showCompose, setShowCompose] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const isCacheValid = useCallback((userId?: string) => {
+    if (!notificationCache.data) return false;
+    if (notificationCache.userId !== userId) return false;
+    
+    const now = Date.now();
+    return now - notificationCache.timestamp < CACHE_EXPIRATION;
+  }, []);
+
+  const transformNotificationsToMessages = useCallback((notifications: NotificationData[]): Message[] => {
+    return notifications.map((notification) => {
+      const subject = notification.subject || LABELS.messaging.noSubject;
+      const body = notification.message || "";
+      const combinedText = (subject + " " + body).toLowerCase();
+      const apartmentNumber = notification.sender?.apartmentNumber || notification.receiver?.apartmentNumber || notification.apartmentNumber || undefined;
+      
+      let type = notification.notificationType?.toLowerCase() || "general";
+      
+      if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
+        type = "noise_complaint";
+      } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
+        type = "package";
+      } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
+        type = "lease";
+      } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
+        type = "management";
+      }
+      
+      return {
+        id: notification.id,
+        subject: subject,
+        body: body,
+        createdAt: notification.createdAt,
+        type: type as "package" | "management" | "lease" | "general" | "noise_complaint",
+        apartmentNumber: apartmentNumber,
+        status: notification.status,
+        priority: notification.priority
+      };
+    });
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -78,7 +139,24 @@ export default function MessagesPage() {
           return;
         }
 
-        const res = await fetch(`/api/notifications?userId=${user.$id}`, {
+        if (isCacheValid(user.$id)) {
+          console.log("Using cached notification data");
+          const cachedData = notificationCache.data as NotificationData[];
+          setRawNotificationData(cachedData);
+
+          const transformedMessages = transformNotificationsToMessages(cachedData);
+          setMessages(transformedMessages);
+          setError(null);
+          setIsLoading(false);
+          return;
+        }
+
+        const url =
+          user.name === 'admin'
+            ? '/api/admin/notifications'
+            : `/api/notifications?userId=${user.$id}`;
+
+        const res = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -93,38 +171,14 @@ export default function MessagesPage() {
         }
 
         const data = await res.json();
-        console.log("Fetched notifications:", data);
-
-        const transformedMessages = data.map(
-          (notification: NotificationData) => {
-            const subject = notification.subject || LABELS.messaging.noSubject;
-            const body = notification.message || "";
-            const combinedText = (subject + " " + body).toLowerCase();
-
-            let type = notification.notificationType?.toLowerCase() || "general";
-            
-            if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
-              type = "noise";
-            } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
-              type = "package";
-            } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
-              type = "lease";
-            } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
-              type = "management";
-            }
-            
-            return {
-              id: notification.id,
-              subject: subject,
-              body: body,
-              createdAt: notification.createdAt,
-              from: "admin",
-              type: type,
-              apartmentNumber: notification.apartmentNumber,
-            };
-          }
-        );
-
+        
+        notificationCache.data = data;
+        notificationCache.timestamp = Date.now();
+        notificationCache.userId = user.$id;
+        
+        setRawNotificationData(data);
+        
+        const transformedMessages = transformNotificationsToMessages(data);
         setMessages(transformedMessages);
         setError(null);
       } catch (err) {
@@ -138,7 +192,13 @@ export default function MessagesPage() {
     if (user) {
       fetchMessages();
     }
-  }, [user]);
+  }, [user, isCacheValid, transformNotificationsToMessages]);
+
+  const messageListProps = useMemo(() => ({
+    messages,
+    isAdmin,
+    data: rawNotificationData
+  }), [messages, isAdmin, rawNotificationData]);
 
   return (
     <>
@@ -232,7 +292,7 @@ export default function MessagesPage() {
                         </button>
                       </div>
                     ) : (
-                      <MessageList messages={messages} />
+                      <MessageList {...messageListProps} />
                     )}
                   </div>
                 </div>
