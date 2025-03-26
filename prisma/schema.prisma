@@ -8,6 +8,152 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Address {
+  id          String    @id @default(uuid())
+  address     String
+  suiteNumber Int?
+  city        String
+  state       String
+  zipCode     String
+  country     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Property    Property?
+}
+
+model User {
+  id              String          @id @default(uuid())
+  appwriteId      String?         @unique
+  firstName       String          @db.VarChar(40)
+  lastName        String          @db.VarChar(40)
+  email           String          @unique
+  phoneNumber     String?         @db.VarChar(40)
+  apartmentNumber String
+  image           String?
+  leaseId         String?
+  userRole        Role            @default(TENANT)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  receiver        Notification[]  @relation("Receiver")
+  sender          Notification[]  @relation("Sender")
+  packageLocker   PackageLocker[]
+  parkingPass     ParkingPass[]
+  smartDoorKey    SmartDoorKey[]
+  lease           Lease?          @relation(fields: [leaseId], references: [id])
+}
+
+model Property {
+  id                    String    @id @default(uuid())
+  managementCompanyName String
+  addressId             String    @unique
+  propertyName          String
+  phoneNumber           String
+  email                 String?
+  websiteURL            String
+  propertyImage         String?
+  description           String?
+  propertyManagerName   String
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  Amenities             Amenity[]
+  Lease                 Lease[]
+  address               Address   @relation(fields: [addressId], references: [id])
+}
+
+model Amenity {
+  id                 String                    @id @default(uuid())
+  amenityName        String
+  description        String?
+  location           String?
+  availabilityStatus AmenityAvailabilityStatus @default(AVAILABLE)
+  requiresAccessCode Boolean                   @default(false)
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  propertyId         String?
+  Property           Property?                 @relation(fields: [propertyId], references: [id])
+}
+
+model Lease {
+  id              String      @id @default(uuid())
+  propertyId      String?
+  firstName       String?
+  lastName        String?
+  email           String?
+  apartmentNumber String?
+  pets            Boolean?    @default(false)
+  governmentId    String?
+  socialSecurity  String?
+  leaseStart      DateTime?
+  leaseEnd        DateTime?
+  monthlyRent     Decimal?
+  securityDeposit Decimal?
+  leaseStatus     LeaseStatus
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  property        Property?   @relation(fields: [propertyId], references: [id])
+  User            User[]
+}
+
+model ParkingPass {
+  id                String   @id @default(uuid())
+  userId            String
+  make              String
+  model             String
+  color             String
+  licensePlate      String
+  parkingPassNumber String   @unique
+  createdAt         DateTime @default(now())
+  expirationDate    DateTime
+  user              User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id               String               @id @default(uuid()) @map("notification_id")
+  senderId         String?
+  receiverId       String
+  notificationType NotificationType     @default(NOISE_COMPLAINT)
+  subject          String?
+  message          String?
+  status           NotificationStatus   @default(UNREAD)
+  priority         NotificationPriority @default(LOW)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  receiver         User                 @relation("Receiver", fields: [receiverId], references: [id])
+  sender           User?                @relation("Sender", fields: [senderId], references: [id])
+}
+
+model SmartDoorKey {
+  id             String   @id @default(uuid())
+  userId         String
+  accessCode     String   @unique
+  createdAt      DateTime @default(now())
+  expirationDate DateTime
+  lastAccessed   DateTime @default(now())
+  lockStatus     Boolean  @default(false)
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model PackageLocker {
+  id                  String              @id @default(uuid())
+  userId              String
+  lockerNumber        String
+  packageLockerStatus PackageLockerStatus @default(READY_FOR_PICKUP)
+  accessCode          String
+  createdAt           DateTime            @default(now())
+  lastAcessed         DateTime            @default(now())
+  user                User                @relation(fields: [userId], references: [id])
+}
+
+model ContactUs {
+  id          String   @id @default(uuid())
+  fullName    String
+  email       String?
+  phoneNumber String
+  subject     String?
+  message     String?
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   ADMIN
   TENANT
@@ -52,150 +198,4 @@ enum NotificationPriority {
 enum PackageLockerStatus {
   READY_FOR_PICKUP
   PICKED_UP
-}
-
-model Address {
-  id          String    @id @default(uuid())
-  address     String
-  suiteNumber Int?
-  city        String
-  state       String
-  zipCode     String
-  country     String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Property    Property?
-}
-
-model User {
-  id              String          @id @default(uuid())
-  appwriteId      String?         @unique
-  firstName       String          @db.VarChar(40)
-  lastName        String          @db.VarChar(40)
-  email           String          @unique
-  phoneNumber     String?         @db.VarChar(40)
-  apartmentNumber String
-  image           String?
-  lease           Lease?          @relation(fields: [leaseId], references: [id])
-  leaseId         String?
-  userRole        Role            @default(TENANT)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  parkingPass     ParkingPass[]
-  smartDoorKey    SmartDoorKey[]
-  packageLocker   PackageLocker[]
-  sender          Notification[]  @relation("Sender")
-  receiver        Notification[]  @relation("Receiver")
-}
-
-model Property {
-  id                    String    @id @default(uuid())
-  managementCompanyName String
-  address               Address   @relation(fields: [addressId], references: [id])
-  addressId             String    @unique
-  propertyName          String
-  phoneNumber           String
-  email                 String?
-  websiteURL            String
-  propertyImage         String?
-  description           String?
-  propertyManagerName   String
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  Amenities             Amenity[]
-  Lease                 Lease[]
-}
-
-model Amenity {
-  id                 String                    @id @default(uuid())
-  amenityName        String
-  description        String?
-  location           String?
-  availabilityStatus AmenityAvailabilityStatus @default(AVAILABLE)
-  requiresAccessCode Boolean                   @default(false)
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @updatedAt
-  Property           Property?                 @relation(fields: [propertyId], references: [id])
-  propertyId         String?
-}
-
-model Lease {
-  id              String      @id @default(uuid())
-  propertyId      String?
-  property        Property?   @relation(fields: [propertyId], references: [id])
-  firstName       String?
-  lastName        String?
-  email           String?
-  apartmentNumber String?
-  pets            Boolean?    @default(false)
-  governmentId    String?
-  socialSecurity  String?
-  leaseStart      DateTime?
-  leaseEnd        DateTime?
-  monthlyRent     Decimal?
-  securityDeposit Decimal?
-  leaseStatus     LeaseStatus
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  User            User[]
-}
-
-model ParkingPass {
-  id                String   @id @default(uuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id])
-  make              String
-  model             String
-  color             String
-  licensePlate      String
-  parkingPassNumber String   @unique
-  createdAt         DateTime @default(now())
-  expirationDate    DateTime
-}
-
-model Notification {
-  id               String               @id @default(uuid()) @map("notification_id")
-  senderId         String?
-  sender           User?                @relation("Sender", fields: [senderId], references: [id])
-  receiverId       String
-  receiver         User                 @relation("Receiver", fields: [receiverId], references: [id])
-  notificationType NotificationType     @default(NOISE_COMPLAINT)
-  subject          String?
-  message          String?
-  status           NotificationStatus   @default(UNREAD)
-  priority         NotificationPriority @default(LOW)
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-}
-
-model SmartDoorKey {
-  id             String   @id @default(uuid())
-  userId         String
-  user           User     @relation(fields: [userId], references: [id])
-  accessCode     String   @unique
-  createdAt      DateTime @default(now())
-  expirationDate DateTime
-  lastAccessed   DateTime @default(now())
-  lockStatus     Boolean  @default(false)
-}
-
-model PackageLocker {
-  id                  String              @id @default(uuid())
-  userId              String
-  user                User                @relation(fields: [userId], references: [id])
-  lockerNumber        String
-  packageLockerStatus PackageLockerStatus @default(READY_FOR_PICKUP)
-  accessCode          String
-  createdAt           DateTime            @default(now())
-  lastAcessed         DateTime            @default(now())
-}
-
-model ContactUs {
-  id          String   @id @default(uuid())
-  fullName    String
-  email       String?
-  phoneNumber String
-  subject     String?
-  message     String?
-  createdAt   DateTime @default(now())
 }
