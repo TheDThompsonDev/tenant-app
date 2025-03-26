@@ -197,7 +197,7 @@ const Dashboard = () => {
     return (
       <Link
         href="/editProfile"
-        className={`${buttonColor} ${hiddenButton} border-4 border-white p-1 rounded-lg relative left-10 bottom-[110px] lg:static lg:border-none lg:px-4 lg:py-2 lg:mt-4 transition-all duration-200 ease-in-out`}
+        className={`${buttonColor} ${hiddenButton} border-2 border-white p-1 rounded-lg relative left-10 bottom-[8rem] lg:static lg:border-none lg:px-4 lg:py-2 lg:mt-4 transition-all duration-200 ease-in-out`}
       >
         <div className="block lg:hidden">
           <Pencil size={16} fill="white" />
