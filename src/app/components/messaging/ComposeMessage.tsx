@@ -33,7 +33,7 @@ type ComposeMessageFormValues = {
   subject: string;
   body: string;
   type: "package" | "management" | "lease" | "general" | "noise_complaint";
-  apartmentNumber?: string;
+  receiverId?: string;
 };
 
 type ComposeMessageProps = {
@@ -56,9 +56,26 @@ export default function ComposeMessage({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"admin" | "tenant">("tenant");
+  const [tenants, setTenants] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
     setUserRole(isAdmin ? "admin" : "tenant");
+
+    if (isAdmin) {
+      fetch("/api/users?userRole=tenant")
+        .then((res) => res.json())
+        .then((data) => {
+          const transformed = data.map((user: any) => ({
+            id: user.id,
+            name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unnamed Tenant",
+          }));
+          setTenants(transformed)
+        })
+        .catch((err) => {
+          console.error("error fetching tenants:", err)
+          setTenants([])
+        })
+    }
   }, [isAdmin]);
 
   const messageTypeOptions: MessageTypeOption[] = [
@@ -100,7 +117,7 @@ export default function ComposeMessage({
         subject: "",
         body: "",
         type: "general",
-        apartmentNumber: "",
+        receiverId: "",
       },
       onSubmit: async (values) => {
         setIsSubmitting(true);
@@ -117,10 +134,9 @@ export default function ComposeMessage({
             message: values.body,
             notificationType: values.type.toUpperCase(),
             user: userResponse.data.$id,
-            from: userRole as "tenant" | "admin",
-            type: values.type,
-            ...(userRole === "admin" && values.apartmentNumber
-              ? { apartmentNumber: values.apartmentNumber }
+            from: userRole,
+            ...(userRole === "admin" && values.receiverId
+              ? { receiverId: values.receiverId }
               : {}),
           };
 
@@ -152,10 +168,7 @@ export default function ComposeMessage({
   const subject = useStore(form.store, (state) => state.values.subject);
   const body = useStore(form.store, (state) => state.values.body);
   const type = useStore(form.store, (state) => state.values.type);
-  const apartmentNumber = useStore(
-    form.store,
-    (state) => state.values.apartmentNumber
-  );
+  const receiverId = useStore(form.store, (state) => state.values.receiverId)
 
   return (
     <div className="w-full">
@@ -202,31 +215,29 @@ export default function ComposeMessage({
           {userRole === "admin" && (
             <div className="relative">
               <label
-                htmlFor="apartmentNumber"
+                htmlFor="receiverId"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Apartment Number
+                Select Tenant
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Building size={16} className="text-gray-400" />
-                </div>
-                <input
-                  id="apartmentNumber"
-                  type="text"
-                  value={apartmentNumber}
-                  onChange={(e) =>
-                    form.setFieldValue("apartmentNumber", e.target.value)
-                  }
-                  placeholder="e.g. 101"
-                  className="w-full pl-10 p-3 border border-gray-300 rounded-lg bg-white text-black 
-                          focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent
-                          transition-all duration-200 ease-in-out shadow-sm"
-                  required={userRole === "admin"}
-                />
-              </div>
+              <select
+                id="receiverId"
+                value={receiverId}
+                onChange={(e) => form.setFieldValue("receiverId", e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-black 
+                      focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent
+                      transition-all duration-200 ease-in-out shadow-sm"
+                required
+              >
+                <option value="">Select a tenant...</option>
+                {tenants.map((tenant) => (
+                  <option key={tenant.id} value={tenant.id}>
+                    {tenant.name}
+                  </option>
+                ))}
+              </select>
               <p className="mt-1 text-xs text-gray-500">
-                Enter the apartment number to send this message to
+                Tenant to send this message to
               </p>
             </div>
           )}
