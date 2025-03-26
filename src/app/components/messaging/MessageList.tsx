@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ArrowLeft,
   Clock,
@@ -67,7 +67,9 @@ function MessageIcon({ type }: { type: string }) {
 
   return (
     <div
-      className={`w-10 h-10 rounded-full flex items-center justify-center ${bgColorMap[type] || "bg-gray-500"}`}
+      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+        bgColorMap[type] || "bg-gray-500"
+      }`}
     >
       {iconMap[type] || iconMap.general}
     </div>
@@ -78,38 +80,30 @@ function formatTime(dateString: string): string {
   try {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    const diffInDays = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     if (diffInDays === 0) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } else if (diffInDays === 1) {
-      return 'Yesterday';
+      return "Yesterday";
     } else if (diffInDays < 7) {
-      return date.toLocaleDateString([], { weekday: 'short' });
+      return date.toLocaleDateString([], { weekday: "short" });
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
     }
   } catch {
-    return 'Invalid date';
+    return "Invalid date";
   }
 }
 
-function MessageList({ messages, isAdmin, data }: MessageListProps) {
+function MessageList({ messages, isAdmin }: MessageListProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const isSentByCurrentUser = useCallback((messageId: string) => {
-    if (!data || !messageId) return false;
-    
-    const notification = data.find(note => note.id === messageId);
-    if (!notification) return false;
-
-    if (isAdmin) {
-      return notification.senderId === 'admin';
-    } else {
-      return notification.senderId !== 'admin';
-    }
-  }, [data, isAdmin]);
 
   const filteredMessages = useMemo(() => {
     return messages.filter(
@@ -175,7 +169,9 @@ function MessageList({ messages, isAdmin, data }: MessageListProps) {
                 <div className="flex items-center text-sm text-gray-500 mt-2">
                   <User size={14} className="mr-1" />
                   <span className="capitalize mr-3">
-                    {selectedMessage.apartmentNumber ? `Apt #${selectedMessage.apartmentNumber}` : "Admin"}
+                    {selectedMessage.apartmentNumber
+                      ? `Apt #${selectedMessage.apartmentNumber}`
+                      : "Admin"}
                   </span>
                   <Clock size={14} className="mr-1" />
                   <span>{formatTime(selectedMessage.createdAt)}</span>
@@ -222,12 +218,12 @@ function MessageList({ messages, isAdmin, data }: MessageListProps) {
                   </span>
                   <span className="capitalize text-xs text-primary-green">
                     {isAdmin
-                      ? (isSentByCurrentUser(msg.id) 
-                          ? `To: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}` 
-                          : `From: ${msg.apartmentNumber ? `Apt #${msg.apartmentNumber}` : 'User'}`)
-                      : (isSentByCurrentUser(msg.id)
-                          ? 'To: Admin'
-                          : 'From: Admin')}
+                      ? msg.apartmentNumber === "0"
+                        ? "From Admin"
+                        : `From: Apt #${msg.apartmentNumber || "Unknown"}`
+                      : msg.apartmentNumber === "0"
+                      ? "From Admin"
+                      : `From: Apt #${msg.apartmentNumber || "Unknown"}`}
                   </span>
                 </div>
               </div>

@@ -12,7 +12,6 @@ import {
   FileText,
   MessageSquare,
   VolumeX,
-  Building,
 } from "lucide-react";
 import LABELS from "@/app/constants/labels";
 
@@ -60,6 +59,7 @@ export default function ComposeMessage({
 
   useEffect(() => {
     setUserRole(isAdmin ? "admin" : "tenant");
+  
 
     if (isAdmin) {
       fetch("/api/users?userRole=tenant")
