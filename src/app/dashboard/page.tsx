@@ -9,11 +9,10 @@ import ICON_MAP from "../constants/icons";
 import { getCurrentUser } from "@/lib/appwrite";
 import { Models } from "appwrite";
 import { useCallback, useEffect, useState } from "react";
-import { VoiceChatButton } from "../components/voicechat/voiceChatButton"
-import { VoiceChatModal } from "../components/voicechat/voiceChatModal"
+import { VoiceChatButton } from "../components/voicechat/voiceChatButton";
+import { VoiceChatModal } from "../components/voicechat/voiceChatModal";
 import { useVoiceChat } from "../hooks/useVoiceChat";
-
-
+import { Toast } from "../components/Toast";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -52,6 +51,48 @@ const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [property, setProperty] = useState<PropertyData[] | null>(null);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const reportToastProblem = async () => {
+    if (!user) {
+      console.error("Tenant not found, cannot report problem!");
+      setToast({
+        message: "Please sign in to report a problem",
+        type: "error",
+      });
+      return;
+    }
+    try {
+      const res = await fetch("/api/noise", {
+        method: "POST",
+        body: JSON.stringify({
+          user: user.$id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.ok) {
+        setToast({
+          message: "Your problem has been reported successfully!",
+          type: "success",
+        });
+      } else {
+        throw new Error("Failed to report a problem");
+      }
+      return res.json();
+    } catch (error) {
+      console.error("error reporting problem:", error);
+      setToast({
+        message: "Failed to report problem. Please try again",
+        type: "error",
+      });
+    }
+  };
 
   const isCacheValid = useCallback(() => {
     if (!userCache.data || !propertyCache.data) return false;
@@ -110,6 +151,7 @@ const Dashboard = () => {
     const fetchUser = async () => {
       try {
         await Promise.all([fetchUserData(), fetchPropertyData()]);
+        // reportToastProblem();
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -258,7 +300,7 @@ const Dashboard = () => {
                       <button
                         key={label}
                         className="bg-primary-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-white"
-                        onClick={reportProblem}
+                        onClick={reportToastProblem}
                       >
                         {Icon}
                         <p className="text-white text-center text-xs lg:text-sm">
@@ -288,29 +330,24 @@ const Dashboard = () => {
   };
 
   const TenantDashboard = ({ user }: { user: UserType }) => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
     const [conversationStarted, setConversationStarted] = useState(false);
 
-    const {
-      status,
-      isSpeaking,
-      messages,
-      startConversation,
-      endConversation,
-    } = useVoiceChat({})
+    const { status, isSpeaking, messages, startConversation, endConversation } =
+      useVoiceChat({});
 
     const getAgentStatus = () => {
-      if (status !== "connected") return "Inactive"
-      if (isSpeaking) return "Speaking"
-      return "Listening"
-    }
+      if (status !== "connected") return "Inactive";
+      if (isSpeaking) return "Speaking";
+      return "Listening";
+    };
 
     const handleStartConversation = async () => {
       await startConversation({
         agentId: "w9HcNnfGpTdqixgjY6vo",
-      })
-      setConversationStarted(true)
-    }
+      });
+      setConversationStarted(true);
+    };
 
     return (
       <div className="relative h-screen">
@@ -344,18 +381,28 @@ const Dashboard = () => {
                 <DashboardBtns user={user} />
               </div>
             </div>
+
             <ParkingLimitContainer />
           </div>
         </div>
         <div className="fixed bottom-6 left-6 z-50">
           <VoiceChatButton onClick={() => setOpen(true)} />
         </div>
+        <div className="fixed left-1/2 z-50">
+          {toast && (
+            <Toast
+              message="Problem reported"
+              type={toast.type}
+              onDismiss={() => setToast(null)}
+            />
+          )}
+        </div>
         <VoiceChatModal
           open={open}
           onClose={async () => {
-            setOpen(false)
-            await endConversation()
-            setConversationStarted(false)
+            setOpen(false);
+            await endConversation();
+            setConversationStarted(false);
           }}
           messages={messages}
           startConversation={handleStartConversation}
