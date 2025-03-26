@@ -132,15 +132,21 @@ export default function ComposeMessage({
             throw new Error(LABELS.messaging.errorUserInfo);
           }
 
+          const isAdmin = userResponse.data.name === "admin";
+
           const newMsg = {
             subject: values.subject,
             message: values.body,
             notificationType: values.type.toUpperCase(),
             sender: userResponse.data.$id,
-            receiver: values.receiverId,
+            receiver: isAdmin ? values.receiverId : "ADMIN",
           };
 
-          const res = await fetch("/api/admin/notifications", {
+          const url = isAdmin
+            ? "/api/admin/notifications"
+            : `/api/notifications`;
+
+          const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newMsg),
