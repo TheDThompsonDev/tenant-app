@@ -18,8 +18,8 @@ export default function LogoutBtn({bgColor = 'bg-secondary-blue'} : LogoutButton
       const result = await logout();
       
       if (result.success) {
-        // Redirect to login page after successful logout
-        router.push('/login');
+        localStorage.removeItem('appwrite_session');
+        router.replace('/login');
       } else {
         console.error('Logout failed:', result.error);
       }

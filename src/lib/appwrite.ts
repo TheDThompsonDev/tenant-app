@@ -176,6 +176,7 @@ export const updateUserPassword = async (
 
 export const logout = async () => {
   try {
+    invalidateAllCaches(); 
     await account.deleteSession('current');
     return { success: true };
   } catch (error) {
