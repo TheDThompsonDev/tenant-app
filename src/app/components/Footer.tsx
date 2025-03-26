@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import LogoutBtn from "./LogoutBtn";
 import { getCurrentUser } from "@/lib/appwrite";
+import CompanyLogo from "./CompanyLogo";
 
 const FooterData = {
   apartmentName: "Willow Creek Apartments",
@@ -19,8 +20,8 @@ const FooterData = {
 };
 
 const buttonStyles = {
-  signUp: "bg-primary-green text-white md:block hidden",
-  logout: "bg-primary-green text-white",
+  signUp: "bg-primary-green text-white ",
+  logout: "bg-primary-green text-white ",
 };
 
 const Footer = () => {
@@ -40,11 +41,11 @@ const Footer = () => {
   }, []);
 
   return (
-    <div className="bg-alternate-light-gray md:bg-secondary-blue flex justify-between p-8">
-      <div className=" md:text-alternate-light-gray md:block hidden">
+    <div className="bg-secondary-blue flex justify-between p-8 items-center">
+      <div className="text-alternate-light-gray hidden md:block w-1/2">
         <p className="text-3xl py-2">{FooterData.apartmentName}</p>
         <p className="tracking-wider">Address: {FooterData.address}</p>
-        <div className="flex justify-center gap-1 tracking-wider">
+        <div className="flex gap-1 tracking-wider">
           <p className="">Website:</p>
           <Link className="underline" href={FooterData.website}>
             {FooterData.website}
@@ -53,11 +54,9 @@ const Footer = () => {
         <p className="tracking-wider">Phone: {FooterData.phone}</p>
       </div>
 
-      <div className="flex items-center gap-10">
+      <div className="flex items-center  gap-4 text-white ml-auto">
         {isLoggedIn ? (
-          <LogoutBtn 
-          bgColor="bg-primary-green"
-          />
+          <LogoutBtn bgColor="bg-primary-green" />
         ) : (
           <Button
             href={LABELS.buttons.FooterLogin.href}
@@ -66,9 +65,7 @@ const Footer = () => {
           />
         )}
 
-        <h1 className="text-3xl md:text-2xl font-semibold text-primary-black md:text-alternate-light-gray uppercase">
-          {FooterData.logoName}
-        </h1>
+        <CompanyLogo isFooter />
       </div>
     </div>
   );
