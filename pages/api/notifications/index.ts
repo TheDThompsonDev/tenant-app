@@ -96,8 +96,27 @@ export default async function handler(
       }
       break;
 
+    case "PATCH":
+      try {
+        const { id } = req.query;
+        if (!id) {
+          return res.status(400).json({ error: "Notification ID is required" });
+        }
+
+        const notification = await prisma.notification.update({
+          where: { id: id as string },
+          data: {
+            status: "READ",
+          },
+        });
+        res.status(200).json(notification);
+      } catch (error) {
+        console.error("Error updating Notification:", error);
+        res.status(500).json({ error: "Failed to update Notification" });
+      }
+      break;
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
+      res.setHeader("Allow", ["GET", "POST", "PATCH"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
