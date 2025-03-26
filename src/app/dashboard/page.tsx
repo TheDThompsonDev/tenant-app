@@ -109,7 +109,7 @@ const Dashboard = () => {
       if (isCacheValid()) {
         console.log("Using cached user data");
         setUser(userCache.data as UserType);
-        
+
         // If we have a cached user,
         //fetch their apartment number
         if (userCache.data?.$id) {
@@ -246,7 +246,7 @@ const Dashboard = () => {
         ? "text-secondary-blue"
         : "text-alternate-light-gray";
     return (
-      <div className={`${textColor} p-6 font-thin text-sm`}>
+      <div className={`${textColor} p-6 font-semibold text-sm`}>
         {property && property.length > 0 ? (
           <>
             <h2 className="text-2xl">{property[0].propertyName}</h2>
@@ -344,8 +344,7 @@ const Dashboard = () => {
     const [open, setOpen] = useState(false);
     const [conversationStarted, setConversationStarted] = useState(false);
 
-    const { messages, startConversation, endConversation } =
-      useVoiceChat({});
+    const { messages, startConversation, endConversation } = useVoiceChat({});
 
     const handleStartConversation = async () => {
       await startConversation({
