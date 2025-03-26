@@ -10,11 +10,43 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
+        const { userId } = req.query;
+        
+        if (userId) {
+          const user = await prisma.user.findUnique({
+            where: { id: userId as string },
+            select: { apartmentNumber: true }
+          });
+          
+          if (!user) {
+            return res.status(404).json({ error: "User not found" });
+          }
+
+          const parkingPermits = await prisma.parkingPass.findMany({
+            where: {
+              user: {
+                apartmentNumber: user.apartmentNumber
+              }
+            },
+            include: {
+              user: {
+                select: {
+                  apartmentNumber: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          });
+          
+          return res.status(200).json(parkingPermits);
+        }
         const parkingPermit = await prisma.parkingPass.findMany();
         res.status(200).json(parkingPermit);
       } catch (error) {
         console.error("Error finding Parking Permit:", error);
-        res.status(500).json({ error: "failed to fecth Parking Permit" });
+        res.status(500).json({ error: "Failed to fetch Parking Permit" });
       }
       break;
 
@@ -43,6 +75,19 @@ export default async function handler(
 
         if (!findUser) {
           return res.status(404).json({ error: "User not found" });
+        }
+        const existingPasses = await prisma.parkingPass.findMany({
+          where: {
+            user: {
+              apartmentNumber: apartmentNumber
+            }
+          }
+        });
+        
+        if (existingPasses.length >= 2) {
+          return res.status(400).json({ 
+            error: "Maximum limit of 2 parking passes per apartment reached"
+          });
         }
 
         const requiredFields = [
@@ -77,9 +122,8 @@ export default async function handler(
             createdAt: new Date(),
           },
         });
-        res.status(201).json(parkingPass);
 
-        const notification = await prisma.notification.create({
+        await prisma.notification.create({
           data: {
             subject: "Parking Pass Created",
             message: `Your guest parking pass has been created. Parking Pass Number: ${parkingPass.parkingPassNumber}`,
@@ -88,11 +132,12 @@ export default async function handler(
             createdAt: new Date(),
           },
         });
-        res.status(201).json(notification);
+        
+        return res.status(201).json(parkingPass);
       } catch (error) {
         console.error("Error creating parking pass:", error);
         res.status(500).json({
-          error: "failed to create parking pass",
+          error: "Failed to create parking pass",
         });
       }
       break;

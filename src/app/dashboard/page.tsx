@@ -51,6 +51,7 @@ const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [property, setProperty] = useState<PropertyData[] | null>(null);
+  const [apartmentNumber, setApartmentNumber] = useState<string>("");
 
   const [toast, setToast] = useState<{
     message: string;
@@ -108,6 +109,16 @@ const Dashboard = () => {
       if (isCacheValid()) {
         console.log("Using cached user data");
         setUser(userCache.data as UserType);
+        
+        // If we have a cached user,
+        //fetch their apartment number
+        if (userCache.data?.$id) {
+          const response = await fetch(`/api/users/${userCache.data.$id}`);
+          if (response.ok) {
+            const userData = await response.json();
+            setApartmentNumber(userData.apartmentNumber || "");
+          }
+        }
         return;
       }
 
@@ -118,6 +129,15 @@ const Dashboard = () => {
         setUser(userResponse.data as UserType);
         userCache.data = userResponse.data as UserType;
         userCache.timestamp = Date.now();
+
+        // Fetch the user's apartment number from the db
+        if (userResponse.data.$id) {
+          const response = await fetch(`/api/users/${userResponse.data.$id}`);
+          if (response.ok) {
+            const userData = await response.json();
+            setApartmentNumber(userData.apartmentNumber || "");
+          }
+        }
       } else {
         console.error("Failed to get user:", userResponse.error);
       }
@@ -214,6 +234,7 @@ const Dashboard = () => {
 
         <h3 className="mt-5 text-3xl">{userName}</h3>
         <p>{userEmail}</p>
+        {apartmentNumber && <p>Apartment: {apartmentNumber}</p>}
         <EditProfileBtn user={user} />
       </div>
     );
@@ -249,24 +270,6 @@ const Dashboard = () => {
         )}
       </div>
     );
-  };
-
-  const reportProblem = async () => {
-    if (!user) {
-      console.error("User not found, cannot report problem.");
-      return;
-    }
-
-    const res = await fetch("/api/noise", {
-      method: "POST",
-      body: JSON.stringify({
-        user: user.$id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return res.json();
   };
 
   const DashboardBtns = ({ user }: { user: UserType }) => {
@@ -341,14 +344,8 @@ const Dashboard = () => {
     const [open, setOpen] = useState(false);
     const [conversationStarted, setConversationStarted] = useState(false);
 
-    const { status, isSpeaking, messages, startConversation, endConversation } =
+    const { messages, startConversation, endConversation } =
       useVoiceChat({});
-
-    const getAgentStatus = () => {
-      if (status !== "connected") return "Inactive";
-      if (isSpeaking) return "Speaking";
-      return "Listening";
-    };
 
     const handleStartConversation = async () => {
       await startConversation({
