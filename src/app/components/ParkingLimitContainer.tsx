@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import LABELS from "../constants/labels";
 import ParkingPassCard from "./ParkingPassCard";
+import { getCurrentUser } from "@/lib/appwrite";
 
 type ParkingPass = {
   id: string;
@@ -12,47 +13,76 @@ type ParkingPass = {
   parkingPassNumber: string;
   createdAt: string | Date;
   expirationDate: string | Date;
+  formattedCreatedAt?: string;
+  formattedExpirationDate?: string;
 };
 
 export default function ParkingLimitContainer() {
   const [parkingPasses, setParkingPasses] = useState<ParkingPass[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [passCount, setPassCount] = useState(0);
+
+  const fetchParkingPasses = async () => {
+    try {
+      setLoading(true);
+      const userResponse = await getCurrentUser();
+      if (!userResponse.success || !userResponse.data) {
+        setError("Unable to fetch user data");
+        setLoading(false);
+        return;
+      }
+      
+      const userId = userResponse.data.$id;
+      const response = await fetch(`/api/parking?userId=${userId}`);
+      const data = await response.json();
+      
+      const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const now = new Date();
+      const activePassesOnly = data.filter((pass: ParkingPass) => {
+        if (!pass.expirationDate) return true;
+        const expDate = new Date(pass.expirationDate);
+        return expDate > now;
+      });
+
+      const sortedPasses = [...activePassesOnly].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setPassCount(sortedPasses.length);
+      const formattedPasses = sortedPasses.map((pass) => ({
+        ...pass,
+        formattedCreatedAt: formatDate(pass.createdAt as string),
+        formattedExpirationDate: pass.expirationDate ? formatDate(pass.expirationDate as string) : 'N/A',
+      }));
+
+      setParkingPasses(formattedPasses);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching parking passes:", error);
+      setError("Failed to load parking passes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchParkingPasses = async () => {
-      try {
-        const response = await fetch("/api/parking");
-        const data = await response.json();
-        console.log(data)
-
-        const formatDate = (dateString: string) => {
-          return new Date(dateString).toLocaleString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        };
-
-        const latestPasses = [...data]
-          .sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
-          .slice(0, 2)
-          .map((pass) => ({
-            ...pass,
-            createdAt: formatDate(pass.createdAt),
-            // expirationDate: formatDate(pass.expirationDate),
-          }));
-
-        setParkingPasses(latestPasses);
-      } catch (error) {
-        console.error("Error fetching parking passes:", error);
-      }
-    };
     fetchParkingPasses();
   }, []);
+
+  const handlePassExpired = () => {
+    fetchParkingPasses();
+  };
 
   return (
     <div className="flex flex-col p-4 w-full bg-secondary-blue">
@@ -60,19 +90,25 @@ export default function ParkingLimitContainer() {
         {LABELS.parkingLimit.title}
       </h2>
       <span className="flex justify-center text-xl font-bold text-white">
-        {/* ({activePasses.length}/2) */}
+        ({passCount}/2)
       </span>
       <p className="flex justify-center p-4 text-white">
         {LABELS.parkingLimit.description}
       </p>
 
-      <div className="flex flex-col lg:flex-row w-full m-auto justify-center">
-        {parkingPasses.length > 0 ? (
-          parkingPasses
-            .slice(0, 2)
-            .map((pass) => (
+      {loading ? (
+        <div className="flex justify-center p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white"></div>
+        </div>
+      ) : error ? (
+        <p className="text-white text-center">{error}</p>
+      ) : (
+        <div className="flex flex-col lg:flex-row w-full m-auto justify-center gap-4">
+          {parkingPasses.length > 0 ? (
+            parkingPasses.map((pass) => (
               <ParkingPassCard
                 key={pass.id}
+                id={pass.id}
                 userId={pass.userId}
                 make={pass.make}
                 model={pass.model}
@@ -81,12 +117,16 @@ export default function ParkingLimitContainer() {
                 parkingPassNumber={pass.parkingPassNumber}
                 createdAt={pass.createdAt}
                 expirationDate={pass.expirationDate}
+                formattedCreatedAt={pass.formattedCreatedAt}
+                formattedExpirationDate={pass.formattedExpirationDate}
+                onExpire={handlePassExpired}
               />
             ))
-        ) : (
-          <p className="text-white">No active passes available.</p>
-        )}
-      </div>
+          ) : (
+            <p className="text-white">No active passes available.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
