@@ -391,7 +391,7 @@ const Dashboard = () => {
         <div className="fixed left-1/2 z-50">
           {toast && (
             <Toast
-              message="Problem reported"
+              message="Complaint Reported"
               type={toast.type}
               onDismiss={() => setToast(null)}
             />
