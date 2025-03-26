@@ -310,7 +310,7 @@ const Dashboard = () => {
                     return (
                       <button
                         key={label}
-                        className="bg-primary-green hover:bg-alternate-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green border border-alternate-green drop-shadow-md hover:cursor-pointer"
+                        className="bg-primary-green hover:bg-alternate-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green drop-shadow-md hover:cursor-pointer"
                         onClick={reportToastProblem}
                       >
                         {Icon}
@@ -325,7 +325,7 @@ const Dashboard = () => {
                     <Link
                       key={label}
                       href={href}
-                      className="bg-primary-green hover:bg-alternate-green hover:text--green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green transition-all ease-in-out duration-200 drop-shadow-md border border-alternate-green "
+                      className="bg-primary-green hover:bg-alternate-green hover:text--green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green transition-all ease-in-out duration-200 drop-shadow-md  "
                     >
                       {Icon}
                       <p className=" text-center text-xs lg:text-sm">
@@ -389,7 +389,7 @@ const Dashboard = () => {
             <ParkingLimitContainer />
           </div>
         </div>
-        <div className="fixed bottom-6 left-6 z-50">
+        <div className="fixed bottom-2 right-20 mr-2 z-50">
           <VoiceChatButton onClick={() => setOpen(true)} />
         </div>
         <div className="fixed left-1/2 z-50">
