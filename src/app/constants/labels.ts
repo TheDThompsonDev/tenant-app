@@ -8,17 +8,17 @@ const LABELS = {
     },
     unlock_door: {
       href: "/passkey",
-      text: "Unlock My Door",
+      text: "Door Lock",
       icon: "lockIcon",
     },
     packages: {
       href: "/locker",
-      text: "My Packages",
+      text: "Packages",
       icon: "packageIcon",
     },
     parking: {
       href: "/parking",
-      text: "Guest Parking Pass",
+      text: "Guest Parking",
       icon: "parkingIcon",
     },
   },

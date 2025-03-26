@@ -5,7 +5,7 @@ import CompanyLogo from "@/app/components/CompanyLogo";
 import Navbar from "@/app/components/Navbar";
 import LogoutBtn from "@/app/components/LogoutBtn";
 import { getCurrentUser } from "@/lib/appwrite";
-import { Cog } from "lucide-react";
+import { Settings } from "lucide-react";
 import Link from "next/link";
 
 export default function Header() {
@@ -79,9 +79,10 @@ export default function Header() {
             <Navbar isMobile={false} />
             <div className="flex flex-row gap-4 items-center justify-center">
               <button>
-                <Cog
-                  width={40}
-                  height={40}
+                <Settings
+                className="text-secondary-dark-gray"
+                  width={32}
+                  height={32}
                   onClick={() => router.push("/dashboard")}
                 />
               </button>

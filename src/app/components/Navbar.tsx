@@ -2,7 +2,7 @@
 import LABELS from '@/app/constants/labels';
 import Link from 'next/link';
 import NotificationBadge from '@/app/components/NotificationBadge';
-import { X, LogOut, Menu, ChevronRight, Cog } from 'lucide-react';
+import { X, LogOut, Menu, ChevronRight, Settings } from 'lucide-react';
 import ICON_MAP from '@/app/constants/icons';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -128,10 +128,10 @@ export default function Navbar({
         </button>
         <div className='mt-16 flex flex-row py-4'>
           <button 
-            className='flex flex-row gap-4 p-4 w-full items-center bg-secondary-blue text-white bg-gradient-to-r from-secondary-blue to-primary-green shadow-md' 
+            className='flex flex-row gap-4 p-4 w-full items-center bg-secondary-blue text-alternate-light-gray bg-gradient-to-r from-secondary-blue to-primary-green shadow-md' 
             onClick={() => router.push("/dashboard")}>
-            <Cog size={50} />
-            <p>{LABELS.mobileNav.cogTitle}</p>
+            <Settings size={40} />
+            <p className='text-xl'>{LABELS.mobileNav.cogTitle}</p>
           </button>
 
         </div>
@@ -168,12 +168,12 @@ export default function Navbar({
   const renderDesktopNav = () => {
     return (
       <nav>
-        <ul className='flex space-x-4'>
+        <ul className='flex space-x-8'>
           {navigationData.map(([label, { href, text }]) => (
             <li key={text}>
               <Link
                 href={href}
-                className='flex h-[48px] grow items-center justify-center gap-2 rounded-md hover:bg-gray-50 p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3'
+                className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3 tracking-tight text-secondary-dark-gray hover:text-alternate-gray'
               >
                 <p className='hidden md:block text-lg'>{text}</p>
                 {label === 'messages' && (
