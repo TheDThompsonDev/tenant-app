@@ -56,7 +56,7 @@ export default function ComposeMessage({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"admin" | "tenant">("tenant");
-  const [tenants, setTenants] = useState<{ id: string; name: string }[]>([])
+  const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     setUserRole(isAdmin ? "admin" : "tenant");
@@ -67,14 +67,17 @@ export default function ComposeMessage({
         .then((data) => {
           const transformed = data.map((user: any) => ({
             id: user.id,
-            name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unnamed Tenant",
+            name:
+              `${user.firstName || ""} ${user.lastName || ""} - APT: ${
+                user.apartmentNumber
+              }`.trim() || "Unnamed Tenant",
           }));
-          setTenants(transformed)
+          setTenants(transformed);
         })
         .catch((err) => {
-          console.error("error fetching tenants:", err)
-          setTenants([])
-        })
+          console.error("error fetching tenants:", err);
+          setTenants([]);
+        });
     }
   }, [isAdmin]);
 
@@ -133,14 +136,11 @@ export default function ComposeMessage({
             subject: values.subject,
             message: values.body,
             notificationType: values.type.toUpperCase(),
-            user: userResponse.data.$id,
-            from: userRole,
-            ...(userRole === "admin" && values.receiverId
-              ? { receiverId: values.receiverId }
-              : {}),
+            sender: userResponse.data.$id,
+            receiver: values.receiverId,
           };
 
-          const res = await fetch("/api/notifications", {
+          const res = await fetch("/api/admin/notifications", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newMsg),
@@ -168,7 +168,7 @@ export default function ComposeMessage({
   const subject = useStore(form.store, (state) => state.values.subject);
   const body = useStore(form.store, (state) => state.values.body);
   const type = useStore(form.store, (state) => state.values.type);
-  const receiverId = useStore(form.store, (state) => state.values.receiverId)
+  const receiverId = useStore(form.store, (state) => state.values.receiverId);
 
   return (
     <div className="w-full">
@@ -223,7 +223,9 @@ export default function ComposeMessage({
               <select
                 id="receiverId"
                 value={receiverId}
-                onChange={(e) => form.setFieldValue("receiverId", e.target.value)}
+                onChange={(e) =>
+                  form.setFieldValue("receiverId", e.target.value)
+                }
                 className="w-full p-3 border border-gray-300 rounded-lg bg-white text-black 
                       focus:outline-none focus:ring-2 focus:ring-primary-green focus:border-transparent
                       transition-all duration-200 ease-in-out shadow-sm"

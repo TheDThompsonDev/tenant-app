@@ -44,19 +44,28 @@ export default async function handler(
 
     case "POST":
       try {
-        const { user, subject, message, notificationType } = req.body;
+        const { sender, receiver, subject, message, notificationType } =
+          req.body;
 
-        const findUser = await prisma.user.findFirst({
+        const findSender = await prisma.user.findFirst({
           where: {
-            OR: [{ id: user }, { appwriteId: user }],
+            OR: [{ id: sender }, { appwriteId: sender }],
           },
         });
-
-        if (!findUser) {
-          return res.status(404).json({ error: "User not found" });
+        if (!findSender) {
+          return res.status(404).json({ error: "Sender not found" });
         }
 
-        const requiredFields = ["user", "subject", "message"];
+        const findRceiver = await prisma.user.findFirst({
+          where: {
+            OR: [{ id: receiver }, { appwriteId: receiver }],
+          },
+        });
+        if (!findRceiver) {
+          return res.status(404).json({ error: "Receiver not found" });
+        }
+
+        const requiredFields = ["sender", "receiver", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -79,10 +88,10 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            senderId: findUser.id,
+            senderId: findSender.id,
             subject,
             message,
-            receiverId: adminUser?.id,
+            receiverId: findRceiver.id,
             notificationType,
             createdAt: new Date(),
           },

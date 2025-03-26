@@ -28,19 +28,28 @@ export default async function handler(
 
     case "POST":
       try {
-        const { userId, subject, message, notificationType } = req.body;
+        const { sender, receiver, subject, message, notificationType } =
+          req.body;
 
-        const findUser = await prisma.user.findFirst({
+        const findSender = await prisma.user.findFirst({
           where: {
-            OR: [{ id: userId }, { appwriteId: userId }],
+            OR: [{ id: sender }, { appwriteId: sender }],
           },
         });
-
-        if (!findUser) {
-          return res.status(404).json({ error: "User not found" });
+        if (!findSender) {
+          return res.status(404).json({ error: "Sender not found" });
         }
 
-        const requiredFields = ["userId", "subject", "message"];
+        const findRceiver = await prisma.user.findFirst({
+          where: {
+            OR: [{ id: receiver }, { appwriteId: receiver }],
+          },
+        });
+        if (!findRceiver) {
+          return res.status(404).json({ error: "Receiver not found" });
+        }
+
+        const requiredFields = ["sender", "receiver", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -51,12 +60,22 @@ export default async function handler(
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
+        const adminUser = await prisma.user.findFirst({
+          where: {
+            userRole: "ADMIN",
+          },
+        });
+
+        if (!adminUser) {
+          return res.status(404).json({ error: "Admin user not found" });
+        }
+
         const notification = await prisma.notification.create({
           data: {
-            senderId: "admin",
+            senderId: findSender.id,
             subject,
             message,
-            receiverId: findUser.id,
+            receiverId: findRceiver.id,
             notificationType,
             createdAt: new Date(),
           },
