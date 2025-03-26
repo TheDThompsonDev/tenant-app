@@ -185,25 +185,25 @@ const Dashboard = () => {
   const renderIcon = (iconName: string) => {
     if (!iconName || !ICON_MAP[iconName]) return null;
     const IconComponent = ICON_MAP[iconName] as LucideIcon;
-    return <IconComponent size={36} color="white" />;
+    return <IconComponent size={36} />;
   };
 
   const EditProfileBtn = ({ user }: { user: { name: string } }) => {
     const buttonColor =
-      user.name === "admin" ? "bg-secondary-blue" : "bg-primary-green";
+      user.name === "admin" ? "bg-secondary-blue" : "bg-primary-green hover:bg-alternate-green hover:text-primary-green";
     const textColor =
-      user.name === "admin" ? "text-alternate-light-gray" : "text-white";
+      user.name === "admin" ? "text-alternate-light-gray" : "text-alternate-green";
     const hiddenButton = user.name === "admin" ? "hidden" : "block";
     return (
       <Link
         href="/editProfile"
-        className={`${buttonColor} ${hiddenButton} border-4 border-white p-1 rounded-lg relative left-10 bottom-[110px] lg:static lg:border-none lg:px-4 lg:py-2 lg:mt-4`}
+        className={`${buttonColor} ${hiddenButton} border-4 border-white p-1 rounded-lg relative left-10 bottom-[110px] lg:static lg:border-none lg:px-4 lg:py-2 lg:mt-4 transition-all duration-200 ease-in-out`}
       >
         <div className="block lg:hidden">
           <Pencil size={16} fill="white" />
         </div>
         <div className="hidden lg:block">
-          <p className={textColor}>Edit Profile</p>
+          <p className=''>Edit Profile</p>
         </div>
       </Link>
     );
@@ -221,7 +221,7 @@ const Dashboard = () => {
     const iconColor =
       user.name === "admin"
         ? " bg-alternate-light-gray text-secondary-blue"
-        : "bg-primary-green";
+        : "bg-alternate-green text-primary-green";
     return (
       <div
         className={`${textColor} mt-14 ${paddingBottom} flex flex-col items-center lg:items-start relative lg:mt-0 lg:px-4`}
@@ -229,7 +229,7 @@ const Dashboard = () => {
         <UserRound
           width={24}
           height={24}
-          className={`w-24 h-24 rounded-full object-cover border-4 border-white lg:relative ${iconColor}`}
+          className={`w-24 h-24 rounded-full object-cover border-2 border-white lg:relative ${iconColor}`}
         />
 
         <h3 className="mt-5 text-3xl">{userName}</h3>
@@ -310,11 +310,11 @@ const Dashboard = () => {
                     return (
                       <button
                         key={label}
-                        className="bg-primary-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-white"
+                        className="bg-primary-green hover:bg-alternate-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green border border-alternate-green drop-shadow-md hover:cursor-pointer"
                         onClick={reportToastProblem}
                       >
                         {Icon}
-                        <p className="text-white text-center text-xs lg:text-sm">
+                        <p className=" text-center text-xs lg:text-sm">
                           {text}
                         </p>
                       </button>
@@ -325,10 +325,10 @@ const Dashboard = () => {
                     <Link
                       key={label}
                       href={href}
-                      className="bg-primary-green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-white"
+                      className="bg-primary-green hover:bg-alternate-green hover:text--green flex flex-col gap-2 items-center justify-center p-6 rounded-lg text-alternate-green hover:text-primary-green transition-all ease-in-out duration-200 drop-shadow-md border border-alternate-green "
                     >
                       {Icon}
-                      <p className="text-white text-center text-xs lg:text-sm">
+                      <p className=" text-center text-xs lg:text-sm">
                         {text}
                       </p>
                     </Link>
