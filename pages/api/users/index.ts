@@ -9,7 +9,20 @@ export default async function handler(
 
   switch (method) {
     case "GET":
+      const { userRole } = req.query;
+
       try {
+        if (userRole === "tenant") {
+          const tenant = await prisma.user.findMany({
+            where: {
+              userRole: "TENANT",
+            },
+            orderBy: {
+              userRole: "desc",
+            },
+          });
+          return res.status(200).json(tenant);
+        }
         const users = await prisma.user.findMany();
         res.status(200).json(users);
       } catch (error) {
@@ -44,16 +57,16 @@ export default async function handler(
             .status(400)
             .json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
-        
+
         const existingUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email },
         });
-        
+
         if (existingUser) {
           if (appwriteId && !existingUser.appwriteId) {
             const updatedUser = await prisma.user.update({
               where: { id: existingUser.id },
-              data: { appwriteId }
+              data: { appwriteId },
             });
             return res.status(200).json(updatedUser.id);
           }
