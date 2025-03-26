@@ -44,7 +44,7 @@ export default function LoginPage() {
 
           <p className="text-center text-gray-600 mt-4">
             {LABELS.login.page.noAccountText}{" "}
-            <Link href="/contact" className="text-blue-600">
+            <Link href="/#contact" className="text-blue-600">
               {LABELS.login.page.contactUsLink}
             </Link>
           </p>
