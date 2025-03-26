@@ -13,6 +13,8 @@ type ParkingPass = {
   parkingPassNumber: string;
   createdAt: string | Date;
   expirationDate: string | Date;
+  formattedCreatedAt?: string;
+  formattedExpirationDate?: string;
 };
 
 export default function ParkingLimitContainer() {
@@ -21,55 +23,66 @@ export default function ParkingLimitContainer() {
   const [error, setError] = useState<string | null>(null);
   const [passCount, setPassCount] = useState(0);
 
-  useEffect(() => {
-    const fetchParkingPasses = async () => {
-      try {
-        setLoading(true);
-        const userResponse = await getCurrentUser();
-        if (!userResponse.success || !userResponse.data) {
-          setError("Unable to fetch user data");
-          setLoading(false);
-          return;
-        }
-        
-        const userId = userResponse.data.$id;
-        const response = await fetch(`/api/parking?userId=${userId}`);
-        const data = await response.json();
-        
-        const formatDate = (dateString: string) => {
-          return new Date(dateString).toLocaleString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        };
-
-        // Sort by creation date (newest first)
-        const sortedPasses = [...data].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        setPassCount(sortedPasses.length);
-        const formattedPasses = sortedPasses.map((pass) => ({
-          ...pass,
-          createdAt: formatDate(pass.createdAt),
-          expirationDate: pass.expirationDate ? formatDate(pass.expirationDate) : 'N/A',
-        }));
-
-        setParkingPasses(formattedPasses);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching parking passes:", error);
-        setError("Failed to load parking passes");
-      } finally {
+  const fetchParkingPasses = async () => {
+    try {
+      setLoading(true);
+      const userResponse = await getCurrentUser();
+      if (!userResponse.success || !userResponse.data) {
+        setError("Unable to fetch user data");
         setLoading(false);
+        return;
       }
-    };   
+      
+      const userId = userResponse.data.$id;
+      const response = await fetch(`/api/parking?userId=${userId}`);
+      const data = await response.json();
+      
+      const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const now = new Date();
+      const activePassesOnly = data.filter((pass: ParkingPass) => {
+        if (!pass.expirationDate) return true;
+        const expDate = new Date(pass.expirationDate);
+        return expDate > now;
+      });
+
+      const sortedPasses = [...activePassesOnly].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setPassCount(sortedPasses.length);
+      const formattedPasses = sortedPasses.map((pass) => ({
+        ...pass,
+        formattedCreatedAt: formatDate(pass.createdAt as string),
+        formattedExpirationDate: pass.expirationDate ? formatDate(pass.expirationDate as string) : 'N/A',
+      }));
+
+      setParkingPasses(formattedPasses);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching parking passes:", error);
+      setError("Failed to load parking passes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchParkingPasses();
   }, []);
+
+  const handlePassExpired = () => {
+    fetchParkingPasses();
+  };
 
   return (
     <div className="flex flex-col p-4 w-full bg-secondary-blue">
@@ -95,6 +108,7 @@ export default function ParkingLimitContainer() {
             parkingPasses.map((pass) => (
               <ParkingPassCard
                 key={pass.id}
+                id={pass.id}
                 userId={pass.userId}
                 make={pass.make}
                 model={pass.model}
@@ -103,6 +117,9 @@ export default function ParkingLimitContainer() {
                 parkingPassNumber={pass.parkingPassNumber}
                 createdAt={pass.createdAt}
                 expirationDate={pass.expirationDate}
+                formattedCreatedAt={pass.formattedCreatedAt}
+                formattedExpirationDate={pass.formattedExpirationDate}
+                onExpire={handlePassExpired}
               />
             ))
           ) : (

@@ -76,10 +76,15 @@ export default async function handler(
         if (!findUser) {
           return res.status(404).json({ error: "User not found" });
         }
+        
+        const now = new Date();
         const existingPasses = await prisma.parkingPass.findMany({
           where: {
             user: {
               apartmentNumber: apartmentNumber
+            },
+            expirationDate: {
+              gt: now
             }
           }
         });

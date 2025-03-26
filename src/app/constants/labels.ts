@@ -477,6 +477,9 @@ const LABELS = {
     createdTitle: 'Created on: ',
     expireMeBtn: 'Expire me',
     deleteBtn: 'Delete',
+    passNumberLabel: 'Pass #:',
+    expiresIn: 'Expires in:',
+    expireButton: 'Expire Pass',
     time: {
       hour: 'h',
       minute: 'm',
