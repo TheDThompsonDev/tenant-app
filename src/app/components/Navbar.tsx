@@ -26,7 +26,7 @@ export default function Navbar({
 }: NavbarProps) {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const mockNotificationCount = 4;
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
@@ -49,6 +49,42 @@ export default function Navbar({
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    async function fetchMessages() {
+      try {
+        const url =
+          user?.name === 'admin'
+            ? '/api/admin/notifications'
+            : `/api/notifications?userId=${user?.$id}`;
+
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+        });
+
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch messages: ${res.status} ${res.statusText}`
+          );
+        }
+
+        const data = await res.json();
+
+        // TODO: this counts all messages, regardless of status ('UNREAD' or 'READ')
+        setNotificationCount(data.length);
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+        return;
+      }
+    }
+
+    if (user) {
+      fetchMessages();
+    }
+  }, [user]);
 
   if (loading) {
     return null; 
@@ -109,7 +145,7 @@ export default function Navbar({
                 </div>
                 <div className='flex flex-row gap-2'>
                   {label === 'messages' && (
-                    <NotificationBadge value={mockNotificationCount} />
+                    <NotificationBadge value={notificationCount} />
                   )}
                   <ChevronRight />
                 </div>
@@ -141,7 +177,7 @@ export default function Navbar({
               >
                 <p className='hidden md:block text-lg'>{text}</p>
                 {label === 'messages' && (
-                  <NotificationBadge value={mockNotificationCount} />
+                  <NotificationBadge value={notificationCount} />
                 )}
               </Link>
             </li>
