@@ -34,6 +34,10 @@ export default function GuestParkingPassForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [formError, setFormError] = useState<{
+    field?: string;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -57,14 +61,47 @@ export default function GuestParkingPassForm() {
         expirationDate: new Date(expireDate),
       },
       onSubmit: async (values) => {
-        const user = await getCurrentUser();
-        if (user?.data?.$id) {
-          await saveOnDB({ ...values, user: user.data.$id });
+        setFormError(null);
+
+        try {
+          const user = await getCurrentUser();
+          if (!user?.data?.$id) {
+            setFormError({ message: "user authentication failed." });
+            return { status: "error" };
+          }
+
+          const res = await saveOnDB({ ...values, user: user.data.$id });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+
+            if (res.status === 404) {
+              setFormError({
+                field: "general",
+                message:
+                  "User not found. Please check Tenant Last Name and Resident Apartment Number.",
+              });
+            } else if (res.status === 400) {
+              setFormError({ field: "general", message: errorData.error });
+            } else {
+              setFormError({
+                field: "general",
+                message: "An unexpected error occurred. Please try again.",
+              });
+            }
+
+            return { status: "error" };
+          }
+
           setIsSubmitted(true);
-        } else {
-          console.error("User data is undefined");
+          return { status: "success" };
+        } catch (error) {
+          setFormError({
+            field: "general",
+            message: "Network error. Please try again later.",
+          });
+          return { status: "error" };
         }
-        return { status: "success" };
       },
     })
   );
@@ -75,14 +112,13 @@ export default function GuestParkingPassForm() {
   };
 
   const saveOnDB = async (values: GuestParkingFormValues) => {
-    const response = await fetch("/api/parking", {
+    return await fetch("/api/parking", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
         "Content-Type": "application/json",
       },
     });
-    return response.json();
   };
 
   const handleCopyCode = () => {
@@ -248,6 +284,12 @@ export default function GuestParkingPassForm() {
 
         <article className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary-blue via-primary-green to-secondary-blue"></div>
+
+          {formError?.field === "general" && (
+            <p className="text-red-500 text-sm text-center">
+              {formError.message}
+            </p>
+          )}
 
           <form
             onSubmit={(e) => {
