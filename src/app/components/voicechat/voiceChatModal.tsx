@@ -66,7 +66,7 @@ export function VoiceChatModal({
                 agentId: "w9HcNnfGpTdqixgjY6vo",
               })
             }
-            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center justify-center gap-2"
+            className="cursor-pointer hover:cursor-pointer w-full bg-primary-green text-alternate-green ease-in-out duration-100 py-2 px-4 rounded flex items-center justify-center gap-2 hover:text-white hover:drop-shadow-lg"
           >
             <Mic className="w-4 h-4" />
             Start Talking
@@ -74,7 +74,7 @@ export function VoiceChatModal({
         ) : (
           <button
             onClick={endConversation}
-            className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex items-center justify-center gap-2"
+            className=" w-full bg-secondary-blue ease-in-out duration-100 text-white hover:text-alternate-light-gray hover:drop-shadow-lg py-2 px-4 rounded 600 flex items-center justify-center gap-2"
           >
             <Mic className="w-4 h-4" />
             Stop Talking
