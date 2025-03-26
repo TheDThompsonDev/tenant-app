@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useCallback, useMemo, Dispatch, SetStateAction } from "react";
 import {
   ArrowLeft,
   Clock,
@@ -44,6 +44,7 @@ type NotificationData = {
 
 type MessageListProps = {
   messages: Message[];
+  setMessages: Dispatch<SetStateAction<Message[]>>;
   isAdmin?: boolean;
   data?: NotificationData[];
 };
@@ -101,9 +102,70 @@ function formatTime(dateString: string): string {
   }
 }
 
-function MessageList({ messages, isAdmin }: MessageListProps) {
+const transformToMessage = (notification: NotificationData) => {
+  const subject = notification.subject || LABELS.messaging.noSubject;
+  const body = notification.message || "";
+  const combinedText = (subject + " " + body).toLowerCase();
+  const apartmentNumber = notification.sender?.apartmentNumber || notification.receiver?.apartmentNumber || notification.apartmentNumber || undefined;
+  
+  let type = notification.notificationType?.toLowerCase() || "general";
+  
+  if (combinedText.includes("noise") || combinedText.includes("complaint") || combinedText.includes("loud")) {
+    type = "noise_complaint";
+  } else if (combinedText.includes("package") || combinedText.includes("delivery") || combinedText.includes("mail")) {
+    type = "package";
+  } else if (combinedText.includes("lease") || combinedText.includes("contract") || combinedText.includes("agreement")) {
+    type = "lease";
+  } else if (combinedText.includes("management") || combinedText.includes("admin") || combinedText.includes("office")) {
+    type = "management";
+  }
+  
+  return {
+    id: notification.id,
+    subject: subject,
+    body: body,
+    createdAt: notification.createdAt,
+    type: type as "package" | "management" | "lease" | "general" | "noise_complaint",
+    apartmentNumber: apartmentNumber,
+    status: notification.status,
+    priority: notification.priority
+  };
+}
+
+
+function MessageList({ messages, setMessages, isAdmin, data }: MessageListProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  
+  const markAsRead = async (msgId: string) => {
+    try {
+      const url = isAdmin ?
+      `/api/admin/notifications?id=${msgId}` :
+      ` /api/notifications?id=${msgId}`;
+      
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(
+          `Failed to update message: ${res.status} ${res.statusText}`
+        );
+      }
+
+      const updatedMessage = await res.json();
+      const updatedId = updatedMessage.id;
+      const withoutUpdated = messages.filter((msg) => msg.id !== updatedId);
+      const withUpdated = [...withoutUpdated, transformToMessage(updatedMessage)];
+      const orderedMessages: Message[] = withUpdated.sort((a: Message, b: Message) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setMessages(orderedMessages);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const filteredMessages = useMemo(() => {
     return messages.filter(
@@ -199,10 +261,13 @@ function MessageList({ messages, isAdmin }: MessageListProps) {
             filteredMessages.map((msg) => (
               <div
                 key={msg.id}
-                onClick={() => setSelectedMessage(msg)}
-                className="flex items-center p-4 hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden"
+                onClick={async () => {
+                  setSelectedMessage(msg);
+                  await markAsRead(msg.id);
+                }}
+                className={`flex items-center p-4 ${msg.status === 'UNREAD' ? 'bg-primary-green/10' : ''} hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden`}
               >
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-green opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                <div className={`absolute left-0 top-0 bottom-0 w-1 bg-primary-green ${msg.status === 'UNREAD' ? 'opacity-30' : 'opacity-0'}  group-hover:opacity-100 transition-opacity duration-200`}></div>
                 <div className="mr-4">
                   <MessageIcon type={msg.type || "general"} />
                 </div>

@@ -127,35 +127,36 @@ export default function MessagesPage() {
     fetchUser();
   }, []);
 
+  
   useEffect(() => {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-
+  
         if (!user || !user.$id) {
           console.error("No user ID available");
           setError(LABELS.messaging.errorUserInformation);
           setIsLoading(false);
           return;
         }
-
+  
         if (isCacheValid(user.$id)) {
           console.log("Using cached notification data");
           const cachedData = notificationCache.data as NotificationData[];
           setRawNotificationData(cachedData);
-
+  
           const transformedMessages = transformNotificationsToMessages(cachedData);
           setMessages(transformedMessages);
           setError(null);
           setIsLoading(false);
           return;
         }
-
+  
         const url =
           user.name === 'admin'
             ? '/api/admin/notifications'
             : `/api/notifications?userId=${user.$id}`;
-
+  
         const res = await fetch(url, {
           method: "GET",
           headers: {
@@ -163,13 +164,13 @@ export default function MessagesPage() {
           },
           cache: "no-store",
         });
-
+  
         if (!res.ok) {
           throw new Error(
             `Failed to fetch messages: ${res.status} ${res.statusText}`
           );
         }
-
+  
         const data = await res.json();
         
         notificationCache.data = data;
@@ -196,9 +197,10 @@ export default function MessagesPage() {
 
   const messageListProps = useMemo(() => ({
     messages,
+    setMessages,
     isAdmin,
     data: rawNotificationData
-  }), [messages, isAdmin, rawNotificationData]);
+  }), [messages, setMessages, isAdmin, rawNotificationData]);
 
   return (
     <>
