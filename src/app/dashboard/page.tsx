@@ -226,19 +226,27 @@ const Dashboard = () => {
         : "text-alternate-light-gray";
     return (
       <div className={`${textColor} p-6 font-thin text-sm`}>
-        <h2 className="text-2xl">{property?.[0].propertyName}</h2>
-        <p>
-          {LABELS.dashboardComponents.addressLabel}
-          {property?.[0].address.address},{property?.[0].address.city},{" "}
-          {property?.[0].address.state} {property?.[0].address.zipCode}{" "}
-          {property?.[0].address.country}
-        </p>
-        <p>
-          {LABELS.dashboardComponents.websiteLabel} {property?.[0].websiteURL}
-        </p>
-        <p>
-          {LABELS.dashboardComponents.phoneLabel} {property?.[0].phoneNumber}
-        </p>
+        {property && property.length > 0 ? (
+          <>
+            <h2 className="text-2xl">{property[0].propertyName}</h2>
+            <p>
+              {LABELS.dashboardComponents.addressLabel}
+              {property[0].address.address}, {property[0].address.city},{" "}
+              {property[0].address.state} {property[0].address.zipCode}{" "}
+              {property[0].address.country}
+            </p>
+            <p>
+              {LABELS.dashboardComponents.websiteLabel} {property[0].websiteURL}
+            </p>
+          </>
+        ) : (
+          <p>Loading property information...</p>
+        )}
+        {property && property.length > 0 && (
+          <p>
+            {LABELS.dashboardComponents.phoneLabel} {property[0].phoneNumber}
+          </p>
+        )}
       </div>
     );
   };
