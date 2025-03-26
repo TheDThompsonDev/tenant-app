@@ -55,10 +55,10 @@ export default function Header() {
           ) : (
             <div className="flex flex-row gap-4">
               <button
-                className="px-4 py-2 rounded-md text-white bg-secondary-blue text-sm"
-                onClick={handleLoginClick}
+                className="flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue"
+                onClick={handleParkingClick}
               >
-                Parking
+                <Link href="/parking">Parking</Link>
               </button>
               <button
                 className="px-4 py-2 rounded-md text-white bg-primary-green text-sm"
@@ -91,12 +91,11 @@ export default function Header() {
           </>
         ) : (
           <div className="flex flex-row gap-4 items-center justify-center">
-            <button 
+            <button
               className="flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue"
               onClick={handleParkingClick}
-            ><Link href="/parking">
-              Guest Parking
-            </Link>
+            >
+              <Link href="/parking">Guest Parking</Link>
             </button>
             <button
               className="flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-primary-green"
