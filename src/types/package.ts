@@ -6,4 +6,7 @@ export type Package = {
   lockerCode: string;
   packageLockerStatus: string;
   pickupDate: string;
+  accessCode: string;
+  lockerNumber: string;
+  lastAcessed: string;
 };

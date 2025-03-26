@@ -122,13 +122,14 @@ export default function Home() {
                 <div
                   key={item.id}
                   onClick={() => router.push(`/locker/${item.id}`)}
-                  className="cursor-pointer transform transition-transform hover:scale-[1.02] focus:outline-none">
+                  className="cursor-pointer transform transition-transform hover:scale-[1.02] focus:outline-none"
+                >
                   <PackageCard
                     id={item.id}
-                    date={item.date}
-                    time={item.time}
+                    accessCode={item.accessCode}
                     status={item.packageLockerStatus}
-                    pickupDate={item.pickupDate}
+                    lockerNumber={item.lockerNumber}
+                    lastAcessed={item.lastAcessed}
                   />
                 </div>
               ))
@@ -146,8 +147,7 @@ export default function Home() {
             {LABELS.packageList.helpDescription}
           </p>
           <Link href="/messaging">
-            <button
-              className="bg-secondary-blue hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-300">
+            <button className="bg-secondary-blue hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-300">
               {LABELS.packageList.contactButton}
             </button>
           </Link>

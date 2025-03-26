@@ -341,6 +341,9 @@ const LABELS = {
     pickupTitle: "Picked up: ",
     back: "Back",
     notfoundError: "Package not found.",
+    lockerNumberTitle: 'Locker Number: ',
+    accessCodeTitle: 'Access Code: ',
+    completedTitle: 'Completed'
   },
   createTenant: {
     title: "Create Tenant Account",
