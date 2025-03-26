@@ -4,6 +4,8 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link'
 import LABELS from '../constants/labels'
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 type DocumentStatus = {
     id: string;
@@ -45,6 +47,12 @@ function ConfirmationContent() {
     }, [documentId, searchParams]);
 
     return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 relative">
+        <Link
+          href="/lease"
+          className="text-med text-gray-500 mb-4 inline-block absolute top-10 left-10">
+          &larr; {LABELS.success.back}
+        </Link>
         <main className="min-h-screen bg-gray-50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto text-center">
@@ -125,13 +133,23 @@ function ConfirmationContent() {
                 </div>
             </div>
         </main>
+      </div>
     );
 }
 
 export default function ConfirmationPage() {
     return (
-        <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading...</div>}>
-            <ConfirmationContent />
+      <div>
+        <Header />
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-screen">
+              Loading...
+            </div>
+          }>
+        <ConfirmationContent />
         </Suspense>
+        <Footer />
+      </div>
     );
 }
