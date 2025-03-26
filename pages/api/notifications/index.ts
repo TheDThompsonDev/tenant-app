@@ -11,14 +11,22 @@ export default async function handler(
     case "GET":
       try {
         const { userId } = req.query;
+        
+        if (!userId) {
+          return res.status(400).json({ error: "User ID is required" });
+        }
+        
+        const userIdString = Array.isArray(userId) ? userId[0] : userId;
+        
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { id: Array.isArray(userId) ? userId[0] : userId },
-              { appwriteId: Array.isArray(userId) ? userId[0] : userId },
+              { id: userIdString },
+              { appwriteId: userIdString },
             ],
           },
         });
+        
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
