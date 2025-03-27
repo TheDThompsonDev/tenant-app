@@ -14,6 +14,8 @@ import {
   VolumeX,
 } from "lucide-react";
 import LABELS from "@/app/constants/labels";
+import {useNotifications} from '@/app/hooks/useNotifications';
+import { useAuth } from '@/app/hooks/useAuth';
 
 type Message = {
   id: string;
@@ -56,6 +58,8 @@ export default function ComposeMessage({
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<"admin" | "tenant">("tenant");
   const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
+  const { getNotifications } = useNotifications();
+  const { user } = useAuth();
 
   useEffect(() => {
     setUserRole(isAdmin ? "admin" : "tenant");
@@ -158,6 +162,9 @@ export default function ComposeMessage({
 
           const savedMsg = await res.json();
           onMessageSent(savedMsg);
+          if (user) {
+            await getNotifications(user);
+          }
           return { status: "success" as const };
         } catch (error) {
           console.error("Error sending message:", error);
