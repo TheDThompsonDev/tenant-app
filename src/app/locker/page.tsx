@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import LABELS from "../constants/labels";
 import Header from "../components/Header";
 import PackageCard from "../components/PackageCard";
@@ -125,10 +126,10 @@ export default function Home() {
                 >
                   <PackageCard
                     id={item.id}
-                    date={item.date}
-                    time={item.time}
+                    accessCode={item.accessCode}
                     status={item.packageLockerStatus}
-                    pickupDate={item.pickupDate}
+                    lockerNumber={item.lockerNumber}
+                    lastAcessed={item.lastAcessed}
                   />
                 </div>
               ))
@@ -145,9 +146,11 @@ export default function Home() {
           <p className="text-gray-600 mb-4">
             {LABELS.packageList.helpDescription}
           </p>
-          <button className="bg-secondary-blue hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-300">
-            {LABELS.packageList.contactButton}
-          </button>
+          <Link href="/messaging">
+            <button className="bg-secondary-blue hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-300">
+              {LABELS.packageList.contactButton}
+            </button>
+          </Link>
         </div>
       </main>
 

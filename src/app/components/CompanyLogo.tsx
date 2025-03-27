@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-export default function CompanyLogo() {
+export default function CompanyLogo({ isFooter = false }) {
+  const textColor = isFooter ? "text-white" : "text-black";
+
   return (
     <div className="flex items-end">
       <Link href="/" className="flex items-center cursor-pointer">

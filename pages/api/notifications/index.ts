@@ -11,14 +11,22 @@ export default async function handler(
     case "GET":
       try {
         const { userId } = req.query;
+        
+        if (!userId) {
+          return res.status(400).json({ error: "User ID is required" });
+        }
+        
+        const userIdString = Array.isArray(userId) ? userId[0] : userId;
+        
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { id: Array.isArray(userId) ? userId[0] : userId },
-              { appwriteId: Array.isArray(userId) ? userId[0] : userId },
+              { id: userIdString },
+              { appwriteId: userIdString },
             ],
           },
         });
+        
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
@@ -44,19 +52,18 @@ export default async function handler(
 
     case "POST":
       try {
-        const { user, subject, message, notificationType } = req.body;
+        const { sender, subject, message, notificationType } = req.body;
 
-        const findUser = await prisma.user.findFirst({
+        const findSender = await prisma.user.findFirst({
           where: {
-            OR: [{ id: user }, { appwriteId: user }],
+            OR: [{ id: sender }, { appwriteId: sender }],
           },
         });
-
-        if (!findUser) {
-          return res.status(404).json({ error: "User not found" });
+        if (!findSender) {
+          return res.status(404).json({ error: "Sender not found" });
         }
 
-        const requiredFields = ["user", "subject", "message"];
+        const requiredFields = ["sender", "subject", "message"];
         const missingFields = requiredFields.filter(
           (field) => !req.body[field]
         );
@@ -79,10 +86,10 @@ export default async function handler(
 
         const notification = await prisma.notification.create({
           data: {
-            senderId: findUser.id,
+            senderId: findSender.id,
             subject,
             message,
-            receiverId: adminUser?.id,
+            receiverId: adminUser.id,
             notificationType,
             createdAt: new Date(),
           },

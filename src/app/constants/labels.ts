@@ -336,6 +336,9 @@ const LABELS = {
     pickupTitle: "Picked up: ",
     back: "Back",
     notfoundError: "Package not found.",
+    lockerNumberTitle: 'Locker Number: ',
+    accessCodeTitle: 'Access Code: ',
+    completedTitle: 'Completed'
   },
   createTenant: {
     title: "Create Tenant Account",
@@ -374,10 +377,12 @@ const LABELS = {
     },
   },
   success: {
-    title: "Success! New Tenant Account Created",
+    title: "Success!  New Tenant Account Created",
     back: "Back",
-    username: "UserName:",
+    email: "Email:",
     temporaryPassword: "Temporary Password:",
+    credentialsMessage: "Tenant Account Credentials",
+    registrationMessage: "Please instruct tenant to change password upon registration"
   },
   generateLease: {
     title: "Generate Lease",
