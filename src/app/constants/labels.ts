@@ -300,8 +300,9 @@ const LABELS = {
 
   doorlock: {
     title: "Door Lock",
-    unit: "Unit #2",
-    ButtonLabel: "Generate Key",
+    unit: "Unit #202",
+    ButtonLabel: "Generate Guest Key",
+    status: "Active",
   },
 
   PackageLocker: {
@@ -341,9 +342,9 @@ const LABELS = {
     pickupTitle: "Picked up: ",
     back: "Back",
     notfoundError: "Package not found.",
-    lockerNumberTitle: 'Locker Number: ',
-    accessCodeTitle: 'Access Code: ',
-    completedTitle: 'Completed'
+    lockerNumberTitle: "Locker Number: ",
+    accessCodeTitle: "Access Code: ",
+    completedTitle: "Completed",
   },
   createTenant: {
     title: "Create Tenant Account",
@@ -387,7 +388,8 @@ const LABELS = {
     email: "Email:",
     temporaryPassword: "Temporary Password:",
     credentialsMessage: "Tenant Account Credentials",
-    registrationMessage: "Please instruct tenant to change password upon registration"
+    registrationMessage:
+      "Please instruct tenant to change password upon registration",
   },
   generateLease: {
     title: "Generate Lease",
@@ -479,21 +481,21 @@ const LABELS = {
     statusExpired: "Expired",
     viewBtn: "View",
     createBtn: "Create",
-    createdTitle: 'Created on: ',
-    expireMeBtn: 'Expire me',
-    deleteBtn: 'Delete',
-    passNumberLabel: 'Pass #:',
-    expiresIn: 'Expires in:',
-    expireButton: 'Expire Pass',
+    createdTitle: "Created on: ",
+    expireMeBtn: "Expire me",
+    deleteBtn: "Delete",
+    passNumberLabel: "Pass #:",
+    expiresIn: "Expires in:",
+    expireButton: "Expire Pass",
     time: {
-      hour: 'h',
-      minute: 'm',
-      second: 's',
-      },
+      hour: "h",
+      minute: "m",
+      second: "s",
+    },
     carFormat: {
-      comma: ',',
-      dash: '-',
-    }
+      comma: ",",
+      dash: "-",
+    },
   },
 };
 
