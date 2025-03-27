@@ -29,17 +29,12 @@ const LABELS = {
       text: "Messages",
       icon: "messageIcon",
     },
-    unlock_door: {
-      href: "/parking",
-      text: "Guest Parking Pass",
-      icon: "parkingIcon",
-    },
-    packages: {
+    lease: {
       href: "/lease",
       text: "Generate Lease",
       icon: "leaseIcon",
     },
-    parking: {
+    tenant: {
       href: "/createTenant",
       text: "Create Tenant Account",
       icon: "userPlus",
@@ -204,17 +199,17 @@ const LABELS = {
     },
     guestParking: {
       href: "/parking",
-      text: "Guest Parking Pass",
+      text: "Guest Parking",
       icon: "guestParkingIcon",
     },
     viewMessages: {
       href: "/messaging",
-      text: "View Messages",
+      text: "Messages",
       icon: "mailIcon",
     },
     viewPackages: {
       href: "/locker",
-      text: "View Packages",
+      text: "Packages",
       icon: "packagesIcon",
     },
     reportProblem: {
@@ -224,7 +219,7 @@ const LABELS = {
     },
     unlockDoor: {
       href: "/passkey",
-      text: "Unlock My Door",
+      text: "Door Lock",
       icon: "unlockIcon",
     },
   },

@@ -100,7 +100,7 @@ export default function Navbar({
       const result = await logout();
 
       if (result.success) {
-        // Redirect to login page after successful logout
+   
         router.push('/login');
       } else {
         console.error('Logout failed:', result.error);
@@ -173,11 +173,13 @@ export default function Navbar({
             <li key={text}>
               <Link
                 href={href}
-                className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3 tracking-tight text-secondary-dark-gray hover:text-alternate-gray'
+                className='relative flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-sm md:flex-none md:justify-start md:p-2 md:px-3 tracking-tight text-secondary-dark-gray hover:drop-shadow-lg hover:text-alternate-gray duration-100 ease-in-out'
               >
                 <p className='hidden md:block text-lg'>{text}</p>
                 {label === 'messages' && (
-                  <NotificationBadge value={notificationCount} />
+                  <NotificationBadge 
+                  className='absolute -top-2 -right-3 '
+                  value={notificationCount} />
                 )}
               </Link>
             </li>
