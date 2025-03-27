@@ -116,7 +116,9 @@ const Dashboard = () => {
           const response = await fetch(`/api/users/${userCache.data.$id}`);
           if (response.ok) {
             const userData = await response.json();
-            setApartmentNumber(userData.apartmentNumber || "");
+            if (userData) {
+              setApartmentNumber(userData.apartmentNumber || "");
+            }
           }
         }
         return;
@@ -135,7 +137,9 @@ const Dashboard = () => {
           const response = await fetch(`/api/users/${userResponse.data.$id}`);
           if (response.ok) {
             const userData = await response.json();
-            setApartmentNumber(userData.apartmentNumber || "");
+            if (userData) {
+              setApartmentNumber(userData.apartmentNumber || "");
+            }
           }
         }
       } else {
