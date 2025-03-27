@@ -32,7 +32,7 @@ export default function Navbar({
     if (user) {
       getNotifications(user);
     }
-  }, [user]);
+  }, [user, getNotifications]);
 
   if (loading) {
     return null; 
@@ -85,7 +85,7 @@ export default function Navbar({
         </div>
         <div className='flex flex-col gap-6 pt-6 flex-grow'>
           {navigationData.map(([label, { href, text, icon }]) => (
-            <Link key={label} href={href} className='w-full flex flex-row px-6'>
+            <Link key={label} href={href} className='w-full flex flex-row'>
               <div className='w-full flex flex-row justify-between'>
                 <div className='flex flex-row gap-2'>
                   {icon && renderIcon(icon)}

@@ -7,10 +7,16 @@ import {
 export const useNotifications = (): NotificationsContextType => {
   const context = useContext(NotificationContext);
 
+  // Instead of throwing an error, return a default implementation
   if (!context) {
-    throw new Error(
-      'useNotifications must be used within a NotificationsProvider'
-    );
+    console.warn('useNotifications called outside of NotificationsProvider, using fallback implementation');
+    return {
+      notifications: [],
+      setNotifications: () => {},
+      getNotifications: async () => {},
+      isLoading: false,
+      error: null
+    };
   }
 
   return context;
