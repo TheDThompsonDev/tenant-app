@@ -11,18 +11,16 @@ export default function PackageDetails({
   lockerNumber,
   lockerCode,
 }: PackageDetailsProps) {
-  const splitCode = lockerCode.split("");
+  const splitCode = typeof lockerCode === "string" ? lockerCode.split("-") : [];
 
   return (
-    <div className="flex items-center justify-center flex-col rounded-md p-4 text-center text-white w-9/10 m-auto bg-secondary-blue text-white ">
-      <span className="text-xl font-bold ">
+    <div className="flex items-center justify-center flex-col rounded-md p-6 text-center text-white m-auto bg-white">
+      <span className="text-xl font-bold text-black bg-secondary-green">
         {LABELS.PackageLocker.numberTitle} {lockerNumber}
       </span>
-      {/* TODO: generate digital access code instead of hard coded*/}      
-      <span className="text-xl font-bold ">
+      <span className="text-xl font-bold text-black">
         {LABELS.PackageLocker.accessCodeTitle}
       </span>
-
       <div className="flex my-4">
         {splitCode.map((digit, index) => (
           <div key={`${digit}-${index}`}>
