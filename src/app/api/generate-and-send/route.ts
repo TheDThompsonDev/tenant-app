@@ -3,6 +3,9 @@ import fs from 'fs/promises'
 import path from 'path'
 import os from 'os'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 interface FormData {
   landlordName: string
@@ -13,6 +16,8 @@ interface FormData {
   leaseStartDate: string
   leaseEndDate: string
   monthlyRent: string
+  securityDeposit: string
+  apartmentNumber?: string
 }
 
 interface DocumensoRecipient {
@@ -30,6 +35,7 @@ interface DocumensoResponse {
   createdAt?: string
   updatedAt?: string
   metadata?: Record<string, unknown>
+  signingUrl?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -53,6 +59,19 @@ export async function POST(request: NextRequest) {
         { success: false, error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
       )
+    }
+
+    let apartmentNumber = formData.apartmentNumber;
+    if (!apartmentNumber) {
+      const match = formData.propertyAddress.match(/Apartment\s+(\d+)/i);
+      if (match && match[1]) {
+        apartmentNumber = match[1];
+      } else {
+        return NextResponse.json(
+          { success: false, error: 'Apartment number is required' },
+          { status: 400 }
+        );
+      }
     }
 
     const pdfDoc = await PDFDocument.create()
@@ -79,8 +98,10 @@ export async function POST(request: NextRequest) {
       { text: `From ${formData.leaseStartDate} to ${formData.leaseEndDate}`, y: 560 },
       { text: `RENT:`, y: 540 },
       { text: `$${formData.monthlyRent} per month, payable on the 1st day of each month`, y: 520 },
-      { text: `The parties agree to the terms of this lease.`, y: 500 },
-      { text: `This document requires digital signature from all parties.`, y: 480 },
+      { text: `SECURITY DEPOSIT:`, y: 500 },
+      { text: `$${formData.securityDeposit || formData.monthlyRent}`, y: 480 },
+      { text: `The parties agree to the terms of this lease.`, y: 460 },
+      { text: `This document requires digital signature from all parties.`, y: 440 },
     ]
 
     contentLines.forEach(line => {
@@ -100,8 +121,36 @@ export async function POST(request: NextRequest) {
     const tempFilePath = path.join(tempDir, `lease_${Date.now()}.pdf`)
     await fs.writeFile(tempFilePath, fileBuffer)
 
-    const documentTitle = `Lease Agreement - ${formData.propertyAddress}`
+    const documentTitle = `Lease Agreement - Apartment ${apartmentNumber}`
     const documensoData = await sendToDocumenso(documentTitle, formData.tenantName, formData.tenantEmail, fileBuffer)
+    const property = await prisma.property.findFirst({
+      where: {
+        email: formData.landlordEmail,
+      },
+    });
+
+    if (!property) {
+      return NextResponse.json(
+        { success: false, error: "Property not found" },
+        { status: 404 }
+      );
+    }
+
+    await prisma.lease.create({
+      data: {
+        firstName: formData.tenantName.split(' ')[0],
+        lastName: formData.tenantName.split(' ').slice(1).join(' '),
+        email: formData.tenantEmail,
+        securityDeposit: formData.securityDeposit,
+        apartmentNumber: apartmentNumber,
+        leaseStart: new Date(formData.leaseStartDate),
+        leaseEnd: new Date(formData.leaseEndDate),
+        monthlyRent: formData.monthlyRent,
+        leaseStatus: "PENDING",
+        propertyId: property.id,
+        createdAt: new Date(),
+      },
+    });
 
     try {
       await fs.unlink(tempFilePath)
@@ -115,9 +164,12 @@ export async function POST(request: NextRequest) {
       redirectUrl: `/confirmation?id=${documensoData.documentId}&email=${encodeURIComponent(formData.tenantEmail)}&name=${encodeURIComponent(formData.tenantName)}`,
       documensoData
     })
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Error generating lease:', error)
     return NextResponse.json({ success: false, error: message }, { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }
 
@@ -199,6 +251,6 @@ async function sendToDocumenso(
     const errorData = await sendResponse.json()
     throw new Error(`Documenso API error: ${errorData.message || sendResponse.statusText}`)
   }
-
+  
   return docResponse;
 }

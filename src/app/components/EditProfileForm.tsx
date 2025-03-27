@@ -88,7 +88,7 @@ export default function EditProfileForm({
       try {
         setIsLoading(true);
         const { data: user } = await getCurrentUser();
-        setUser(user ?? null);
+        setUser(user as UserType ?? null);
         form.reset({
           name: user?.name ?? "",
           email: user?.email ?? "",
