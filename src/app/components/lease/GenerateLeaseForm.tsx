@@ -78,10 +78,19 @@ function FormField({
 }
 
 const fetchLease = async () => {
-  const response = await fetch("/api/property");
-  const data = await response.json();
-  console.log("Property data:", data[1]);
-  return data[1];
+  try {
+    const response = await fetch("/api/property");
+    if (!response.ok) {
+      console.log("Error fetching property data:", response.statusText);
+      return null;
+    }
+    const data = await response.json();
+    console.log("Property data:", data[0]);
+    return data[0];
+  } catch (error) {
+    console.log("Error fetching property data:", error);
+    return null;
+  }
 };
 
 export default function GenerateLeaseForm() {
@@ -137,31 +146,6 @@ export default function GenerateLeaseForm() {
         securityDeposit: value.securityDeposit,
       };
 
-      const saveOnDB = async (leaseData: {
-        firstName: string;
-        lastName: string;
-        tenantEmail: string;
-        securityDeposit: string;
-        apartmentNumber: string;
-        leaseStartDate: string;
-        leaseEndDate: string;
-        monthlyRent: string;
-        landlordEmail: string;
-      }) => {
-        const response = await fetch("/api/admin/lease", {
-          method: "POST",
-          body: JSON.stringify(leaseData),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        if (!data.success) {
-          throw new Error(data.error || "Failed to save lease data");
-        }
-        console.log("Lease data saved to DB:", data);
-      };
-
       try {
         const response = await fetch("/api/generate-and-send", {
           method: "POST",
@@ -177,28 +161,7 @@ export default function GenerateLeaseForm() {
           throw new Error(data.error || "Failed to generate lease");
         }
 
-        if (data.success) {
-          saveOnDB({
-            firstName: value.firstName,
-            lastName: value.lastName,
-            tenantEmail: value.tenantEmail,
-            securityDeposit: value.securityDeposit,
-            apartmentNumber: value.apartmentNumber,
-            leaseStartDate: value.leaseStartDate,
-            leaseEndDate: value.leaseEndDate,
-            monthlyRent: value.monthlyRent,
-            landlordEmail: value.landlordEmail,
-          });
-        }
-
-        setSubmitMessage("Lease successfully generated and sent!");
-        setTimeout(() => {
-          router.push(
-            `/confirmation?id=${data.documentId}&email=${encodeURIComponent(
-              leaseData.tenantEmail
-            )}&name=${encodeURIComponent(leaseData.tenantName)}`
-          );
-        }, 300);
+        router.push(`/confirmation?email=${encodeURIComponent(value.tenantEmail)}`);
       } catch (error) {
         console.error("Error:", error);
         setSubmitMessage(
