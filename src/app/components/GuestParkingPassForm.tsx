@@ -64,13 +64,7 @@ export default function GuestParkingPassForm() {
         setFormError(null);
 
         try {
-          const user = await getCurrentUser();
-          if (!user?.data?.$id) {
-            setFormError({ message: "user authentication failed." });
-            return { status: "error" };
-          }
-
-          const res = await saveOnDB({ ...values, user: user.data.$id });
+          const res = await saveOnDB({ ...values });
 
           if (!res.ok) {
             const errorData = await res.json();
