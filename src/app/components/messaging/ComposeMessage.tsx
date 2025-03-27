@@ -14,7 +14,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import LABELS from "@/app/constants/labels";
-import {useNotifications} from '@/app/hooks/useNotifications';
+import { useNotifications } from '@/context/NotificationsContext';
 import { useAuth } from '@/app/hooks/useAuth';
 
 type Message = {
@@ -69,7 +69,7 @@ export default function ComposeMessage({
       fetch("/api/users?userRole=tenant")
         .then((res) => res.json())
         .then((data) => {
-          const transformed = data.map((user: any) => ({
+          const transformed = data.map((user: { id: string; firstName?: string; lastName?: string; apartmentNumber?: string }) => ({
             id: user.id,
             name:
               `${user.firstName || ""} ${user.lastName || ""} - APT: ${

@@ -1,16 +1,10 @@
 'use client';
-import {
-  createContext,
-  useState,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { Models } from "appwrite";
 
 type UserType = Models.User<Models.Preferences>;
 
-type NotificationData = {
+export type NotificationData = {
   id: string;
   subject: string | null;
   message: string | null;
@@ -31,7 +25,7 @@ type NotificationData = {
 
 export interface NotificationsContextType {
   notifications: NotificationData[] | null;
-  setNotifications: Dispatch<SetStateAction<NotificationData[] | null>>;
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationData[] | null>>;
   getNotifications: (user: UserType) => Promise<void>;
   isLoading: boolean;
   error: unknown;
@@ -52,7 +46,8 @@ export const NotificationsProvider = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
 
-  const getNotifications = async (user: UserType) => {
+  // Use useCallback to memoize the getNotifications function
+  const getNotifications = useCallback(async (user: UserType) => {
     try {
       setIsLoading(true);
       const url =
@@ -81,7 +76,7 @@ export const NotificationsProvider = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []); // Empty dependency array since it doesn't depend on any props or state
 
   return (
     <NotificationContext.Provider
@@ -96,4 +91,21 @@ export const NotificationsProvider = ({
       {children}
     </NotificationContext.Provider>
   );
+};
+
+export const useNotifications = (): NotificationsContextType => {
+  const context = useContext(NotificationContext);
+
+  if (!context) {
+    console.warn('useNotifications called outside of NotificationsProvider, using fallback implementation');
+    return {
+      notifications: [],
+      setNotifications: () => {},
+      getNotifications: async () => {},
+      isLoading: false,
+      error: null
+    };
+  }
+
+  return context;
 };

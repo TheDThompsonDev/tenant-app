@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import { MessageSquare, PenSquare, X, AlertCircle } from "lucide-react";
 import Footer from "../components/Footer";
-import { useNotifications } from '@/app/hooks/useNotifications';
+import { useNotifications } from '@/context/NotificationsContext';
 import { useAuth } from "../hooks/useAuth";
 
 type Message = {
@@ -98,7 +98,7 @@ export default function MessagesPage() {
       getNotifications(user);
     }
   }, [user, getNotifications]);
-  
+
   useEffect(() => {
     async function fetchMessages() {
       try {

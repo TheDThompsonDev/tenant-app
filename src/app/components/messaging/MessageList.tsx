@@ -11,7 +11,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import LABELS from "@/app/constants/labels";
-import { useNotifications } from "@/app/hooks/useNotifications";
+import { useNotifications } from "@/context/NotificationsContext";
 import { useAuth } from "@/app/hooks/useAuth";
 
 type Message = {
@@ -104,7 +104,7 @@ function formatTime(dateString: string): string {
   }
 }
 
-function MessageList({ messages, isAdmin }: MessageListProps) {
+function MessageList({ messages, setMessages, isAdmin }: MessageListProps) {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { getNotifications } = useNotifications();
@@ -116,7 +116,7 @@ function MessageList({ messages, isAdmin }: MessageListProps) {
 
         const url = isAdmin ?
         `/api/admin/notifications?id=${msgId}` :
-        ` /api/notifications?id=${msgId}`;
+        `/api/notifications?id=${msgId}`;
         
         const res = await fetch(url, {
           method: "PATCH",
@@ -132,6 +132,12 @@ function MessageList({ messages, isAdmin }: MessageListProps) {
         }
         
         await res.json();
+
+        setMessages(prevMessages => 
+          prevMessages.map(msg => 
+            msg.id === msgId ? { ...msg, status: 'READ' } : msg
+          )
+        );
       }
     } catch (error) {
       console.error(error);

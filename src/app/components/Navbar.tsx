@@ -7,7 +7,7 @@ import ICON_MAP from '@/app/constants/icons';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/appwrite';
-import { useNotifications } from '@/app/hooks/useNotifications';
+import { useNotifications } from '@/context/NotificationsContext';
 import { useAuth } from '@/app/hooks/useAuth';
 
 interface NavbarProps {
