@@ -14,7 +14,7 @@ export const useAuth = () => {
       try {
         const { success, data: user } = await getCurrentUser();
         if (success) {
-          setUser(user || null);
+          setUser(user as UserType || null);
         }
       } catch (error) {
         console.error(error);

@@ -77,9 +77,9 @@ export default function PackageDetailsPage() {
               &larr; {LABELS.package.back}
             </Link>
             <h3 className="text-2xl font-bold">
-              {LABELS.PackageDetails.statusTitle} {packageData.status}
+              {LABELS.PackageDetails.statusTitle} {packageData.packageLockerStatus}
             </h3>
-            {packageData.status.toLowerCase() === "ready for pickup" ? (
+            {packageData.packageLockerStatus.toLowerCase() === "ready for pickup" ? (
               <span>
                 {LABELS.PackageDetails.deliveredTitle} {packageData.time}
               </span>
@@ -90,7 +90,7 @@ export default function PackageDetailsPage() {
             )}
           </div>
 
-          {packageData.status === "Ready for pickup" ? (
+          {packageData.packageLockerStatus === "Ready for pickup" ? (
             <LockerDetails
               id={packageData.id}
               lockerNumber={packageData.locker}
