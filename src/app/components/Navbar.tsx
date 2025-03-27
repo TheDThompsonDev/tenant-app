@@ -142,11 +142,14 @@ export default function Navbar({
                 <div className='flex flex-row gap-2'>
                   {icon && renderIcon(icon)}
                   <p>{text}</p>
+                  {label === 'messages' && (
+                    <NotificationBadge 
+                    className='ml-2'
+                    value={notificationCount} />
+                  )}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  {label === 'messages' && (
-                    <NotificationBadge value={notificationCount} />
-                  )}
+
                   <ChevronRight />
                 </div>
               </div>
