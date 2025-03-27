@@ -13,6 +13,7 @@ import { VoiceChatButton } from "../components/voicechat/voiceChatButton";
 import { VoiceChatModal } from "../components/voicechat/voiceChatModal";
 import { useVoiceChat } from "../hooks/useVoiceChat";
 import { Toast } from "../components/Toast";
+import Footer from "../components/Footer";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -420,6 +421,7 @@ const Dashboard = () => {
           }}
           conversationStarted={conversationStarted}
         />
+
       </div>
     );
   };
@@ -458,6 +460,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+        <Footer />
         </div>
       </div>
     );
