@@ -13,6 +13,7 @@ import { VoiceChatButton } from "../components/voicechat/voiceChatButton";
 import { VoiceChatModal } from "../components/voicechat/voiceChatModal";
 import { useVoiceChat } from "../hooks/useVoiceChat";
 import { Toast } from "../components/Toast";
+import Footer from "../components/Footer";
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -116,7 +117,9 @@ const Dashboard = () => {
           const response = await fetch(`/api/users/${userCache.data.$id}`);
           if (response.ok) {
             const userData = await response.json();
-            setApartmentNumber(userData.apartmentNumber || "");
+            if (userData) {
+              setApartmentNumber(userData.apartmentNumber || "");
+            }
           }
         }
         return;
@@ -135,7 +138,9 @@ const Dashboard = () => {
           const response = await fetch(`/api/users/${userResponse.data.$id}`);
           if (response.ok) {
             const userData = await response.json();
-            setApartmentNumber(userData.apartmentNumber || "");
+            if (userData) {
+              setApartmentNumber(userData.apartmentNumber || "");
+            }
           }
         }
       } else {
@@ -416,6 +421,7 @@ const Dashboard = () => {
           }}
           conversationStarted={conversationStarted}
         />
+
       </div>
     );
   };
@@ -454,6 +460,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+        <Footer />
         </div>
       </div>
     );
