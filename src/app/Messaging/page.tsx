@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MessageList from "../components/messaging/MessageList";
 import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
@@ -94,31 +94,30 @@ export default function MessagesPage() {
   }, [user]);
 
   useEffect(() => {
-    // ! If getNotifications is included in the dependency array, we get an infinite loop
-    getNotifications();
-  }, [user]);
+    if (user) {
+      getNotifications(user);
+    }
+  }, [user, getNotifications]);
   
   useEffect(() => {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-  
+
         if (!user || !user.$id) {
           console.error("No user ID available");
           setError(LABELS.messaging.errorUserInformation);
           setIsLoading(false);
           return;
         }
-        
-        if (rawNotificationData) {
-          const transformedMessages = transformNotificationsToMessages(rawNotificationData);
-          setMessages(transformedMessages);
-        }
-        setError(null);
+
+        // Transform notifications to messages format
+        const transformedMessages = transformNotificationsToMessages(rawNotificationData || []);
+        setMessages(transformedMessages);
+        setIsLoading(false);
       } catch (err) {
         console.error("Error fetching messages:", err);
         setError(LABELS.messaging.errorLoading);
-      } finally {
         setIsLoading(false);
       }
     }
@@ -126,14 +125,7 @@ export default function MessagesPage() {
     if (user) {
       fetchMessages();
     }
-  }, [user, rawNotificationData]);
-
-  const messageListProps = useMemo(() => ({
-    messages,
-    setMessages,
-    isAdmin,
-    data: rawNotificationData
-  }), [messages, setMessages, isAdmin, rawNotificationData]);
+  }, [user, rawNotificationData, transformNotificationsToMessages]);
 
   return (
     <>
@@ -227,7 +219,12 @@ export default function MessagesPage() {
                         </button>
                       </div>
                     ) : (
-                      <MessageList {...messageListProps} />
+                      <MessageList
+                        messages={messages}
+                        setMessages={setMessages}
+                        isAdmin={isAdmin}
+                        data={rawNotificationData || []}
+                      />
                     )}
                   </div>
                 </div>
