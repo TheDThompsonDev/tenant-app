@@ -1,5 +1,5 @@
 interface NotificationBadgeProps {
-  value: number;
+  value?: number;
   className?: string;
 }
 
@@ -7,7 +7,7 @@ export default function NotificationBadge({
   value,
   className,
 }: NotificationBadgeProps) {
-  if (value <= 0) {
+  if (!value || value <= 0) {
     return null;
   }
 

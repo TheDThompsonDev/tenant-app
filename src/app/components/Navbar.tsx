@@ -6,10 +6,9 @@ import { X, LogOut, Menu, ChevronRight, Settings } from 'lucide-react';
 import ICON_MAP from '@/app/constants/icons';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout, getCurrentUser } from '@/lib/appwrite';
-import { Models } from 'appwrite';
-
-type UserType = Models.User<Models.Preferences>;
+import { logout } from '@/lib/appwrite';
+import { useNotifications } from '@/app/hooks/useNotifications';
+import { useAuth } from '@/app/hooks/useAuth';
 
 interface NavbarProps {
   isMobile?: boolean;
@@ -24,65 +23,14 @@ export default function Navbar({
   toggleMenu,
   closeMenu,
 }: NavbarProps) {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notificationCount, setNotificationCount] = useState(0);
+  const { user, loading } = useAuth();
+  const { getNotifications, notifications } = useNotifications();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await getCurrentUser();
-        if (response.success && response.data) {
-          setUser(response.data as UserType);
-        } else {
-          console.error("Failed to get user:", response.error);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    async function fetchMessages() {
-      try {
-        const url =
-          user?.name === 'admin'
-            ? '/api/admin/notifications'
-            : `/api/notifications?userId=${user?.$id}`;
-
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          cache: 'no-store',
-        });
-
-        if (!res.ok) {
-          throw new Error(
-            `Failed to fetch messages: ${res.status} ${res.statusText}`
-          );
-        }
-
-        const data = await res.json();
-
-        // TODO: this counts all messages, regardless of status ('UNREAD' or 'READ')
-        setNotificationCount(data.length);
-      } catch (err) {
-        console.error('Error fetching messages:', err);
-        return;
-      }
-    }
-
     if (user) {
-      fetchMessages();
+      getNotifications(user);
     }
   }, [user]);
 
@@ -143,9 +91,7 @@ export default function Navbar({
                   {icon && renderIcon(icon)}
                   <p>{text}</p>
                   {label === 'messages' && (
-                    <NotificationBadge 
-                    className='ml-2'
-                    value={notificationCount} />
+                    <NotificationBadge value={notifications?.filter((notification) => notification.status !== 'READ').length} />
                   )}
                 </div>
                 <div className='flex flex-row gap-2'>
@@ -180,9 +126,7 @@ export default function Navbar({
               >
                 <p className='hidden md:block text-lg'>{text}</p>
                 {label === 'messages' && (
-                  <NotificationBadge 
-                  className='absolute -top-2 -right-3 '
-                  value={notificationCount} />
+                  <NotificationBadge value={notifications?.filter((notification) => notification.status !== 'READ').length} />
                 )}
               </Link>
             </li>

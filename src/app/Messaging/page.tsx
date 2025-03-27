@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MessageList from "../components/messaging/MessageList";
 import ComposeMessage from "../components/messaging/ComposeMessage";
 import Header from "../components/Header";
 import LABELS from "../constants/labels";
 import { MessageSquare, PenSquare, X, AlertCircle } from "lucide-react";
 import Footer from "../components/Footer";
-import { getCurrentUser } from "@/lib/appwrite";
-import { Models } from "appwrite";
+import { useNotifications } from '@/app/hooks/useNotifications';
+import { useAuth } from "../hooks/useAuth";
 
 type Message = {
   id: string;
@@ -21,8 +21,6 @@ type Message = {
   status?: string;
   priority?: string;
 };
-
-type UserType = Models.User<Models.Preferences>;
 
 type NotificationData = {
   id: string;
@@ -43,34 +41,17 @@ type NotificationData = {
   };
 };
 
-const notificationCache: {
-  data: NotificationData[] | null;
-  timestamp: number;
-  userId?: string;
-} = {
-  data: null,
-  timestamp: 0,
-  userId: undefined,
-};
-
-const CACHE_EXPIRATION = 30000;
-
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [rawNotificationData, setRawNotificationData] = useState<NotificationData[]>([]);
+  const {
+    notifications: rawNotificationData,
+    getNotifications
+  } = useNotifications();
   const [showCompose, setShowCompose] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<UserType | null>(null);
+  const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const isCacheValid = useCallback((userId?: string) => {
-    if (!notificationCache.data) return false;
-    if (notificationCache.userId !== userId) return false;
-    
-    const now = Date.now();
-    return now - notificationCache.timestamp < CACHE_EXPIRATION;
-  }, []);
 
   const transformNotificationsToMessages = useCallback((notifications: NotificationData[]): Message[] => {
     return notifications.map((notification) => {
@@ -105,87 +86,38 @@ export default function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await getCurrentUser();
-        if (response.success && response.data) {
-          setUser(response.data as UserType);
-          const userEmail = response.data.email || "";
-          const isUserAdmin = userEmail.includes("admin") || 
-                            (response.data.prefs && response.data.prefs.role === "admin");
-          setIsAdmin(isUserAdmin);
-        } else {
-          console.error("Failed to get user:", response.error);
-        }
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      } finally {
-        setIsLoading(false);
+    if (user) {
+      if (user.email.includes("admin") || user.prefs && user.prefs.role === 'admin') {
+        setIsAdmin(true);
       }
-    };
+    }
+  }, [user]);
 
-    fetchUser();
-  }, []);
-
+  useEffect(() => {
+    if (user) {
+      getNotifications(user);
+    }
+  }, [user, getNotifications]);
   
   useEffect(() => {
     async function fetchMessages() {
       try {
         setIsLoading(true);
-  
+
         if (!user || !user.$id) {
           console.error("No user ID available");
           setError(LABELS.messaging.errorUserInformation);
           setIsLoading(false);
           return;
         }
-  
-        if (isCacheValid(user.$id)) {
-          console.log("Using cached notification data");
-          const cachedData = notificationCache.data as NotificationData[];
-          setRawNotificationData(cachedData);
-  
-          const transformedMessages = transformNotificationsToMessages(cachedData);
-          setMessages(transformedMessages);
-          setError(null);
-          setIsLoading(false);
-          return;
-        }
-  
-        const url =
-          user.name === 'admin'
-            ? '/api/admin/notifications'
-            : `/api/notifications?userId=${user.$id}`;
-  
-        const res = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        });
-  
-        if (!res.ok) {
-          throw new Error(
-            `Failed to fetch messages: ${res.status} ${res.statusText}`
-          );
-        }
-  
-        const data = await res.json();
-        
-        notificationCache.data = data;
-        notificationCache.timestamp = Date.now();
-        notificationCache.userId = user.$id;
-        
-        setRawNotificationData(data);
-        
-        const transformedMessages = transformNotificationsToMessages(data);
+
+        // Transform notifications to messages format
+        const transformedMessages = transformNotificationsToMessages(rawNotificationData || []);
         setMessages(transformedMessages);
-        setError(null);
+        setIsLoading(false);
       } catch (err) {
         console.error("Error fetching messages:", err);
         setError(LABELS.messaging.errorLoading);
-      } finally {
         setIsLoading(false);
       }
     }
@@ -193,14 +125,7 @@ export default function MessagesPage() {
     if (user) {
       fetchMessages();
     }
-  }, [user, isCacheValid, transformNotificationsToMessages]);
-
-  const messageListProps = useMemo(() => ({
-    messages,
-    setMessages,
-    isAdmin,
-    data: rawNotificationData
-  }), [messages, setMessages, isAdmin, rawNotificationData]);
+  }, [user, rawNotificationData, transformNotificationsToMessages]);
 
   return (
     <>
@@ -294,7 +219,12 @@ export default function MessagesPage() {
                         </button>
                       </div>
                     ) : (
-                      <MessageList {...messageListProps} />
+                      <MessageList
+                        messages={messages}
+                        setMessages={setMessages}
+                        isAdmin={isAdmin}
+                        data={rawNotificationData || []}
+                      />
                     )}
                   </div>
                 </div>
