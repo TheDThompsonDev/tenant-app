@@ -9,4 +9,5 @@ export type Package = {
   accessCode: string;
   lockerNumber: string;
   lastAcessed: string;
+  createdAt: string;
 };
