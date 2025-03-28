@@ -38,7 +38,7 @@ const fetchLease = async () => {
 const defaultLeaseSummary: LeaseSummary = {
   id: "lease-mock-001",
   title: "Residential Lease Agreement",
-  leaseStatus: "ACTIVE",
+  leaseStatus: "PENDING",
   startDate: "January 1, 2025",
   endDate: "December 31, 2025",
   monthlyRent: "$1,200.00",
@@ -219,6 +219,8 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
       if (!response.ok) {
         throw new Error(LABELS.leaseManagement.updateError);
       }
+      
+      console.log('Lease status updated successfully to:', newStatus);
 
       const updatedLeases = leases.map(lease => 
         lease.id === id ? {
@@ -236,14 +238,12 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
         });
       }
       
-      if (leaseSummary && leaseSummary.id === id) {
-        setLeaseSummary({
-          ...leaseSummary,
-          leaseStatus: newStatus
-        });
+      // Fetch the updated lease summary to ensure we have the latest data
+      if (apartmentNumber) {
+        const updatedSummary = await fetchLeaseSummary(apartmentNumber);
+        console.log('Updated lease summary after status change:', updatedSummary);
+        setLeaseSummary(updatedSummary);
       }
-      
-      await fetchLeaseSummary(apartmentNumber);
     } catch (error) {
       console.error('Error updating lease status:', error);
     } finally {
