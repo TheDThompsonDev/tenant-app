@@ -41,7 +41,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <div className="bg-secondary-blue flex justify-between p-8 items-center">
+    <div className="bg-secondary-blue flex justify-between p-6 items-center">
       <div className="text-alternate-light-gray hidden md:block w-1/2">
         <p className="text-3xl py-2">{FooterData.apartmentName}</p>
         <p className="tracking-wider">Address: {FooterData.address}</p>
