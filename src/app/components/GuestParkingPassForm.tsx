@@ -44,7 +44,7 @@ export default function GuestParkingPassForm() {
   }, []);
 
   const get24HoursFromNow = () =>
-    new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString("en-US");
+    new Date(Date.now() + 20 * 1000).toLocaleString("en-US");
 
   const expireDate = get24HoursFromNow();
 

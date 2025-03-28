@@ -32,6 +32,7 @@ export default function ParkingPassCard({
   const [expirationStatus, setExpirationStatus] = useState("active");
   const [expirationCountdown, setExpirationCountdown] = useState("");
   const [isExpiring, setIsExpiring] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const expirePass = async () => {
     if (isExpiring) return;
@@ -65,6 +66,35 @@ export default function ParkingPassCard({
     }
   };
 
+  const deletePass = async () => {
+    if (isDeleting) return;
+    
+    try {
+      setIsDeleting(true);
+      
+      const response = await fetch(`/api/parking/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to delete parking pass");
+      }
+      
+      if (onExpire) {
+        onExpire();
+      }
+      
+      console.log("Parking pass deleted successfully");
+    } catch (error) {
+      console.log("Error deleting parking pass:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   useEffect(() => {
     const updateCountdown = () => {
       if (expirationDate === 'N/A') {
@@ -80,7 +110,7 @@ export default function ParkingPassCard({
           parsedExpDate = new Date(expirationDate);
           
           if (isNaN(parsedExpDate.getTime())) {
-            setExpirationCountdown('24h 0m 0s');
+            setExpirationCountdown('0h 0m 10s');
             return;
           }
         } else {
@@ -111,7 +141,7 @@ export default function ParkingPassCard({
         );
       } catch (error) {
         console.log("Error calculating countdown:", error);
-        setExpirationCountdown('24h 0m 0s');
+        setExpirationCountdown('0h 0m 10s');
       }
     };
 
@@ -188,11 +218,12 @@ export default function ParkingPassCard({
           </>
         ) : (
           <button
-            onClick={expirePass}
-            className="flex flex-row justify-between bg-red-400 py-1 px-4 rounded-md items-center text-white"
+            onClick={deletePass}
+            disabled={isDeleting}
+            className={`flex flex-row justify-between ${isDeleting ? 'bg-gray-400' : 'bg-red-400'} py-1 px-4 rounded-md items-center text-white`}
           >
             <X className="p-2" size={40} />
-            {LABELS.parkingPassCard.deleteBtn} {parkingPassNumber && `#${parkingPassNumber}`}
+            {isDeleting ? 'Deleting...' : LABELS.parkingPassCard.deleteBtn} {parkingPassNumber && `#${parkingPassNumber}`}
           </button>
         )}
       </div>

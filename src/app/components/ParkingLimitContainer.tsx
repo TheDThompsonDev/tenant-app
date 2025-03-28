@@ -48,25 +48,31 @@ export default function ParkingLimitContainer() {
       };
 
       const now = new Date();
-      const activePassesOnly = data.filter((pass: ParkingPass) => {
-        if (!pass.expirationDate) return true;
-        const expDate = new Date(pass.expirationDate);
-        return expDate > now;
-      });
-
-      const sortedPasses = [...activePassesOnly].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-
-      setPassCount(sortedPasses.length);
-      const formattedPasses = sortedPasses.map((pass) => ({
+      const formattedPasses = data.map((pass: ParkingPass) => ({
         ...pass,
         formattedCreatedAt: formatDate(pass.createdAt as string),
         formattedExpirationDate: pass.expirationDate ? formatDate(pass.expirationDate as string) : 'N/A',
       }));
 
-      setParkingPasses(formattedPasses);
+      const sortedPasses = [...formattedPasses].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      const activePasses = sortedPasses.filter(pass => {
+        if (!pass.expirationDate) return true;
+        const expDate = new Date(pass.expirationDate as string);
+        return expDate > now;
+      });
+
+      const expiredPasses = sortedPasses.filter(pass => {
+        if (!pass.expirationDate) return false;
+        const expDate = new Date(pass.expirationDate as string);
+        return expDate <= now;
+      });
+
+      setPassCount(activePasses.length);
+      setParkingPasses([...expiredPasses, ...activePasses]);
       setError(null);
     } catch (error) {
       console.error("Error fetching parking passes:", error);
@@ -123,7 +129,7 @@ export default function ParkingLimitContainer() {
               />
             ))
           ) : (
-            <p className="text-white">No active passes available.</p>
+            <p className="text-white">No parking passes available.</p>
           )}
         </div>
       )}
