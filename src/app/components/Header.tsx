@@ -34,10 +34,6 @@ export default function Header() {
     router.push('/login');
   };
 
-  const handleParkingClick = () => {
-    console.log('Parking btn clicked');
-  };
-
   return (
     <header className='relative bg-white text-black py-4 px-6'>
       {/* Mobile View */}
@@ -53,10 +49,7 @@ export default function Header() {
             />
           ) : (
             <div className='flex flex-row gap-4'>
-              <button
-                className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue'
-                onClick={handleParkingClick}
-              >
+              <button className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue'>
                 <Link href='/parking'>Parking</Link>
               </button>
               <button
@@ -91,10 +84,7 @@ export default function Header() {
           </>
         ) : (
           <div className='flex flex-row gap-4 items-center justify-center'>
-            <button
-              className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue'
-              onClick={handleParkingClick}
-            >
+            <button className='flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 text-lg font-medium md:flex-none md:justify-start md:p-2 md:px-8 text-white bg-secondary-blue'>
               <Link href='/parking'>Guest Parking</Link>
             </button>
             <button

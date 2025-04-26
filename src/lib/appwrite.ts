@@ -31,11 +31,9 @@ function isCacheValid(): boolean {
 export async function getCurrentUser() {
   try {
     if (isCacheValid()) {
-      console.log('Using cached user data');
       return { success: true, data: userCache.user };
     }
 
-    console.log('Fetching user data from Appwrite');
     const user = await account.get();
 
     userCache.user = user;
@@ -43,7 +41,7 @@ export async function getCurrentUser() {
 
     return { success: true, data: user };
   } catch (error) {
-    console.log('Error getting current user:', error);
+    console.error('Error getting current user:', error);
     return { success: false, error };
   }
 }
@@ -70,11 +68,9 @@ export async function cachedDatabaseList(
       Date.now() - queryCache[cacheKey].timestamp <
         queryCache[cacheKey].expiresIn
     ) {
-      console.log(`Using cached data for ${cacheKey}`);
       return { success: true, data: queryCache[cacheKey].data };
     }
 
-    console.log(`Fetching fresh data for ${cacheKey}`);
     const result = await databases.listDocuments(
       databaseId,
       collectionId,
@@ -89,7 +85,7 @@ export async function cachedDatabaseList(
 
     return { success: true, data: result };
   } catch (error) {
-    console.log(`Error in cachedDatabaseList for ${cacheKey}:`, error);
+    console.error(`Error in cachedDatabaseList for ${cacheKey}:`, error);
     return { success: false, error };
   }
 }

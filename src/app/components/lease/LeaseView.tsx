@@ -57,14 +57,14 @@ const fetchLeaseSummary = async (
     );
 
     if (!response.ok) {
-      console.log('Error fetching lease summary:', response.statusText);
+      console.error('Error fetching lease summary:', response.statusText);
       return defaultLeaseSummary;
     }
 
     const data = await response.json();
     return data.data || defaultLeaseSummary;
   } catch (error) {
-    console.log('Error fetching lease summary:', error);
+    console.error('Error fetching lease summary:', error);
     return defaultLeaseSummary;
   }
 };
@@ -151,10 +151,6 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
     fetchData();
   }, [isAdmin]);
 
-  useEffect(() => {
-    console.log('Lease summary state updated:', leaseSummary);
-  }, [leaseSummary]);
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -229,8 +225,6 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
         throw new Error(LABELS.leaseManagement.updateError);
       }
 
-      console.log('Lease status updated successfully to:', newStatus);
-
       const updatedLeases = leases.map((lease) =>
         lease.id === id
           ? {
@@ -251,10 +245,6 @@ export default function LeaseView({ isAdmin = false }: LeaseViewProps) {
 
       if (apartmentNumber) {
         const updatedSummary = await fetchLeaseSummary(apartmentNumber);
-        console.log(
-          'Updated lease summary after status change:',
-          updatedSummary
-        );
         setLeaseSummary(updatedSummary);
       }
     } catch (error) {

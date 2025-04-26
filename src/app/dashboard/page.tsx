@@ -108,7 +108,6 @@ const Dashboard = () => {
   const fetchUserData = useCallback(async () => {
     try {
       if (isCacheValid()) {
-        console.log('Using cached user data');
         setUser(userCache.data as UserType);
 
         if (userCache.data?.$id) {
@@ -123,7 +122,6 @@ const Dashboard = () => {
         return;
       }
 
-      console.log('Fetching user data from API');
       const userResponse = await getCurrentUser();
 
       if (userResponse.success && userResponse.data) {
@@ -151,16 +149,13 @@ const Dashboard = () => {
   const fetchPropertyData = useCallback(async () => {
     try {
       if (isCacheValid()) {
-        console.log('Using cached property data');
         setProperty(propertyCache.data as PropertyData[]);
         return;
       }
 
-      console.log('Fetching property data from API');
       const propertyResponse = await fetch('/api/property', { method: 'GET' });
 
       const propertyData = await propertyResponse.json();
-      console.log('Property:', propertyData);
       setProperty(propertyData);
       propertyCache.data = propertyData;
       propertyCache.timestamp = Date.now();
