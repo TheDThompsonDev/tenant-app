@@ -189,10 +189,6 @@ const Dashboard = () => {
       user.name === 'admin'
         ? 'bg-secondary-blue'
         : 'bg-primary-green hover:bg-alternate-green hover:text-primary-green';
-    const textColor =
-      user.name === 'admin'
-        ? 'text-alternate-light-gray'
-        : 'text-alternate-green';
     const hiddenButton = user.name === 'admin' ? 'hidden' : 'block';
     return (
       <Link
