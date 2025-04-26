@@ -34,19 +34,15 @@ export const useVoiceChat = (props: ConversationHookProps = {}) => {
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log('Connected to Eleven Labs');
       setIsConnected(true);
       props.onConnect?.();
     },
     onDisconnect: () => {
-      console.log('Disconnected from Eleven Labs');
       setIsConnected(false);
       setConversationId(null);
       props.onDisconnect?.();
     },
     onMessage: (message) => {
-      console.log('Message received:', message);
-
       if (message.source === 'user') {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -111,7 +107,6 @@ export const useVoiceChat = (props: ConversationHookProps = {}) => {
       });
 
       setConversationId(id);
-      console.log('Conversation started with ID:', id);
 
       sessionProps.onStart?.();
     } catch (error) {
@@ -123,7 +118,6 @@ export const useVoiceChat = (props: ConversationHookProps = {}) => {
   const endConversation = async (): Promise<void> => {
     try {
       await conversation.endSession();
-      console.log('Conversation ended');
     } catch (error) {
       console.error('Failed to end conversation:', error);
     }

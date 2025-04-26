@@ -1,6 +1,12 @@
 'use client';
-import { createContext, useState, useContext, ReactNode, useCallback } from 'react';
-import { Models } from "appwrite";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useCallback,
+} from 'react';
+import { Models } from 'appwrite';
 
 type UserType = Models.User<Models.Preferences>;
 
@@ -25,7 +31,9 @@ export type NotificationData = {
 
 export interface NotificationsContextType {
   notifications: NotificationData[] | null;
-  setNotifications: React.Dispatch<React.SetStateAction<NotificationData[] | null>>;
+  setNotifications: React.Dispatch<
+    React.SetStateAction<NotificationData[] | null>
+  >;
   getNotifications: (user: UserType) => Promise<void>;
   isLoading: boolean;
   error: unknown;
@@ -42,11 +50,12 @@ interface NotificationsProviderProps {
 export const NotificationsProvider = ({
   children,
 }: NotificationsProviderProps) => {
-  const [notifications, setNotifications] = useState<NotificationData[] | null>([]);
+  const [notifications, setNotifications] = useState<NotificationData[] | null>(
+    []
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
 
-  // Use useCallback to memoize the getNotifications function
   const getNotifications = useCallback(async (user: UserType) => {
     try {
       setIsLoading(true);
@@ -76,7 +85,7 @@ export const NotificationsProvider = ({
     } finally {
       setIsLoading(false);
     }
-  }, []); // Empty dependency array since it doesn't depend on any props or state
+  }, []);
 
   return (
     <NotificationContext.Provider
@@ -97,13 +106,15 @@ export const useNotifications = (): NotificationsContextType => {
   const context = useContext(NotificationContext);
 
   if (!context) {
-    console.warn('useNotifications called outside of NotificationsProvider, using fallback implementation');
+    console.warn(
+      'useNotifications called outside of NotificationsProvider, using fallback implementation'
+    );
     return {
       notifications: [],
       setNotifications: () => {},
       getNotifications: async () => {},
       isLoading: false,
-      error: null
+      error: null,
     };
   }
 

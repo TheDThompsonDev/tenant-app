@@ -1,96 +1,111 @@
-import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 interface LeaseSummary {
-  id: string
-  title: string
-  leaseStatus: string
-  startDate: string
-  endDate: string
-  monthlyRent: string
-  securityDeposit: string
-  paymentDueDate: string
-  lateFee: string
-  createdAt: string
+  id: string;
+  title: string;
+  leaseStatus: string;
+  startDate: string;
+  endDate: string;
+  monthlyRent: string;
+  securityDeposit: string;
+  paymentDueDate: string;
+  lateFee: string;
+  createdAt: string;
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userEmail = searchParams.get('email')
-    const apartmentNumber = searchParams.get('apartmentNumber')
-    const getAllLeases = searchParams.get('all') === 'true'
-    
-    console.log('Looking for lease with email:', userEmail)
-    console.log('Looking for lease with apartment:', apartmentNumber)
-    console.log('Get all leases:', getAllLeases)
-    
+    const { searchParams } = new URL(request.url);
+    const userEmail = searchParams.get('email');
+    const apartmentNumber = searchParams.get('apartmentNumber');
+    const getAllLeases = searchParams.get('all') === 'true';
+
     if (getAllLeases) {
       const leases = await prisma.lease.findMany({
-        orderBy: { updatedAt: 'desc' }
-      })
-      
-      return NextResponse.json(leases)
+        orderBy: { updatedAt: 'desc' },
+      });
+
+      return NextResponse.json(leases);
     }
-    
-    let lease
-    
+
+    let lease;
+
     if (apartmentNumber) {
       lease = await prisma.lease.findFirst({
-        where: { 
+        where: {
           apartmentNumber,
-          leaseStatus: 'ACTIVE'
+          leaseStatus: 'ACTIVE',
         },
-        orderBy: { updatedAt: 'desc' }
-      })
+        orderBy: { updatedAt: 'desc' },
+      });
     } else if (userEmail) {
       lease = await prisma.lease.findFirst({
         where: { email: userEmail },
-        orderBy: { updatedAt: 'desc' }
-      })
+        orderBy: { updatedAt: 'desc' },
+      });
     } else {
       lease = await prisma.lease.findFirst({
-        orderBy: { updatedAt: 'desc' }
-      })
-    }
-    
-    console.log('Lease query result:', lease)
-    
-    if (!lease) {
-      console.log('No lease found')
-      return NextResponse.json({ success: false, error: 'No lease found' }, { status: 404 })
-    }
-    
-    const paymentDueDate = '1st of each month'
-    const lateFee = '$50 after the 5th of each month'
-    
-    const leaseSummary: LeaseSummary = {
-      id: lease.id,
-      title: `Lease Agreement for ${lease.firstName || ''} ${lease.lastName || ''}`.trim(),
-      leaseStatus: lease.leaseStatus,
-      startDate: lease.leaseStart ? new Date(lease.leaseStart).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified',
-      endDate: lease.leaseEnd ? new Date(lease.leaseEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified',
-      monthlyRent: lease.monthlyRent ? `$${lease.monthlyRent}` : 'Not specified',
-      securityDeposit: lease.securityDeposit ? `$${lease.securityDeposit}` : 'Not specified',
-      paymentDueDate,
-      lateFee,
-      createdAt: lease.createdAt.toISOString()
+        orderBy: { updatedAt: 'desc' },
+      });
     }
 
-    console.log('Fetched lease summary:', leaseSummary)
+    if (!lease) {
+      return NextResponse.json(
+        { success: false, error: 'No lease found' },
+        { status: 404 }
+      );
+    }
+
+    const paymentDueDate = '1st of each month';
+    const lateFee = '$50 after the 5th of each month';
+
+    const leaseSummary: LeaseSummary = {
+      id: lease.id,
+      title: `Lease Agreement for ${lease.firstName || ''} ${
+        lease.lastName || ''
+      }`.trim(),
+      leaseStatus: lease.leaseStatus,
+      startDate: lease.leaseStart
+        ? new Date(lease.leaseStart).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : 'Not specified',
+      endDate: lease.leaseEnd
+        ? new Date(lease.leaseEnd).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : 'Not specified',
+      monthlyRent: lease.monthlyRent
+        ? `$${lease.monthlyRent}`
+        : 'Not specified',
+      securityDeposit: lease.securityDeposit
+        ? `$${lease.securityDeposit}`
+        : 'Not specified',
+      paymentDueDate,
+      lateFee,
+      createdAt: lease.createdAt.toISOString(),
+    };
 
     return NextResponse.json({
       success: true,
-      data: leaseSummary
-    })
+      data: leaseSummary,
+    });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    console.error('Error fetching lease summary:', message)
-    return NextResponse.json({ success: false, error: message }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error fetching lease summary:', message);
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 500 }
+    );
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }

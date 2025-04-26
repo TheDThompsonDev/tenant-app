@@ -1,8 +1,8 @@
-import { Client, Account, Databases, Storage } from "appwrite";
+import { Client, Account, Databases, Storage } from 'appwrite';
 
 const client = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1") // Your Appwrite API endpoint
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || ""); // Your project ID, We get this from Appwrite Console and it is required to be in your .env file
+  .setEndpoint('https://cloud.appwrite.io/v1')
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '');
 
 export const account = new Account(client);
 export const databases = new Databases(client);
@@ -31,20 +31,17 @@ function isCacheValid(): boolean {
 export async function getCurrentUser() {
   try {
     if (isCacheValid()) {
-      console.log("Using cached user data");
       return { success: true, data: userCache.user };
     }
 
-    console.log("Fetching user data from Appwrite");
     const user = await account.get();
 
-    // Update cache
     userCache.user = user;
     userCache.timestamp = Date.now();
 
     return { success: true, data: user };
   } catch (error) {
-    console.log("Error getting current user:", error);
+    console.error('Error getting current user:', error);
     return { success: false, error };
   }
 }
@@ -64,18 +61,16 @@ export async function cachedDatabaseList(
   queries: string[] = [],
   cacheDuration: number = CACHE_DURATION
 ) {
-  const cacheKey = `${databaseId}_${collectionId}_${queries.join(",")}`;
+  const cacheKey = `${databaseId}_${collectionId}_${queries.join(',')}`;
   try {
     if (
       queryCache[cacheKey] &&
       Date.now() - queryCache[cacheKey].timestamp <
         queryCache[cacheKey].expiresIn
     ) {
-      console.log(`Using cached data for ${cacheKey}`);
       return { success: true, data: queryCache[cacheKey].data };
     }
 
-    console.log(`Fetching fresh data for ${cacheKey}`);
     const result = await databases.listDocuments(
       databaseId,
       collectionId,
@@ -90,18 +85,18 @@ export async function cachedDatabaseList(
 
     return { success: true, data: result };
   } catch (error) {
-    console.log(`Error in cachedDatabaseList for ${cacheKey}:`, error);
+    console.error(`Error in cachedDatabaseList for ${cacheKey}:`, error);
     return { success: false, error };
   }
 }
 
-export function clearCache(type: "user" | "query", key?: string) {
-  if (type === "user") {
+export function clearCache(type: 'user' | 'query', key?: string) {
+  if (type === 'user') {
     userCache.user = null;
     userCache.timestamp = 0;
-  } else if (type === "query" && key) {
+  } else if (type === 'query' && key) {
     delete queryCache[key];
-  } else if (type === "query") {
+  } else if (type === 'query') {
     Object.keys(queryCache).forEach((k) => delete queryCache[k]);
   }
 }
@@ -176,7 +171,7 @@ export const updateUserPassword = async (
 
 export const logout = async () => {
   try {
-    invalidateAllCaches(); 
+    invalidateAllCaches();
     await account.deleteSession('current');
     return { success: true };
   } catch (error) {
