@@ -86,7 +86,7 @@ export default function ContactUs() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    onFocus={(e) => {
+                    onFocus={() => {
                       if (!field.state.meta.isTouched) {
                         field.handleChange('');
                       }
@@ -128,7 +128,7 @@ export default function ContactUs() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    onFocus={(e) => {
+                    onFocus={() => {
                       if (!field.state.meta.isTouched) {
                         field.handleChange('');
                       }
@@ -167,7 +167,7 @@ export default function ContactUs() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    onFocus={(e) => {
+                    onFocus={() => {
                       if (!field.state.meta.isTouched) {
                         field.handleChange('');
                       }
